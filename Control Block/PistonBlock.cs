@@ -39,6 +39,12 @@ namespace Control_Block
             {
                 things.Clear();
                 CanMove = GetBlocks();
+                if (things.ContainsKey(block))
+                {
+                    var rawOfs = open - alphaOpen;
+                    Vector3 offs = (block.transform.localRotation * Vector3.up) * rawOfs;
+                    block.transform.localPosition += offs;
+                }
             }
             else
             {
