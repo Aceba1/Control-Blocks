@@ -107,6 +107,11 @@ namespace Control_Block
 
         private void DoWindow(int id)
         {
+            if (module == null)
+            {
+                visible = false;
+                return;
+            }
             if (IsSettingKeybind)
             {
                 var e = Event.current;
@@ -125,14 +130,15 @@ namespace Control_Block
 
             module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
 
+            GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
+            GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
+
             if (GUILayout.Button("Close"))
             {
                 visible = false;
                 IsSettingKeybind = false;
                 module = null;
             }
-
-            GUILayout.Label("Current Load" + module.CurrentCellPush.ToString());
             GUI.DragWindow();
         }
     }
