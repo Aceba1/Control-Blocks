@@ -40,7 +40,7 @@ namespace Control_Block
 
         public void BeforeBlockAdded(IntVector3 localPos)
         {
-            Print("Block was added");
+            //Print("Block was added");
             if (alphaOpen != 0f)
             {
                 alphaOpen = 0f;
@@ -50,7 +50,7 @@ namespace Control_Block
 
         private void BlockAdded(TankBlock block, Tank tank)
         {
-            Print("BlockAdded()");
+            //Print("BlockAdded()");
             /*
             //Only run if extended, refresh blocks, check if new block is part of, apply offset to new block if is
             if (SnapRender && alphaOpen == 0f)
@@ -78,7 +78,7 @@ namespace Control_Block
         }
         private void BlockRemoved(TankBlock block, Tank tank)
         {
-            Print("BlockRemoved()");
+            //Print("BlockRemoved()");
             things.Remove(block);
             SetDirty();
         }
@@ -86,7 +86,7 @@ namespace Control_Block
         {
             if (!Dirty)
             {
-                Print("Piston " + base.block.cachedLocalPosition.ToString() + " is now  d i r t y");
+                //Print("Piston " + base.block.cachedLocalPosition.ToString() + " is now  d i r t y");
                 Dirty = true;
             }
         }
@@ -222,7 +222,7 @@ namespace Control_Block
             //StartExtended = !SetToExpand;
             CanMove = GetBlocks();
             Dirty = false;
-            Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
+            //Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
         }
 
         public void ResetRenderState(bool ImmediatelySetAfter = false)
@@ -261,7 +261,7 @@ namespace Control_Block
             }
         }
 
-        public const ushort MaxBlockPush = 64;
+        public const int MaxBlockPush = 64;
         public int CurrentCellPush { get; private set; } = 0;
         internal bool Dirty = true;
         //internal bool StartExtended = false;
@@ -334,17 +334,13 @@ namespace Control_Block
                     }
                     catch (Exception E)
                     {
-                        Print(E.Message);
-                        Print(E.StackTrace);
-                        Print(cb == null ? "Cycled block is null!" : "");
+                        Print(E.Message + "\n" + E.StackTrace + "\n" + (cb == null ? "Cycled block is null!" : ""));
                     }
                 }
             }
             catch (Exception E2)
             {
-                Print(E2.Message);
-                Print(E2.StackTrace);
-                Print(_Start == null ? "Scanned block is null!" : "");
+                Print(E2.Message + "\n" + E2.StackTrace + "\n" + (_Start == null ? "Scanned block is null!" : ""));
             }
             return true;
         }

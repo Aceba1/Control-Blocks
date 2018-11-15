@@ -156,6 +156,14 @@ namespace Control_Block
 
             GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
             GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
+            if (module.CurrentCellPush > ModulePiston.MaxBlockPush)
+            {
+                GUILayout.Label("- The piston is overburdened! (>"+ModulePiston.MaxBlockPush.ToString()+")");
+            }
+            else if (module.CurrentCellPush == -1)
+            {
+                GUILayout.Label("- The piston is structurally locked!");
+            }
 
             if (GUILayout.Button("Close"))
             {
