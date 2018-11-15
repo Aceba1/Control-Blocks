@@ -35,7 +35,7 @@ namespace Control_Block
 
         public void Print(string Message)
         {
-            Console.WriteLine("ControlBlocks (" + DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")) + "): " + Message);
+            Console.WriteLine("CB(" + DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")) + "): " + Message);
         }
 
         public void BeforeBlockAdded(IntVector3 localPos)
@@ -274,13 +274,14 @@ namespace Control_Block
             bool flag = things.Count == 0;
             if (flag)
             {
-                Print("\nStarting blockgrab for Piston " + block.cachedLocalPosition.ToString());
+                Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
                 try
                 {
                     blockman = block.tank.blockman;
                     _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * (/*StartExtended ? Vector3.up * 2 :*/ Vector3.up)) + block.cachedLocalPosition);
                     if (_Start == null)
                     {
+                        CurrentCellPush = 0;
                         Print("Piston is pushing nothing");
                         return true;
                     }
@@ -396,6 +397,9 @@ namespace Control_Block
 
         void Attach()
         {
+            alphaOpen = 0;
+            open = 0;
+            gOfs = 0;
             SetDirty();
             tankcache?.AttachEvent.Unsubscribe(a_action);
             tankcache?.DetachEvent.Unsubscribe(d_action);
