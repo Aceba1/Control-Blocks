@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Nuterra.BlockInjector;
+using Harmony;
 
 namespace Control_Block
 {
@@ -11,6 +12,9 @@ namespace Control_Block
     {
         public static void CreateBlocks()
         {
+            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
+            harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+
             var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                 .SetName("Piston Block")
                 .SetDescription("A configurable piston that can push and pull blocks on a tech. Right click to configure")
@@ -61,6 +65,26 @@ namespace Control_Block
             UnityEngine.Object.DontDestroyOnLoad(_holder);
         }
     }
+
+    internal class Patches
+    {
+        [HarmonyPatch(typeof(BlockManager), "AddBlock")]
+        private static class BlockManagerFix
+        {
+            private static void Prefix(ref BlockManager __instance, ref TankBlock block, IntVector3 localPos)
+            {
+                foreach (TankBlock _b in __instance.IterateBlocks())
+                {
+                    var module = _b.GetComponent<ModulePiston>();
+                    if (module)
+                    {
+                        module.BeforeBlockAdded(localPos);
+                    }
+                }
+            }
+        }
+    }
+
     class OptionMenu : MonoBehaviour
     {
         private int ID = 7787;

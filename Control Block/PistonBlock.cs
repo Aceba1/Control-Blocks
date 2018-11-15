@@ -31,29 +31,54 @@ namespace Control_Block
         Action<TankBlock, Tank> a_action, d_action;
         protected Tank tankcache;
         bool SnapRender = true;
+        List<TankBlock> NewlyAddedBlocks = new List<TankBlock>();
+
+        public void Print(string Message)
+        {
+            Console.WriteLine("ControlBlocks (" + DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")) + "): " + Message);
+        }
+
+        public void BeforeBlockAdded(IntVector3 localPos)
+        {
+            Print("Block was added");
+            if (alphaOpen != 0f)
+            {
+                alphaOpen = 0f;
+                ResetRenderState(true);
+            }
+        }
 
         private void BlockAdded(TankBlock block, Tank tank)
         {
+            Print("BlockAdded()");
+            /*
             //Only run if extended, refresh blocks, check if new block is part of, apply offset to new block if is
-            if (alphaOpen != 0f)
+            if (SnapRender && alphaOpen == 0f)
             {
                 things.Clear();
                 CanMove = GetBlocks();
-                if (things.ContainsKey(block))
+                if (CanMove)
                 {
-                    var rawOfs = open - alphaOpen;
-                    Vector3 offs = (block.transform.localRotation * Vector3.up) * rawOfs;
-                    block.transform.localPosition += offs;
+                    Move(true);
+                    alphaOpen = 1f;
+                    open = 1f;
+                    SetRenderState();
+                    if (things.ContainsKey(block))
+                    {
+                        block.transform.localPosition += this.block.cachedLocalRotation * Vector3.one;
+                    }
+                    SnapRender = true;
                 }
             }
             else
             {
-                ResetRenderState();
-                SetDirty();
-            }
+            */
+            SetDirty();
+            /*}*/
         }
         private void BlockRemoved(TankBlock block, Tank tank)
         {
+            Print("BlockRemoved()");
             things.Remove(block);
             SetDirty();
         }
@@ -61,10 +86,11 @@ namespace Control_Block
         {
             if (!Dirty)
             {
-                Console.WriteLine("Piston " + base.transform.localPosition.ToString() + " is now  d i r t y");
+                Print("Piston " + base.block.cachedLocalPosition.ToString() + " is now  d i r t y");
                 Dirty = true;
             }
         }
+
         void FixedUpdate()
         {
             try
@@ -86,8 +112,8 @@ namespace Control_Block
             }
             catch (Exception E)
             {
-                Console.WriteLine(E.Message);
-                Console.WriteLine(E.StackTrace);
+                Print(E.Message);
+                Print(E.StackTrace);
             }
             if (!block.IsAttached || block.tank == null)
             {
@@ -196,15 +222,16 @@ namespace Control_Block
             //StartExtended = !SetToExpand;
             CanMove = GetBlocks();
             Dirty = false;
-            Console.WriteLine("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
+            Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
         }
 
-        public void ResetRenderState()
+        public void ResetRenderState(bool ImmediatelySetAfter = false)
         {
             head.localPosition = Vector3.zero;
             shaft.localPosition = Vector3.zero;
             open = 0f;
             //alphaOpen = 0f;
+            SnapRender = ImmediatelySetAfter;
             gOfs = 0;
             foreach (var pair in things)
             {
@@ -247,14 +274,14 @@ namespace Control_Block
             bool flag = things.Count == 0;
             if (flag)
             {
-                Console.WriteLine("\nStarting blockgrab for Piston " + block.transform.localPosition.ToString());
+                Print("\nStarting blockgrab for Piston " + block.cachedLocalPosition.ToString());
                 try
                 {
                     blockman = block.tank.blockman;
                     _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * (/*StartExtended ? Vector3.up * 2 :*/ Vector3.up)) + block.cachedLocalPosition);
                     if (_Start == null)
                     {
-                        Console.WriteLine("Piston is pushing nothing");
+                        Print("Piston is pushing nothing");
                         return true;
                     }
                     things.Add(_Start, new BlockDat(_Start));
@@ -262,8 +289,8 @@ namespace Control_Block
                 }
                 catch
                 {
-                    Console.WriteLine("Something is VERY wrong:");
-                    Console.WriteLine(block == null ? "BLOCK IS NULL" : (block.tank == null ? "TANK IS NULL" : (block.tank.blockman == null ? "BLOCKMAN IS NULL" : "i don't even know")));
+                    Print("Something is VERY wrong:");
+                    Print(block == null ? "BLOCK IS NULL" : (block.tank == null ? "TANK IS NULL" : (block.tank.blockman == null ? "BLOCKMAN IS NULL" : "i don't even know")));
                     return false;
                 }
             }
@@ -282,19 +309,19 @@ namespace Control_Block
                         {
                             if (!flag)
                             {
-                                Console.WriteLine("Looped to self! Escaping blockgrab as false");
+                                Print("Looped to self! Escaping blockgrab as false");
                                 CurrentCellPush = -1;
                                 return false;
                             }
                             else
                             {
-                                Console.WriteLine("Skipping self");
+                                Print("Skipping self");
                                 continue;
                             }
                         }
                         if (!things.ContainsKey(cb))
                         {
-                            Console.WriteLine("Found " + cb.cachedLocalPosition.ToString());
+                            Print("Found " + cb.cachedLocalPosition.ToString());
                             CurrentCellPush += cb.filledCells.Length;
                             if (CurrentCellPush > MaxBlockPush)
                             {
@@ -307,17 +334,17 @@ namespace Control_Block
                     }
                     catch (Exception E)
                     {
-                        Console.WriteLine(E.Message);
-                        Console.WriteLine(E.StackTrace);
-                        Console.WriteLine(cb == null ? "Cycled block is null!" : "");
+                        Print(E.Message);
+                        Print(E.StackTrace);
+                        Print(cb == null ? "Cycled block is null!" : "");
                     }
                 }
             }
             catch (Exception E2)
             {
-                Console.WriteLine(E2.Message);
-                Console.WriteLine(E2.StackTrace);
-                Console.WriteLine(_Start == null ? "Scanned block is null!" : "");
+                Print(E2.Message);
+                Print(E2.StackTrace);
+                Print(_Start == null ? "Scanned block is null!" : "");
             }
             return true;
         }
@@ -356,33 +383,6 @@ namespace Control_Block
             set
             {
                 block.attachPoints[0] = value;
-            }
-        }
-
-        public void BeforeBlockAdded(IntVector3 localPos)
-        {
-            var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null);
-            try
-            {
-                for (int i = 0; i < serializationBuffer.Length; i++)
-                {
-                    object sblock = serializationBuffer.GetValue(i);
-                    var block = (TankBlock)SpawnContext_block.GetValue(sblock);
-                    var blockSpec = (TankPreset.BlockSpec)SpawnContext_blockSpec.GetValue(sblock);
-
-                    if (blockSpec.saveState.Count == 0) continue;
-                    var data = Module.SerialData<ModulePiston.SerialData>.Retrieve(blockSpec.saveState);
-
-                    if (base.block == block)
-                    {
-                        open = data.IsOpen ? 1f : 0f;
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
 
@@ -433,6 +433,8 @@ namespace Control_Block
         {
             if (saving)
             {
+                if (alphaOpen == 1f)
+                    ResetRenderState(true);
                 ModulePiston.SerialData serialData = new ModulePiston.SerialData()
                 {
                     IsOpen = this.open != 0f,
