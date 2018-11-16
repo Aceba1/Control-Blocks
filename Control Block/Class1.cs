@@ -19,13 +19,13 @@ namespace Control_Block
                 .SetName("Piston Block")
                 .SetDescription("A configurable piston that can push and pull blocks on a tech. Right click to configure")
                 .SetBlockID(1293838, "f53931ef3e14ba8e")
-                .SetFaction(FactionSubTypes.EXP)
+                .SetFaction(FactionSubTypes.GSO)
                 .SetCategory(BlockCategories.Base)
-                .SetGrade(0)
-                .SetPrice(50000)
+                .SetGrade(3)
+                .SetPrice(5142)
                 .SetHP(3000)
                 .SetMass(3.5f)
-                .SetIcon(GameObjectJSON.SpriteFromImage(new Texture2D(16, 16)));
+                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.piston_icon_png)));
 
             var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
 
@@ -63,6 +63,18 @@ namespace Control_Block
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenu>();
             UnityEngine.Object.DontDestroyOnLoad(_holder);
+            
+            CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                        new CustomRecipe.RecipeInput((int)ChunkTypes.GluonBeam, 1),
+                        new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                        new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 2),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                        new CustomRecipe.RecipeOutput(1293838)
+                    });
         }
     }
 
@@ -78,7 +90,7 @@ namespace Control_Block
                     var module = _b.GetComponent<ModulePiston>();
                     if (module)
                     {
-                        module.BeforeBlockAdded(localPos);
+                        module.BeforeBlockAdded(block);
                     }
                 }
             }

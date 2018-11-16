@@ -87,42 +87,38 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #
-        ///#
-        ///#
-        ///
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;piston.blend&apos;
+        ///# www.blender.org
         ///mtllib piston_head.mtl
-        ///
-        ///
-        ///#
-        ///#  Mesh
-        ///#
-        ///g  Mesh
-        ///
-        ///
-        ///#
-        ///#  Mesh_None
-        ///#
-        ///usemtl  Mesh_None
-        ///
-        ///v -0.132023 0.500000 0.132022
-        ///v 0.000000 0.600000 -0.000001
-        ///v -0.132023 0.500000 -0.132023
-        ///v 0.132023 0.500000 0.132022
-        ///v 0.132023 0.500000 -0.132023
-        ///v 0.132023 0.400000 -0.132023
-        ///v -0.132023 0.400000 -0.132023
-        ///v -0.132023 0.400000 0.132022
-        ///v 0.132023 0.400000 0.132022
+        ///o Cylinder.005
+        ///v 0.000000 0.141421 -0.500000
         ///v 0.191342 0.250000 -0.461940
         ///v 0.353553 0.250000 -0.353553
         ///v 0.461940 0.250000 -0.191342
-        ///v 0.191342 0.250000 -0.191373
-        ///v [rest of string was truncated]&quot;;.
+        ///v 0.500000 0.141421 0.000000
+        ///v 0.461940 0.250000 0.191342
+        ///v 0.353553 0.250000 0.353553
+        ///v 0.191342 0.250000 0.461940
+        ///v 0.000000 0.141421 0.500000
+        ///v -0.191342 0.250000 0.461940
+        ///v -0.353553 0.250000 0.353554
+        ///v -0.461940 0.250000 0.191342
+        ///v -0.500000 0.141421 -0.000000
+        ///v -0.461940 0.250000  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_head {
             get {
                 return ResourceManager.GetString("piston_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] piston_icon_png {
+            get {
+                object obj = ResourceManager.GetObject("piston_icon_png", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

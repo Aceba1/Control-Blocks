@@ -288,6 +288,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BlockControllerGuide.txt" />
+    <Resource Include="piston_icon_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

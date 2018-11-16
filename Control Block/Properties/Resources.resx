@@ -124,6 +124,9 @@
   <data name="piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="piston_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\piston_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="piston_shaft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\piston_shaft.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

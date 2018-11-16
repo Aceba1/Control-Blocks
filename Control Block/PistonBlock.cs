@@ -33,18 +33,29 @@ namespace Control_Block
         bool SnapRender = true;
         List<TankBlock> NewlyAddedBlocks = new List<TankBlock>();
 
+        bool ForceOpen = false;
+        bool ForceMove = false;
+
         public void Print(string Message)
         {
             Console.WriteLine("CB(" + DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")) + "): " + Message);
         }
 
-        public void BeforeBlockAdded(IntVector3 localPos)
+        public void BeforeBlockAdded(TankBlock block)
         {
             //Print("Block was added");
             if (alphaOpen != 0f)
             {
                 alphaOpen = 0f;
+                if (IsToggle)
+                {
+                    ForceOpen = true;
+                }
                 ResetRenderState(true);
+            }
+            else
+            {
+                ResetRenderState(false);
             }
         }
 
@@ -78,6 +89,14 @@ namespace Control_Block
         }
         private void BlockRemoved(TankBlock block, Tank tank)
         {
+            if (alphaOpen == 1f)
+            {
+                ForceMove = true;
+            }
+            else
+            {
+                ResetRenderState(false);
+            }
             //Print("BlockRemoved()");
             things.Remove(block);
             SetDirty();
@@ -93,6 +112,12 @@ namespace Control_Block
 
         void FixedUpdate()
         {
+            if (ForceMove)
+            {
+                Move(true);
+                SetRenderState();
+                ForceMove = false;
+            }
             try
             {
                 if (block.tank == null)
@@ -148,6 +173,11 @@ namespace Control_Block
                     {
                         alphaOpen = 0f;
                     }
+                }
+                if (ForceOpen)
+                {
+                    alphaOpen = 1f;
+                    ForceOpen = false;
                 }
                 if (open != alphaOpen)
                 {
@@ -434,13 +464,19 @@ namespace Control_Block
             if (saving)
             {
                 if (alphaOpen == 1f)
+                {
+                    ForceMove = true;
                     ResetRenderState(true);
+                }
+                open = 1f;
+
                 ModulePiston.SerialData serialData = new ModulePiston.SerialData()
                 {
-                    IsOpen = this.open != 0f,
+                    IsOpen = this.alphaOpen != 0f,
                     Input = this.trigger,
                     Toggle = this.IsToggle,
-                    Local = this.LocalControl
+                    Local = this.LocalControl,
+                    Invert = this.InverseTrigger
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -450,7 +486,12 @@ namespace Control_Block
                 if (serialData2 != null)
                 {
                     alphaOpen = serialData2.IsOpen ? 1f : 0f;
-                    OVERRIDE = serialData2.IsOpen;
+                    if (serialData2.IsOpen)
+                    {
+                        ForceOpen = true;
+                        OVERRIDE = true;
+                    }
+                    InverseTrigger = serialData2.Invert;
                     trigger = serialData2.Input;
                     IsToggle = serialData2.Toggle;
                     LocalControl = serialData2.Local;
@@ -466,6 +507,7 @@ namespace Control_Block
             public KeyCode Input;
             public bool Toggle;
             public bool Local;
+            public bool Invert;
         }
     }
 }
