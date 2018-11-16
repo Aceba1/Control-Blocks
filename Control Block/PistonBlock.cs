@@ -110,6 +110,8 @@ namespace Control_Block
             }
         }
 
+        bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
+
         void FixedUpdate()
         {
             if (ForceMove)
@@ -150,14 +152,14 @@ namespace Control_Block
                 {
                     if (InverseTrigger)
                     {
-                        if (Input.GetKeyUp(trigger))
+                        if (VInput && Input.GetKeyUp(trigger))
                         {
                             alphaOpen = 1f - alphaOpen;
                         }
                     }
                     else
                     {
-                        if (Input.GetKeyDown(trigger))
+                        if (VInput && Input.GetKeyDown(trigger))
                         {
                             alphaOpen = 1f - alphaOpen;
                         }
@@ -165,7 +167,7 @@ namespace Control_Block
                 }
                 else
                 {
-                    if (Input.GetKey(trigger) != InverseTrigger)
+                    if (VInput && Input.GetKey(trigger) != InverseTrigger)
                     {
                         alphaOpen = 1f;
                     }
