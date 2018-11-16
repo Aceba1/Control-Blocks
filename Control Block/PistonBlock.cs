@@ -29,11 +29,20 @@ namespace Control_Block
         protected static FieldInfo SpawnContext_blockSpec;
 
         Action<TankBlock, Tank> a_action, d_action;
-        protected Tank tankcache;
-        bool SnapRender = true;
-        List<TankBlock> NewlyAddedBlocks = new List<TankBlock>();
 
+        protected Tank tankcache;
+
+        /// <summary>
+        /// Ignore animating
+        /// </summary>
+        bool SnapRender = true; 
+        /// <summary>
+        /// Invoke activate input
+        /// </summary>
         bool ForceOpen = false;
+        /// <summary>
+        /// Force ghost-push as opened
+        /// </summary>
         bool ForceMove = false;
 
         public void Print(string Message)
@@ -92,6 +101,7 @@ namespace Control_Block
             if (alphaOpen == 1f)
             {
                 ForceMove = true;
+                ResetRenderState(true);
             }
             else
             {
@@ -116,8 +126,10 @@ namespace Control_Block
         {
             if (ForceMove)
             {
+                open = 1f;
+                alphaOpen = 1f;
                 Move(true);
-                SetRenderState();
+                //SetRenderState();
                 ForceMove = false;
             }
             try
@@ -200,6 +212,17 @@ namespace Control_Block
             {
                 open = Mathf.Clamp01((open - .05f) + alphaOpen * .1f);
                 SetRenderState();
+                //if (open == alphaOpen)
+                //{
+                //    if (alphaOpen == 1f)
+                //    {
+
+                //    }
+                //    else
+                //    {
+
+                //    }
+                //}
             }
             SnapRender = false;
         }
@@ -257,7 +280,11 @@ namespace Control_Block
             //Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
         }
 
-        public void ResetRenderState(bool ImmediatelySetAfter = false)
+        /// <summary>
+        /// ONLY USE IF ALL PISTONS ARE TO BE RESET
+        /// </summary>
+        /// <param name="ImmediatelySetAfter">Set SnapRender true</param>
+        public void ResetRenderState(bool ImmediatelySetAfter = false) 
         {
             head.localPosition = Vector3.zero;
             shaft.localPosition = Vector3.zero;
@@ -469,8 +496,8 @@ namespace Control_Block
                 {
                     ForceMove = true;
                     ResetRenderState(true);
+                    open = 1f;
                 }
-                open = 1f;
 
                 ModulePiston.SerialData serialData = new ModulePiston.SerialData()
                 {
@@ -487,11 +514,10 @@ namespace Control_Block
                 ModulePiston.SerialData serialData2 = Module.SerialData<ModulePiston.SerialData>.Retrieve(blockSpec.saveState);
                 if (serialData2 != null)
                 {
-                    alphaOpen = serialData2.IsOpen ? 1f : 0f;
                     if (serialData2.IsOpen)
                     {
-                        ForceOpen = true;
-                        OVERRIDE = true;
+                        ForceMove = true;
+                        SnapRender = true;
                     }
                     InverseTrigger = serialData2.Invert;
                     trigger = serialData2.Input;
