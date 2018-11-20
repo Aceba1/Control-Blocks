@@ -261,6 +261,7 @@ namespace Control_Block
             CleanDirty();
             if (CanMove)
             {
+                if (head != null) { head.localPosition = Vector3.up * (Expand ? 1f : 0f); shaft.localPosition = Vector3.up * (Expand ? 0.375f : 0f); }
                 var blockman = block.tank.blockman;
                 Vector3 modifier = block.cachedLocalRotation * (Expand ? Vector3.up : Vector3.down);
                 int iterate = things.Count;
