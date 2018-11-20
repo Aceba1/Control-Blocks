@@ -151,10 +151,12 @@ namespace Control_Block
                     bool UseGrounded = controlBlock.UseGroundMode(pv);
                     if (UseGrounded)
                     {
+                        controlBlock.SetColor(Color.magenta);
                         groundMethod.Invoke(__instance, new object[] { drive + pv.y, turn + pv.z});
                     }
                     else
                     {
+                        controlBlock.SetColor(Color.cyan);
                         airMethod.Invoke(__instance, new object[] { drive + pv.y, turn - pv.x });
                     }
                     return false;

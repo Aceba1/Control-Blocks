@@ -12,7 +12,7 @@ namespace Control_Block
         /// <summary>
         /// Constants for controlling the compensation calculation
         /// </summary>
-        const float PassIfAbove = .025f, AngularSensitivity = 0.005f, LinearSensitivity = 0.01f, InputDeadZone = 0.35f, AngularStrength = 3f, LinearStrength = 2f, MaxLinearRange = 0.5f, MaxAngularRange = 0.5f, VelocityToIgnoreAngle = .2f, MinAngularVelocity = 0.02f, DecayStart = .25f, DecayRate = .95f;
+        const float PassIfAbove = .025f, AngularSensitivity = 0.005f, LinearSensitivity = 0.01f, InputDeadZone = 0.35f, AngularStrength = 4f, LinearStrength = 2f, MaxLinearRange = 0.5f, MaxAngularRange = 0.5f, VelocityRatio = .3f, RotationRatio = .04f;
         const float _idz = 2.857142857142857f;
         /// <summary>
         /// Result effector based on given input
@@ -21,7 +21,7 @@ namespace Control_Block
         bool Heart = false;
         public bool UseGroundMode(Vector3 calculated)
         {
-            return (SteeringMultiplier == 0 || Heart) && Mathf.Abs(calculated.z) > MinAngularVelocity && (Mathf.Abs(calculated.x) < VelocityToIgnoreAngle);
+            return (SteeringMultiplier == 0) || (Heart && (Mathf.Abs(calculated.x) / VelocityRatio < Mathf.Abs(calculated.z) / RotationRatio));
         }
         //public float SteerFixing
         //{
@@ -33,6 +33,22 @@ namespace Control_Block
         //        return 0f;
         //    }
         //}
+        MeshRenderer _mr;
+        MeshRenderer mr
+        {
+            get
+            {
+                if (_mr == null)
+                {
+                    _mr = block.GetComponentInChildren<MeshRenderer>();
+                }
+                return _mr;
+            }
+        }
+        public void SetColor(Color color)
+        {
+            mr.material.color = color;
+        }
 
         public Vector3 PositionalFixingVector
         {
@@ -41,7 +57,7 @@ namespace Control_Block
                 var tr = Quaternion.Inverse(block.tank.control.FirstController.transform.rotation);
                 var rb = block.tank.rbody;
                 var linearVel = tr * rb.velocity;
-                var angularVel = (tr * rb.angularVelocity).y;
+                var angularVel = rb.angularVelocity.y;
                 return new Vector3(-linearVel.x* SteeringMultiplier * LinearStrength, -linearVel.z * VerticalMultiplier * LinearStrength, -angularVel * SteeringMultiplier * AngularStrength);
 
             }
@@ -55,6 +71,7 @@ namespace Control_Block
         private void OnDetach()
         {
             base.block.tank.control.driveControlEvent -= this.DriveControlInput;
+            mr.material.color = Color.white;
         }
         private void OnAttach()
         {
