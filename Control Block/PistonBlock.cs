@@ -239,7 +239,12 @@ namespace Control_Block
             }
             if (open != alphaOpen)
             {
+                float oldOpen = open;
                 open = Mathf.Clamp01((open - .05f) + alphaOpen * .1f);
+                if (block.tank != null && !block.tank.IsAnchored)
+                {
+                    block.tank.transform.position -= block.transform.rotation * Vector3.up * (open - oldOpen) * (MassPushing / block.tank.rbody.mass);
+                }
                 SetRenderState();
             }
             SnapRender = false;
@@ -366,6 +371,7 @@ namespace Control_Block
             var _Start = Start;
             if (BeginGrab)
             {
+                MassPushing += block.CurrentMass;
                 Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
                 try
                 {
@@ -373,13 +379,12 @@ namespace Control_Block
                     _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * (/*StartExtended ? Vector3.up * 2 :*/ Vector3.up)) + block.cachedLocalPosition);
                     if (_Start == null)
                     {
-                        CurrentCellPush = 0;
                         Print("Piston is pushing nothing");
                         return true;
                     }
                     GrabbedBlocks.Add(_Start, new BlockDat(_Start));
-                    CurrentCellPush = _Start.filledCells.Length;
-                    MassPushing = _Start.m_DefaultMass;
+                    CurrentCellPush += _Start.filledCells.Length;
+                    MassPushing += _Start.CurrentMass;
                     Print("Found " + _Start.cachedLocalPosition.ToString());
                     Print($"First block render info dump:\nmat({_Start.GetComponentInChildren<MeshRenderer>().material.name})\ntex({_Start.GetComponentInChildren<MeshRenderer>().material.mainTexture.name})");
                 }
