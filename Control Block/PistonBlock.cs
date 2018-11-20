@@ -45,9 +45,21 @@ namespace Control_Block
         /// </summary>
         bool ForceMove = false;
 
+        private string lastdatetime = "";
+        private string GetDateTime(string Before, string After)
+        {
+            string newdatetime = DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
+            if (newdatetime != lastdatetime)
+            {
+                lastdatetime = newdatetime;
+                return Before+lastdatetime+After;
+            }
+            return "";
+        }
+
         public void Print(string Message)
         {
-            Console.WriteLine("CB(" + DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")) + "): " + Message);
+            Console.WriteLine(GetDateTime("CB(", "): ") + Message);
         }
 
         public void BeforeBlockAdded(TankBlock block)
@@ -107,8 +119,10 @@ namespace Control_Block
             {
                 ResetRenderState(false);
             }
-            //Print("BlockRemoved()");
-            things.Remove(block);
+            if (GrabbedBlocks.ContainsKey(block))
+            {
+                GrabbedBlocks.Remove(block);
+            }
             SetDirty();
         }
         private void SetDirty()
@@ -227,17 +241,6 @@ namespace Control_Block
             {
                 open = Mathf.Clamp01((open - .05f) + alphaOpen * .1f);
                 SetRenderState();
-                //if (open == alphaOpen)
-                //{
-                //    if (alphaOpen == 1f)
-                //    {
-
-                //    }
-                //    else
-                //    {
-
-                //    }
-                //}
             }
             SnapRender = false;
         }
@@ -264,8 +267,8 @@ namespace Control_Block
                 if (head != null) { head.localPosition = Vector3.up * (Expand ? 1f : 0f); shaft.localPosition = Vector3.up * (Expand ? 0.375f : 0f); }
                 var blockman = block.tank.blockman;
                 Vector3 modifier = block.cachedLocalRotation * (Expand ? Vector3.up : Vector3.down);
-                int iterate = things.Count;
-                foreach (var pair in things)
+                int iterate = GrabbedBlocks.Count;
+                foreach (var pair in GrabbedBlocks)
                 {
                     iterate--;
                     var val = pair.Key;
@@ -295,7 +298,7 @@ namespace Control_Block
         {
             if (!Dirty)
                 return;
-            things.Clear();
+            ResetBlocks();
             //StartExtended = !SetToExpand;
             CanMove = GetBlocks();
             Dirty = false;
@@ -308,13 +311,14 @@ namespace Control_Block
         /// <param name="ImmediatelySetAfter">Set SnapRender true</param>
         public void ResetRenderState(bool ImmediatelySetAfter = false) 
         {
+            //ApplyPistonForce(0f - alphaOpen);
             head.localPosition = Vector3.zero;
             shaft.localPosition = Vector3.zero;
             open = 0f;
             //alphaOpen = 0f;
             SnapRender = ImmediatelySetAfter;
             gOfs = 0;
-            foreach (var pair in things)
+            foreach (var pair in GrabbedBlocks)
             {
                 var block = pair.Key;
                 if (block.tank == base.block.tank)
@@ -334,7 +338,7 @@ namespace Control_Block
             var rawOfs = open - alphaOpen;
             Vector3 offs = (block.transform.localRotation * Vector3.up) * (rawOfs-gOfs);
             gOfs = rawOfs;
-            foreach (var pair in things)
+            foreach (var pair in GrabbedBlocks)
             {
                 var block = pair.Key;
                 if (block.tank == base.block.tank)
@@ -344,21 +348,28 @@ namespace Control_Block
 
         public const int MaxBlockPush = 64;
         public int CurrentCellPush { get; private set; } = 0;
+        public float MassPushing { get; private set; } = 0f;
         internal bool Dirty = true;
         //internal bool StartExtended = false;
         bool CanMove = false;
-        private Dictionary<TankBlock, BlockDat> things;
+        private Dictionary<TankBlock, BlockDat> GrabbedBlocks;
 
-        private bool GetBlocks(TankBlock Start = null, BlockManager blockman = null)
+        private void ResetBlocks()
+        {
+            GrabbedBlocks.Clear();
+            CurrentCellPush = 0;
+            MassPushing = 0f;
+        }
+
+        private bool GetBlocks(TankBlock Start = null, bool BeginGrab = true)
         {
             var _Start = Start;
-            bool flag = things.Count == 0;
-            if (flag)
+            if (BeginGrab)
             {
                 Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
                 try
                 {
-                    blockman = block.tank.blockman;
+                    var blockman = block.tank.blockman;
                     _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * (/*StartExtended ? Vector3.up * 2 :*/ Vector3.up)) + block.cachedLocalPosition);
                     if (_Start == null)
                     {
@@ -366,8 +377,9 @@ namespace Control_Block
                         Print("Piston is pushing nothing");
                         return true;
                     }
-                    things.Add(_Start, new BlockDat(_Start));
+                    GrabbedBlocks.Add(_Start, new BlockDat(_Start));
                     CurrentCellPush = _Start.filledCells.Length;
+                    MassPushing = _Start.m_DefaultMass;
                     Print("Found " + _Start.cachedLocalPosition.ToString());
                     Print($"First block render info dump:\nmat({_Start.GetComponentInChildren<MeshRenderer>().material.name})\ntex({_Start.GetComponentInChildren<MeshRenderer>().material.mainTexture.name})");
                 }
@@ -391,7 +403,7 @@ namespace Control_Block
                     {
                         if (cb == block)
                         {
-                            if (!flag)
+                            if (!BeginGrab)
                             {
                                 Print("Looped to self! Escaping blockgrab as false");
                                 CurrentCellPush = -1;
@@ -403,16 +415,17 @@ namespace Control_Block
                                 continue;
                             }
                         }
-                        if (!things.ContainsKey(cb))
+                        if (!GrabbedBlocks.ContainsKey(cb))
                         {
                             Print("Found " + cb.cachedLocalPosition.ToString());
                             CurrentCellPush += cb.filledCells.Length;
+                            MassPushing += cb.CurrentMass;
                             if (CurrentCellPush > MaxBlockPush)
                             {
                                 return false;
                             }
-                            things.Add(cb, new BlockDat(cb));
-                            if (!GetBlocks(cb, blockman))
+                            GrabbedBlocks.Add(cb, new BlockDat(cb));
+                            if (!GetBlocks(cb, false))
                                 return false;
                         }
                     }
@@ -468,7 +481,7 @@ namespace Control_Block
 
         private void OnSpawn()
         {
-            things.Clear();
+            GrabbedBlocks.Clear();
             Dirty = true;
             shaft = block.transform.GetChild(2);
             head = block.transform.GetChild(3);
@@ -493,7 +506,7 @@ namespace Control_Block
 
         private void OnDisable()
         {
-            things.Clear();
+            GrabbedBlocks.Clear();
             Dirty = true;
             tankcache?.AttachEvent.Unsubscribe(a_action);
             tankcache?.DetachEvent.Unsubscribe(d_action);
@@ -507,7 +520,7 @@ namespace Control_Block
 
         private void OnPool()
         {
-            things = new Dictionary<TankBlock, BlockDat>();
+            GrabbedBlocks = new Dictionary<TankBlock, BlockDat>();
             base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
             base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
         }

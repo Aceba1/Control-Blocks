@@ -58,7 +58,7 @@ namespace Control_Block
                 var rb = block.tank.rbody;
                 var linearVel = tr * rb.velocity;
                 var angularVel = rb.angularVelocity.y;
-                return new Vector3(-linearVel.x* SteeringMultiplier * LinearStrength, -linearVel.z * VerticalMultiplier * LinearStrength, angularVel * SteeringMultiplier * AngularStrength);
+                return new Vector3(-linearVel.x* SteeringMultiplier * LinearStrength, -linearVel.z * VerticalMultiplier * LinearStrength, angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier);
 
             }
         }
