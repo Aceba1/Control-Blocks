@@ -12,15 +12,16 @@ namespace Control_Block
         /// <summary>
         /// Constants for controlling the compensation calculation
         /// </summary>
-        const float PassIfAbove = .025f, AngularSensitivity = 0.005f, LinearSensitivity = 0.01f, InputDeadZone = 0.35f, AngularStrength = 3f, LinearStrength = 2f, MaxLinearRange = 0.5f, MaxAngularRange = 0.5f, VelocityToIgnoreAngle = 1f, MinimumAngularVelocity = .2f, DecayStart = .25f, DecayRate = .95f;
+        const float PassIfAbove = .025f, AngularSensitivity = 0.005f, LinearSensitivity = 0.01f, InputDeadZone = 0.35f, AngularStrength = 3f, LinearStrength = 2f, MaxLinearRange = 0.5f, MaxAngularRange = 0.5f, VelocityToIgnoreAngle = .2f, MinAngularVelocity = 0.02f, DecayStart = .25f, DecayRate = .95f;
         const float _idz = 2.857142857142857f;
         /// <summary>
         /// Result effector based on given input
         /// </summary>
         float VerticalMultiplier = 0f, SteeringMultiplier = 0f;
+        bool Heart = false;
         public bool UseGroundMode(Vector3 calculated)
         {
-            return (Mathf.Abs(calculated.z) > MinimumAngularVelocity && calculated.magnitude < VelocityToIgnoreAngle);
+            return (SteeringMultiplier == 0 || Heart) && Mathf.Abs(calculated.z) > MinAngularVelocity && (Mathf.Abs(calculated.x) < VelocityToIgnoreAngle);
         }
         //public float SteerFixing
         //{
@@ -73,6 +74,7 @@ namespace Control_Block
                 {
                     VerticalMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedDrive), 0f) * _idz;
                     SteeringMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedTurn), 0f) * _idz;
+                    Heart = !Heart;
                 }
             }
             catch { }
