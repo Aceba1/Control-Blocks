@@ -14,7 +14,7 @@ namespace Control_Block
         internal bool OVERRIDE = false;
         private float alphaOpen = 0f, gOfs = 0f;
         public bool IsToggle;
-        public bool InverseTrigger;
+        public byte InverseTrigger;
         public bool LocalControl = true;
         public KeyCode trigger = KeyCode.Space;
 
@@ -121,7 +121,7 @@ namespace Control_Block
         }
 
         bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
-
+        bool ButtonIsValid = true;
         void FixedUpdate()
         {
             if (ForceMove)
@@ -162,24 +162,39 @@ namespace Control_Block
             {
                 if (IsToggle)
                 {
-                    if (InverseTrigger)
+                    switch (InverseTrigger)
                     {
-                        if (VInput && Input.GetKeyUp(trigger))
-                        {
-                            alphaOpen = 1f - alphaOpen;
-                        }
-                    }
-                    else
-                    {
-                        if (VInput && Input.GetKeyDown(trigger))
-                        {
-                            alphaOpen = 1f - alphaOpen;
-                        }
+                        case 0:
+                            if (VInput && Input.GetKeyDown(trigger))
+                                alphaOpen = 1f - alphaOpen;
+                            break;
+                        case 1:
+                            if (VInput && Input.GetKeyUp(trigger))
+                                alphaOpen = 1f - alphaOpen;
+                            break;
+                        case 2:
+                            if ((alphaOpen == 0f && VInput && Input.GetKeyDown(trigger)) || 
+                                (alphaOpen == 1f && VInput && Input.GetKeyUp(trigger)))
+                                if (ButtonIsValid)
+                                {
+                                    ButtonIsValid = false;
+                                    alphaOpen = 1f - alphaOpen;
+                                }
+                            break;
+                        case 3:
+                            if ((alphaOpen == 1f && VInput && Input.GetKeyDown(trigger)) || 
+                                (alphaOpen == 0f && VInput && Input.GetKeyUp(trigger)))
+                                if (ButtonIsValid)
+                                {
+                                    ButtonIsValid = false;
+                                    alphaOpen = 1f - alphaOpen;
+                                }
+                            break;
                     }
                 }
                 else
                 {
-                    if (VInput && Input.GetKey(trigger) != InverseTrigger)
+                    if ((VInput && Input.GetKey(trigger)) != (InverseTrigger == 1)) 
                     {
                         alphaOpen = 1f;
                     }
@@ -225,6 +240,12 @@ namespace Control_Block
                 //}
             }
             SnapRender = false;
+        }
+
+        void Update()
+        {
+            if (InverseTrigger == 2 || InverseTrigger == 3)
+            ButtonIsValid = ButtonIsValid || Input.GetKeyUp(trigger);
         }
 
         internal float open = 0f;
@@ -346,6 +367,8 @@ namespace Control_Block
                     }
                     things.Add(_Start, new BlockDat(_Start));
                     CurrentCellPush = _Start.filledCells.Length;
+                    Print("Found " + _Start.cachedLocalPosition.ToString());
+                    Print($"First block render info dump:\nmat({_Start.GetComponentInChildren<MeshRenderer>().material.name})\ntex({_Start.GetComponentInChildren<MeshRenderer>().material.mainTexture.name})");
                 }
                 catch
                 {
@@ -475,7 +498,7 @@ namespace Control_Block
             tankcache?.DetachEvent.Unsubscribe(d_action);
             trigger = KeyCode.Space;
             IsToggle = false;
-            InverseTrigger = false;
+            InverseTrigger = 0;
             alphaOpen = 0f;
             open = 0f;
 
@@ -505,7 +528,8 @@ namespace Control_Block
                     Input = this.trigger,
                     Toggle = this.IsToggle,
                     Local = this.LocalControl,
-                    Invert = this.InverseTrigger
+                    Invert = this.InverseTrigger % 2 == 1,
+                    PreferState = this.InverseTrigger >= 2
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -519,7 +543,7 @@ namespace Control_Block
                         ForceMove = true;
                         SnapRender = true;
                     }
-                    InverseTrigger = serialData2.Invert;
+                    InverseTrigger = (byte)((serialData2.Invert ? 1 : 0) + (serialData2.PreferState ? 2 : 0));
                     trigger = serialData2.Input;
                     IsToggle = serialData2.Toggle;
                     LocalControl = serialData2.Local;
@@ -536,6 +560,7 @@ namespace Control_Block
             public bool Toggle;
             public bool Local;
             public bool Invert;
+            public bool PreferState;
         }
     }
 }

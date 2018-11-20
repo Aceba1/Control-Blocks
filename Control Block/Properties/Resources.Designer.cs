@@ -161,5 +161,44 @@ namespace Control_Block.Properties {
                 return ResourceManager.GetString("piston_shaft", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;steering regulator.blend&apos;
+        ///# www.blender.org
+        ///mtllib sr.mtl
+        ///o Cylinder.004_Cylinder.007
+        ///v -0.132023 -0.500000 0.132023
+        ///v -0.132023 -0.500000 -0.132022
+        ///v 0.132023 -0.500000 -0.132022
+        ///v 0.132023 -0.500000 0.132023
+        ///v 0.000000 -0.600000 0.000001
+        ///vt 0.062266 0.062266
+        ///vt 0.062266 0.000231
+        ///vt 0.031251 0.031253
+        ///vt 0.000234 0.062266
+        ///vt 0.000234 0.000231
+        ///vn -0.6038 -0.7971 0.0000
+        ///vn 0.6038 -0.7971 0.0000
+        ///vn 0.0000 -0.7971 -0.6038
+        ///vn 0.0000 -0.7971 0.6038
+        ///usemtl Material.001
+        ///s off
+        ///f 1/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string sr {
+            get {
+                return ResourceManager.GetString("sr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sr_png {
+            get {
+                object obj = ResourceManager.GetObject("sr_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

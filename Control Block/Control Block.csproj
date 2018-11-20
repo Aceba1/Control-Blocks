@@ -271,6 +271,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SteeringRegulatorBlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -282,12 +283,14 @@
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Resource Include="sr.obj" />
     <Resource Include="piston_base.obj" />
     <Resource Include="piston_head.obj" />
     <Resource Include="piston_shaft.obj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BlockControllerGuide.txt" />
+    <Resource Include="sr_png" />
     <Resource Include="piston_icon_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
