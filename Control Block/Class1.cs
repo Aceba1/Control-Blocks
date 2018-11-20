@@ -19,7 +19,7 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Piston Block")
-                    .SetDescription("A configurable piston that can push and pull blocks on a tech. Right click to configure")
+                    .SetDescription("A configurable piston that can push and pull blocks on a tech. Right click to configure.\n\nThis one uses ghost-phasing technology to move blocks, warping some laws of physics and stuff... Spooky")
                     .SetBlockID(1293838, "f53931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
@@ -81,7 +81,7 @@ namespace Control_Block
             {
                 var SteeringRegulator = new BlockPrefabBuilder("VENSteeringHover (111)")
                     .SetName("Steering Regulator")
-                    .SetDescription("Stabilize hovertechs to keep from drifting in to the sunset")
+                    .SetDescription("A fairly hacky way to stabilize hovertechs from drifting in to the sunset. This will take the wheel when you let go and try to keep your tech from moving, using any steering hovers present.")
                     .SetBlockID(1293839, "12ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Accessories)
