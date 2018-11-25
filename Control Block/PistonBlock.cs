@@ -295,12 +295,7 @@ namespace Control_Block
                 return;
             ResetBlocks();
             //StartExtended = !SetToExpand;
-            foreach (IntVector3 sbp in startblockpos)
-            {
-                CanMove = GetBlocks(null, sbp);
-                if (!CanMove)
-                    break;
-            }
+            CanMove = GetBlocks(null, true);
             Dirty = false;
             //Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
         }
@@ -367,31 +362,34 @@ namespace Control_Block
             MassPushing = block.CurrentMass;
         }
 
-        private bool GetBlocks(TankBlock Start = null, IntVector3 BeginGrabPos = default(IntVector3))
+        private bool GetBlocks(TankBlock Start = null, bool BeginGrab = false)
         {
-            var _Start = Start;
-            if (BeginGrabPos != default(IntVector3))
+            if (BeginGrab)
             {
                 Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
+
+                var StarterBlocks = new List<TankBlock>();
+
                 try
                 {
                     var blockman = block.tank.blockman;
-                    _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * BeginGrabPos) + block.cachedLocalPosition);
-                    if (_Start == null)
+                    
+                    foreach (IntVector3 sbp in startblockpos)
                     {
-                        Print("Piston is pushing nothing");
-                        return true;
+                        var _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * sbp) + block.cachedLocalPosition);
+                        if (_Start == null)
+                        {
+                            continue;
+                        }
+                        if (GrabbedBlocks.ContainsKey(_Start))
+                        {
+                            continue;
+                        }
+                        GrabbedBlocks.Add(_Start, new BlockDat(_Start));
+                        CurrentCellPush += _Start.filledCells.Length;
+                        MassPushing += _Start.CurrentMass;
+                        StarterBlocks.Add(_Start);
                     }
-                    if (GrabbedBlocks.ContainsKey(_Start))
-                    {
-                        Print("Starting block was already started on");
-                        return true;
-                    }
-                    GrabbedBlocks.Add(_Start, new BlockDat(_Start));
-                    CurrentCellPush += _Start.filledCells.Length;
-                    MassPushing += _Start.CurrentMass;
-                    Print("Found " + _Start.cachedLocalPosition.ToString());
-                    Print($"First block render info dump:\nmat({_Start.GetComponentInChildren<MeshRenderer>().material.name})\ntex({_Start.GetComponentInChildren<MeshRenderer>().material.mainTexture.name})");
                 }
                 catch
                 {
@@ -399,11 +397,21 @@ namespace Control_Block
                     Print(block == null ? "BLOCK IS NULL" : (block.tank == null ? "TANK IS NULL" : (block.tank.blockman == null ? "BLOCKMAN IS NULL" : "i don't even know")));
                     return false;
                 }
+                bool result = true;
+                foreach (var b in StarterBlocks)
+                {
+                    result = GetBlocks(b);
+                    if (!result)
+                        return false;
+                }
+                //do the stuff here
+
+                return true;
             }
 
             try
             {
-                foreach (TankBlock cb in _Start.ConnectedBlocksByAP)
+                foreach (TankBlock cb in Start.ConnectedBlocksByAP)
                 {
                     if (cb == null)
                     {
@@ -413,7 +421,7 @@ namespace Control_Block
                     {
                         if (cb == block)
                         {
-                            if (BeginGrabPos == default(IntVector3))
+                            if (BeginGrab)
                             {
                                 Print("Looped to self! Escaping blockgrab as false");
                                 CurrentCellPush = -1;
@@ -447,7 +455,7 @@ namespace Control_Block
             }
             catch (Exception E2)
             {
-                Print(E2.Message + "\n" + E2.StackTrace + "\n" + (_Start == null ? "Scanned block is null!" : ""));
+                Print(E2.Message + "\n" + E2.StackTrace + "\n" + (Start == null ? "Scanned block is null!" : ""));
             }
             return true;
         }
