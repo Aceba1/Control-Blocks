@@ -335,7 +335,7 @@ namespace Control_Block
             {
                 open = alphaOpen;
                 SnapRender = false;
-                EvaluatedBlockCurve = open;
+                EvaluatedBlockCurve = blockcurve.Evaluate(open);
             }
             for (int I = 0; I < parts.Length; I++)
             {
