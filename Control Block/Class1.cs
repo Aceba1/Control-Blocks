@@ -16,7 +16,8 @@ namespace Control_Block
             var harmony = HarmonyInstance.Create("aceba1.controlblocks");
             harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
-            //GSO Piston
+            #region Blocks
+            #region GSO Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Piston Block")
@@ -59,8 +60,9 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293838)
                     });
             }
-            //GeoCorp Piston
-            { 
+            #endregion
+            #region GeoCorp Piston
+            {
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Large Piston Block")
                     .SetDescription("This piston can push much, MUCH more than the GSO one... and is slower.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
@@ -115,7 +117,8 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(129380)
                     }, RecipeTable.Recipe.OutputType.Items, "gcfab");
             }
-
+            #endregion
+            #region Steering Regulator
             {
                 var SteeringRegulator = new BlockPrefabBuilder("VENSteeringHover (111)")
                     .SetName("Steering Regulator")
@@ -150,6 +153,8 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293839)
                     });
             }
+            #endregion
+            #endregion
 
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenu>();
