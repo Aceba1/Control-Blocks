@@ -280,18 +280,36 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Blocks\Piston\GeoCorp\GEOp_blockbottom.obj" />
+    <Resource Include="Blocks\Piston\GeoCorp\GEOp_blocktop.obj" />
+    <Resource Include="Blocks\Piston\GeoCorp\GEOp_shaftbottom.obj" />
+    <Resource Include="Blocks\Piston\GeoCorp\GEOp_shafttop.obj" />
+    <None Include="Blocks\Piston\GeoCorp\GEO_piston.blend" />
+    <None Include="Blocks\Piston\GSO\piston.blend" />
+    <None Include="Blocks\Piston\HE\HEp_blockbottom.obj" />
+    <None Include="Blocks\Piston\HE\HEp_blocktop.obj" />
+    <None Include="Blocks\Piston\HE\HEp_shaftbottom.obj" />
+    <None Include="Blocks\Piston\HE\HEp_shaftmidb.obj" />
+    <None Include="Blocks\Piston\HE\HEp_shaftmidt.obj" />
+    <None Include="Blocks\Piston\HE\HEp_shafttop.obj" />
+    <None Include="Blocks\Piston\HE\HE_piston.blend" />
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Resource Include="sr.obj" />
-    <Resource Include="piston_base.obj" />
-    <Resource Include="piston_head.obj" />
-    <Resource Include="piston_shaft.obj" />
+    <Resource Include="Blocks\SteeringRegulator\sr.obj" />
+    <Resource Include="Blocks\Piston\GSO\piston_base.obj" />
+    <Resource Include="Blocks\Piston\GSO\piston_head.obj" />
+    <Resource Include="Blocks\Piston\GSO\piston_shaft.obj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BlockControllerGuide.txt" />
-    <Resource Include="sr_png" />
-    <Resource Include="piston_icon_png" />
+    <None Include="Blocks\Piston\HE\HEp_icon_png" />
+    <Resource Include="Blocks\Piston\GeoCorp\GEOp_icon_png" />
+    <Resource Include="Blocks\SteeringRegulator\sr_png" />
+    <Resource Include="Blocks\Piston\GSO\piston_icon_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Blocks\Piston\VEN\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

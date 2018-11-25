@@ -12,27 +12,16 @@ namespace Control_Block
         /// <summary>
         /// Constants for controlling the compensation calculation
         /// </summary>
-        const float PassIfAbove = .025f, AngularSensitivity = 0.005f, LinearSensitivity = 0.01f, InputDeadZone = 0.35f, AngularStrength = 4f, LinearStrength = 2f, MaxLinearRange = 0.5f, MaxAngularRange = 0.5f, VelocityRatio = .15f, RotationRatio = .1f;
+        const float InputDeadZone = 0.35f, AngularStrength = .2f, LinearStrength = .1f, VelocityRatio = 6.4f, RotationRatio = 10f;
+        /// <summary>
+        /// Inverse InputDeadZone (1 / InputDeadZone)
+        /// </summary>
         const float _idz = 2.857142857142857f;
         /// <summary>
         /// Result effector based on given input
         /// </summary>
         float VerticalMultiplier = 0f, SteeringMultiplier = 0f;
-        bool Heart = true;
-        public bool UseGroundMode(Vector3 calculated)
-        {
-            return (SteeringMultiplier == 0) || (Heart && ((Mathf.Abs(calculated.x) + Mathf.Abs(calculated.y)) / VelocityRatio < Mathf.Abs(calculated.z) / RotationRatio));
-        }
-        //public float SteerFixing
-        //{
-        //    get
-        //    {
-        //        var thing = FixedSteering * SteeringMultiplier * AngularStrength;
-        //        if (Mathf.Abs(thing) > PassIfAbove)
-        //            return thing;
-        //        return 0f;
-        //    }
-        //}
+        public bool UseGroundMode { get; private set; } = true;
         MeshRenderer _mr;
         MeshRenderer mr
         {
@@ -50,18 +39,7 @@ namespace Control_Block
             mr.material.SetColor("_EmissionColor", color);
         }
 
-        public Vector3 PositionalFixingVector
-        {
-            get
-            {
-                var tr = Quaternion.Inverse(block.tank.control.FirstController.transform.rotation);
-                var rb = block.tank.rbody;
-                var linearVel = tr * rb.velocity;
-                var angularVel = rb.angularVelocity.y;
-                return new Vector3(-linearVel.x* SteeringMultiplier * LinearStrength, -linearVel.z * VerticalMultiplier * LinearStrength, angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier);
-
-            }
-        }
+        public Vector3 PositionalFixingVector { get; private set; } = Vector3.zero;
 
         private void OnPool()
         {
@@ -83,15 +61,41 @@ namespace Control_Block
             cachedDrive = drive;
             cachedTurn = turn;
         }
+
+        private float IfNotInDeadZone(float Value, float DeadZone)
+        {
+            if (Mathf.Abs(Value) < DeadZone)
+                return 0f;
+            return Value;
+        }
+
         void LateUpdate()
         {
             try
             {
+                if (base.block.tank.GetComponentInChildren<ModuleSteeringRegulator>() != this)
+                {
+                    SetColor(Color.black);
+                    return;
+                }
                 if (block.tank != null && !Singleton.Manager<ManPauseGame>.inst.IsPaused)
                 {
                     VerticalMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedDrive), 0f) * _idz;
                     SteeringMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedTurn), 0f) * _idz;
-                    //Heart = !Heart;
+                    {
+                        var tr = Quaternion.Inverse(block.tank.control.FirstController.transform.rotation);
+                        var rb = block.tank.rbody;
+                        var linearVel = tr * rb.velocity;
+                        var angularVel = rb.angularVelocity.y;
+
+                        PositionalFixingVector = new Vector3(
+                            -linearVel.x * SteeringMultiplier * LinearStrength, 
+                            -linearVel.z * VerticalMultiplier * LinearStrength, 
+                            angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier);
+
+                        UseGroundMode = (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio);
+                        SetColor(UseGroundMode ? Color.red : Color.white);
+                    }
                 }
             }
             catch { }

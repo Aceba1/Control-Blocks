@@ -16,42 +16,26 @@ namespace Control_Block
             var harmony = HarmonyInstance.Create("aceba1.controlblocks");
             harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
+            //GSO Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Piston Block")
-                    .SetDescription("A configurable piston that can push and pull blocks on a tech. Right click to configure.\n\nThis one uses ghost-phasing technology to move blocks, warping some laws of physics and stuff... Spooky")
+                    .SetDescription("A configurable piston that can push and pull blocks on a tech.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(1293838, "f53931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
-                    .SetGrade(3)
-                    .SetPrice(5142)
-                    .SetHP(3000)
-                    .SetMass(3.5f)
+                    .SetGrade(2)
+                    .SetPrice(4470)
+                    .SetHP(2000)
+                    .SetMass(2.5f)
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.piston_icon_png)));
 
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                var par = ControlBlock.Prefab.transform;
 
-                GameObject mbase = new GameObject("base"), mshaft = new GameObject("shaft"), mhead = new GameObject("head");
-                mbase.layer = Globals.inst.layerTank;
-                mshaft.layer = Globals.inst.layerTank;
-                mhead.layer = Globals.inst.layerTank;
-
-                mbase.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Properties.Resources.piston_base, "piston_base");
-                mbase.AddComponent<MeshRenderer>().sharedMaterial = mat;
-                var mbc = mbase.AddComponent<BoxCollider>();
-                mbc.size = new Vector3(.9f, .725f, .9f);
-                mbc.center = new Vector3(0f, -.125f, 0f);
-                mbase.transform.SetParent(ControlBlock.Prefab.transform);
-
-                mshaft.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Properties.Resources.piston_shaft, "piston_shaft");
-                mshaft.AddComponent<MeshRenderer>().sharedMaterial = mat;
-                mshaft.transform.SetParent(ControlBlock.Prefab.transform);
-
-                mhead.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Properties.Resources.piston_head, "piston_head");
-                mhead.AddComponent<MeshRenderer>().sharedMaterial = mat;
-                var mhc = mhead.AddComponent<BoxCollider>();
-                mhc.size = new Vector3(.8f, .9f, .8f);
-                mhead.transform.SetParent(ControlBlock.Prefab.transform);
+                AddMeshToPiston(mat, new Vector3(.95f, .725f, .95f), new Vector3(0f, -.125f, 0f), par, Properties.Resources.piston_base);
+                AddMeshToPiston(mat, new Vector3(.75f, .8f, .75f), Vector3.zero, par, Properties.Resources.piston_shaft);
+                AddMeshToPiston(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
 
                 ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.up*0.5f,
@@ -60,24 +44,78 @@ namespace Control_Block
                     Vector3.right * 0.5f,
                     Vector3.forward * 0.5f,
                     Vector3.back * 0.5f })
-                    .AddComponent<ModulePiston>()
+                    .AddComponent<ModulePiston>(SetGSOPiston)
                     .RegisterLater();
-                GameObject _holder = new GameObject();
-                _holder.AddComponent<OptionMenu>();
-                UnityEngine.Object.DontDestroyOnLoad(_holder);
 
                 CustomRecipe.RegisterRecipe(
                     new CustomRecipe.RecipeInput[]
                     {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.GluonBeam, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 2),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
                     new CustomRecipe.RecipeOutput(1293838)
                     });
             }
+            //GeoCorp Piston
+            { 
+                var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
+                    .SetName("Large Piston Block")
+                    .SetDescription("This piston can push much more than the GSO one... and is heavier.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
+                    .SetBlockID(129380, "f5b931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.GC)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(3)
+                    .SetPrice(6462)
+                    .SetHP(8000)
+                    .SetMass(10f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.GEOp_icon_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToPiston(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
+                AddMeshToPiston(mat, new Vector3(1.6f, 1f, 1.6f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shaftbottom);
+                AddMeshToPiston(mat, new Vector3(1.3f, 1f, 1.3f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shafttop);
+                AddMeshToPiston(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 1f, .5f), par, Properties.Resources.GEOp_blocktop);
+
+                ControlBlock.SetSizeManual(new IntVector3[] {
+                    new IntVector3(0,0,0),
+                    new IntVector3(0,0,1),
+                    new IntVector3(0,1,0),
+                    new IntVector3(0,1,1),
+                    new IntVector3(1,0,0),
+                    new IntVector3(1,0,1),
+                    new IntVector3(1,1,0),
+                    new IntVector3(1,1,1)
+                }, new Vector3[]{
+                    new Vector3(0f,-.5f,0f),
+                    new Vector3(1f,-.5f,0f),
+                    new Vector3(0f,-.5f,1f),
+                    new Vector3(1f,-.5f,1f),
+                    new Vector3(0f,1.5f,0f),
+                    new Vector3(1f,1.5f,0f),
+                    new Vector3(0f,1.5f,1f),
+                    new Vector3(1f,1.5f,1f)
+                })  .AddComponent<ModulePiston>(SetGeoCorpPiston)
+                    .RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 3),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.TitanicAlloy, 1)
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(129380)
+                    }, RecipeTable.Recipe.OutputType.Items, "gcfab");
+            }
+
             {
                 var SteeringRegulator = new BlockPrefabBuilder("VENSteeringHover (111)")
                     .SetName("Steering Regulator")
@@ -112,6 +150,163 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293839)
                     });
             }
+
+            GameObject _holder = new GameObject();
+            _holder.AddComponent<OptionMenu>();
+            _holder.AddComponent<LogGUI>();
+            UnityEngine.Object.DontDestroyOnLoad(_holder);
+        }
+
+        internal static void AddMeshToPiston(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
+        {
+            GameObject sub = new GameObject();
+            sub.layer = Globals.inst.layerTank;
+            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
+            sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
+
+            var mhc = sub.AddComponent<BoxCollider>();
+            mhc.size = colliderSize;
+            mhc.center = colliderOffset;
+            sub.transform.SetParent(par);
+        }
+
+        internal static void SetGSOPiston(ModulePiston piston)
+        {
+            piston.MaximumBlockPush = 72;
+            piston.curves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)),
+
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(.5f, .5f, .6f, .6f), new Keyframe(1f, 1f, 0f, 0f))
+            };
+            piston.StretchSpeed = 0.08f;
+            piston.CanModifyStretch = false;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0)
+            };
+        }
+
+        internal static void SetGeoCorpPiston(ModulePiston piston)
+        {
+            piston.MaximumBlockPush = 192;
+            piston.curves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .5f, 0f, 0f)),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1.1f, 0f, 0f)),
+
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 2f, 0f, 0f))
+            };
+            piston.StretchSpeed = 0.03f;
+            piston.CanModifyStretch = false;
+            piston.StretchModifier = 2;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,2,0),
+                new IntVector3(0,2,1),
+                new IntVector3(1,2,0),
+                new IntVector3(1,2,1)
+            };
+        }
+
+        internal static void SetHawkeyePiston(ModulePiston piston)
+        {
+            piston.MaximumBlockPush = 80;
+            piston.curves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f,  0f), new Keyframe(.66667f,  .5f,  0f,  0f), new Keyframe(1f,  .5f, 0f, 0f)), //shaft bottom
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f, .5f), new Keyframe(.66667f,   1f, .5f,  0f), new Keyframe(1f,   1f, 0f, 0f)), //shaft mid bottom
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f, .5f), new Keyframe(.66667f,   1f, .5f,  1f), new Keyframe(1f,   2f, 1f, 0f)), //shaft mid top
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f,  1f), new Keyframe(.66667f, 1.5f,  1f,  1f), new Keyframe(1f, 2.5f, 1f, 0f)), //shaft top
+
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(.33333f, 1f, 1f, 1f), new Keyframe(.66667f, 2f, 1f, 1f), new Keyframe(1f, 3f, 1f, 0f)), //block top
+            };
+            piston.StretchSpeed = 0.025f;
+            piston.CanModifyStretch = true;
+            piston.MinSt = 1;
+            piston.MaxStr = 3;
+            piston.StretchModifier = 3;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0),
+                new IntVector3(0,0,1)
+            };
+        }
+
+        public static string LogAllComponents(Transform SearchIn, string Indenting = "")
+        {
+            string result = "";
+            Component[] c = SearchIn.GetComponents<Component>();
+            foreach (Component comp in c)
+            {
+                result += "\n" + Indenting + comp.name + " : " + comp.GetType().Name;
+            }
+            for (int i = SearchIn.transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = SearchIn.transform.GetChild(i);
+                result += LogAllComponents(child, Indenting + "  ");
+            }
+            return result;
+        }
+    }
+
+    internal class LogGUI : MonoBehaviour
+    {
+        private int ID = 45925;
+
+        private bool visible = false;
+
+        private TankBlock module;
+
+        string Log = "";
+
+        private Rect win;
+        private void Update()
+        {
+            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
+            {
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 300f, 200f);
+                try
+                {
+                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block;
+                    Log = Class1.LogAllComponents(module.transform);
+                }
+                catch
+                {
+                    //Console.WriteLine(e);
+                    module = null;
+                    Log = "";
+                }
+                visible = module;
+            }
+        }
+
+        private void OnGUI()
+        {
+            if (!visible || !module) return;
+            try
+            {
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Dump");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        Vector2 scroll = Vector2.zero;
+
+        private void DoWindow(int id)
+        {
+            if (module == null)
+            {
+                visible = false;
+                return;
+            }
+            scroll = GUILayout.BeginScrollView(scroll);
+            GUILayout.Label("Keybind input");
+            GUILayout.EndScrollView();
+            GUI.DragWindow();
         }
     }
 
@@ -141,22 +336,20 @@ namespace Control_Block
             private static bool Prefix(ModuleBooster __instance, float drive, float turn)
             {
                 var controlBlock = __instance.block.tank.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (controlBlock == null || !__instance.block.tank.grounded)
+                if (!__instance.UsesDriveControls||controlBlock == null || __instance.block.GetComponentInChildren<FanJet>() != null || !__instance.block.tank.grounded)
                 {
                     return true;
                 }
                 else
                 {
                     var pv = controlBlock.PositionalFixingVector;
-                    bool UseGrounded = controlBlock.UseGroundMode(pv);
+                    bool UseGrounded = controlBlock.UseGroundMode;
                     if (UseGrounded)
                     {
-                        controlBlock.SetColor(Color.black);
                         groundMethod.Invoke(__instance, new object[] { drive/* + pv.y*/, turn + pv.z});
                     }
                     else
                     {
-                        controlBlock.SetColor(Color.white);
                         airMethod.Invoke(__instance, new object[] { drive + pv.y, turn - pv.x });
                     }
                     return false;
@@ -238,9 +431,9 @@ namespace Control_Block
 
             GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
             GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
-            if (module.CurrentCellPush > ModulePiston.MaxBlockPush)
+            if (module.CurrentCellPush > module.MaximumBlockPush)
             {
-                GUILayout.Label("- The piston is overburdened! (>"+ModulePiston.MaxBlockPush.ToString()+")");
+                GUILayout.Label("- The piston is overburdened! (>"+module.MaximumBlockPush.ToString()+")");
             }
             else if (module.CurrentCellPush == -1)
             {

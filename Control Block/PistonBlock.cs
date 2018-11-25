@@ -9,7 +9,16 @@ namespace Control_Block
 {
     class ModulePiston : Module
     {
-        public Transform head, shaft;
+        public Transform[] parts;
+        public UnityEngine.AnimationCurve[] curves;
+        public UnityEngine.AnimationCurve blockcurve => curves[curves.Length - 1];
+        public float EvaluatedBlockCurve = 0f;
+        public int StretchModifier = 1;
+        public int MinSt = 1, MaxStr = 1;
+        public bool CanModifyStretch = false;
+        public float StretchSpeed = 0.1f;
+        public IntVector3[] startblockpos;
+
         protected bool deserializing = false;
         internal bool OVERRIDE = false;
         private float alphaOpen = 0f, gOfs = 0f;
@@ -82,31 +91,7 @@ namespace Control_Block
 
         private void BlockAdded(TankBlock block, Tank tank)
         {
-            //Print("BlockAdded()");
-            /*
-            //Only run if extended, refresh blocks, check if new block is part of, apply offset to new block if is
-            if (SnapRender && alphaOpen == 0f)
-            {
-                things.Clear();
-                CanMove = GetBlocks();
-                if (CanMove)
-                {
-                    Move(true);
-                    alphaOpen = 1f;
-                    open = 1f;
-                    SetRenderState();
-                    if (things.ContainsKey(block))
-                    {
-                        block.transform.localPosition += this.block.cachedLocalRotation * Vector3.one;
-                    }
-                    SnapRender = true;
-                }
-            }
-            else
-            {
-            */
             SetDirty();
-            /*}*/
         }
         private void BlockRemoved(TankBlock block, Tank tank)
         {
@@ -239,11 +224,12 @@ namespace Control_Block
             }
             if (open != alphaOpen)
             {
-                float oldOpen = open;
-                open = Mathf.Clamp01((open - .05f) + alphaOpen * .1f);
+                float oldOpen = blockcurve.Evaluate(open);
+                open = Mathf.Clamp01((open - (StretchSpeed * 0.5f)) + alphaOpen * StretchSpeed);
+                EvaluatedBlockCurve = blockcurve.Evaluate(open);
                 if (block.tank != null && !block.tank.IsAnchored)
                 {
-                    block.tank.transform.position -= block.transform.rotation * Vector3.up * (open - oldOpen) * (MassPushing / block.tank.rbody.mass);
+                    block.tank.transform.position -= block.transform.rotation * Vector3.up * (EvaluatedBlockCurve - oldOpen) * (MassPushing / block.tank.rbody.mass);
                 }
                 SetRenderState();
             }
@@ -269,9 +255,13 @@ namespace Control_Block
             CleanDirty();
             if (CanMove)
             {
-                if (head != null) { head.localPosition = Vector3.up * (Expand ? 1f : 0f); shaft.localPosition = Vector3.up * (Expand ? 0.375f : 0f); }
+                if (parts.Length != 0)
+                {
+                    for (int I = 0; I < parts.Length; I++)
+                    parts[I].localPosition = Vector3.up * curves[I].Evaluate(Expand ? 1f : 0f);
+                }
                 var blockman = block.tank.blockman;
-                Vector3 modifier = block.cachedLocalRotation * (Expand ? Vector3.up : Vector3.down);
+                Vector3 modifier = block.cachedLocalRotation * ((Expand ? Vector3.up : Vector3.down) * StretchModifier);
                 int iterate = GrabbedBlocks.Count;
                 foreach (var pair in GrabbedBlocks)
                 {
@@ -305,7 +295,12 @@ namespace Control_Block
                 return;
             ResetBlocks();
             //StartExtended = !SetToExpand;
-            CanMove = GetBlocks();
+            foreach (IntVector3 sbp in startblockpos)
+            {
+                CanMove = GetBlocks(null, sbp);
+                if (!CanMove)
+                    break;
+            }
             Dirty = false;
             //Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
         }
@@ -317,12 +312,15 @@ namespace Control_Block
         public void ResetRenderState(bool ImmediatelySetAfter = false) 
         {
             //ApplyPistonForce(0f - alphaOpen);
-            head.localPosition = Vector3.zero;
-            shaft.localPosition = Vector3.zero;
+            foreach(var part in parts)
+            {
+                part.localPosition = Vector3.zero;
+            }
             open = 0f;
             //alphaOpen = 0f;
             SnapRender = ImmediatelySetAfter;
             gOfs = 0;
+            EvaluatedBlockCurve = 0f;
             foreach (var pair in GrabbedBlocks)
             {
                 var block = pair.Key;
@@ -337,10 +335,13 @@ namespace Control_Block
             {
                 open = alphaOpen;
                 SnapRender = false;
+                EvaluatedBlockCurve = open;
             }
-            head.localPosition = Vector3.up * open;
-            shaft.localPosition = Vector3.up * open * 0.375f;
-            var rawOfs = open - alphaOpen;
+            for (int I = 0; I < parts.Length; I++)
+            {
+                parts[I].localPosition = Vector3.up * curves[I].Evaluate(open);
+            }
+            var rawOfs = EvaluatedBlockCurve - alphaOpen * StretchModifier;
             Vector3 offs = (block.transform.localRotation * Vector3.up) * (rawOfs-gOfs);
             gOfs = rawOfs;
             foreach (var pair in GrabbedBlocks)
@@ -351,7 +352,7 @@ namespace Control_Block
             }
         }
 
-        public const int MaxBlockPush = 64;
+        public int MaximumBlockPush = 64;
         public int CurrentCellPush { get; private set; } = 0;
         public float MassPushing { get; private set; } = 0f;
         internal bool Dirty = true;
@@ -363,23 +364,27 @@ namespace Control_Block
         {
             GrabbedBlocks.Clear();
             CurrentCellPush = 0;
-            MassPushing = 0f;
+            MassPushing = block.CurrentMass;
         }
 
-        private bool GetBlocks(TankBlock Start = null, bool BeginGrab = true)
+        private bool GetBlocks(TankBlock Start = null, IntVector3 BeginGrabPos = default(IntVector3))
         {
             var _Start = Start;
-            if (BeginGrab)
+            if (BeginGrabPos != default(IntVector3))
             {
-                MassPushing += block.CurrentMass;
                 Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
                 try
                 {
                     var blockman = block.tank.blockman;
-                    _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * (/*StartExtended ? Vector3.up * 2 :*/ Vector3.up)) + block.cachedLocalPosition);
+                    _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * BeginGrabPos) + block.cachedLocalPosition);
                     if (_Start == null)
                     {
                         Print("Piston is pushing nothing");
+                        return true;
+                    }
+                    if (GrabbedBlocks.ContainsKey(_Start))
+                    {
+                        Print("Starting block was already started on");
                         return true;
                     }
                     GrabbedBlocks.Add(_Start, new BlockDat(_Start));
@@ -408,7 +413,7 @@ namespace Control_Block
                     {
                         if (cb == block)
                         {
-                            if (!BeginGrab)
+                            if (BeginGrabPos == default(IntVector3))
                             {
                                 Print("Looped to self! Escaping blockgrab as false");
                                 CurrentCellPush = -1;
@@ -425,12 +430,12 @@ namespace Control_Block
                             Print("Found " + cb.cachedLocalPosition.ToString());
                             CurrentCellPush += cb.filledCells.Length;
                             MassPushing += cb.CurrentMass;
-                            if (CurrentCellPush > MaxBlockPush)
+                            if (CurrentCellPush > MaximumBlockPush)
                             {
                                 return false;
                             }
                             GrabbedBlocks.Add(cb, new BlockDat(cb));
-                            if (!GetBlocks(cb, false))
+                            if (!GetBlocks(cb))
                                 return false;
                         }
                     }
@@ -488,8 +493,9 @@ namespace Control_Block
         {
             GrabbedBlocks.Clear();
             Dirty = true;
-            shaft = block.transform.GetChild(2);
-            head = block.transform.GetChild(3);
+            parts = new Transform[curves.Length];
+            for (int I = 0; I < curves.Length; I++)
+                parts[I] = block.transform.GetChild(I + 2);
             a_action = new Action<TankBlock, Tank>(this.BlockAdded);
             d_action = new Action<TankBlock, Tank>(this.BlockRemoved);
             block.AttachEvent += Attach;

@@ -61,6 +61,280 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GEO_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib GEOp_blockbottom.mtl
+        ///o geo_block_bottom
+        ///v -0.258274 0.344012 -0.340149
+        ///v -0.258274 0.557951 -0.340149
+        ///v -0.371306 0.557951 -0.386968
+        ///v -0.371306 0.344012 -0.386968
+        ///v -0.418125 0.557951 -0.500000
+        ///v -0.418125 0.344012 -0.500000
+        ///v -0.371306 0.557951 -0.613032
+        ///v -0.371306 0.344012 -0.613032
+        ///v -0.258274 0.557951 -0.659851
+        ///v -0.258274 0.344012 -0.659851
+        ///v 0.030684 0.344012 -0.340149
+        ///v 0.030684 0.557951 -0.340149
+        ///v 0.030684 0.557951 -0.6 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GEOp_blockbottom {
+            get {
+                return ResourceManager.GetString("GEOp_blockbottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GEO_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib GEOp_blocktop.mtl
+        ///o geo_block_top
+        ///v 1.500000 0.552534 -1.045250
+        ///v 1.500000 0.552534 -1.300020
+        ///v 1.500000 0.965657 -1.300020
+        ///v 1.441378 0.552534 -1.045250
+        ///v 1.500000 0.369114 -0.896773
+        ///v 1.441378 0.369114 -0.896773
+        ///v 1.300020 1.300020 -1.500000
+        ///v 1.300020 1.500000 -1.300020
+        ///v 1.500000 1.300020 -1.300020
+        ///v 1.045250 0.552534 -1.500000
+        ///v 0.896773 0.369114 -1.500000
+        ///v 0.103227 0.369114 -1.500000
+        ///v -0.045250 0.552534 -1.500000
+        ///v 1.50000 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GEOp_blocktop {
+            get {
+                return ResourceManager.GetString("GEOp_blocktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] GEOp_icon_png {
+            get {
+                object obj = ResourceManager.GetObject("GEOp_icon_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GEO_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib GEOp_shaftbottom.mtl
+        ///o geo_piston_bottom
+        ///v 1.185176 -0.160939 -0.895587
+        ///v 0.895587 -0.160939 -1.185176
+        ///v 0.895587 1.131227 -1.185176
+        ///v 1.185176 1.131227 -0.895587
+        ///v 0.500000 -0.160939 -1.291174
+        ///v 0.500000 1.131227 -1.291174
+        ///v 0.104413 -0.160939 -1.185176
+        ///v 0.104413 1.131227 -1.185176
+        ///v -0.185176 -0.160939 -0.895587
+        ///v -0.185176 1.131227 -0.895587
+        ///v -0.291174 -0.160939 -0.500000
+        ///v -0.291174 1.131227 -0.500000
+        ///v -0.185176 -0.160939 - [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GEOp_shaftbottom {
+            get {
+                return ResourceManager.GetString("GEOp_shaftbottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GEO_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib GEOp_shafttop.mtl
+        ///o geo_piston_top
+        ///v 1.064939 0.513169 -0.826168
+        ///v 0.826168 0.513169 -1.064939
+        ///v 0.826168 1.486831 -1.064939
+        ///v 1.064939 1.486831 -0.826168
+        ///v 0.500000 0.513169 -1.152335
+        ///v 0.500000 1.486831 -1.152335
+        ///v 0.173832 0.513169 -1.064939
+        ///v 0.173832 1.486831 -1.064939
+        ///v -0.064939 0.513169 -0.826168
+        ///v -0.064939 1.486831 -0.826168
+        ///v -0.152335 0.513169 -0.500000
+        ///v -0.152335 1.486831 -0.500000
+        ///v -0.064939 0.513169 -0.173832
+        ///v -0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GEOp_shafttop {
+            get {
+                return ResourceManager.GetString("GEOp_shafttop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_blockbottom.mtl
+        ///o the_node.003_tri_420_geometry.041
+        ///v 0.470392 -0.500000 -0.470712
+        ///v 0.470392 -0.470712 -0.500000
+        ///v 0.499679 -0.470712 -0.470712
+        ///v 0.470392 -0.500000 0.470393
+        ///v 0.499679 -0.470713 0.470393
+        ///v 0.470392 -0.470713 0.499680
+        ///v -0.500000 -0.404328 -0.470712
+        ///v -0.479291 -0.354331 -0.470712
+        ///v -0.470713 -0.387171 -0.499999
+        ///v -0.500000 -0.404328 0.470393
+        ///v -0.470713 -0.387172 0.499680
+        ///v -0.479291 -0.354331 0.470393
+        ///v -0.50 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_blockbottom {
+            get {
+                return ResourceManager.GetString("HEp_blockbottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_blocktop.mtl
+        ///o the_node.001_tri_420_geometry.039
+        ///v 0.132023 0.500000 0.132023
+        ///v 0.132023 0.500000 -0.132022
+        ///v -0.132023 0.500000 0.132023
+        ///v 0.000000 0.600000 0.000001
+        ///v -0.132023 0.500000 -0.132022
+        ///v 0.132023 0.400000 0.132023
+        ///v 0.132023 0.400000 -0.132022
+        ///v -0.132023 0.400000 0.132023
+        ///v -0.132023 0.400000 -0.132022
+        ///vt 0.537592 0.537593
+        ///vt 0.537592 0.501469
+        ///vt 0.519531 0.519534
+        ///vt 0.501470 0.537593
+        ///vt 0.501470 0.501469
+        ///vt 0.501 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_blocktop {
+            get {
+                return ResourceManager.GetString("HEp_blocktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] HEp_icon_png {
+            get {
+                object obj = ResourceManager.GetObject("HEp_icon_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_shaftbottom.mtl
+        ///o the_node.006_tri_420_geometry.053
+        ///v -0.437520 -0.500160 -0.437519
+        ///v -0.437520 -0.000321 0.437200
+        ///v 0.437200 -0.500160 -0.437519
+        ///v 0.437199 -0.000320 -0.437519
+        ///v -0.437520 -0.000321 -0.437519
+        ///v 0.437199 -0.000321 0.437200
+        ///v -0.437520 -0.500160 0.437200
+        ///v 0.437200 -0.500160 0.437200
+        ///v -0.000160 -0.500160 0.437200
+        ///v -0.000160 -0.000321 -0.437519
+        ///v -0.000160 -0.500160 -0.437519
+        ///v -0.000160 -0.000321 0.437200
+        ///v -0. [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_shaftbottom {
+            get {
+                return ResourceManager.GetString("HEp_shaftbottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_shaftmidb.mtl
+        ///o the_node.018_tri_420_geometry.020
+        ///v 0.312239 0.499359 -0.312559
+        ///v -0.312560 -0.437841 0.312240
+        ///v -0.312560 -0.437841 -0.312559
+        ///v 0.312240 -0.437841 0.312240
+        ///v 0.312240 -0.437841 -0.312559
+        ///v -0.312560 0.499359 0.312240
+        ///v -0.312560 0.499359 -0.312559
+        ///v 0.312239 0.499359 0.312240
+        ///v -0.000160 -0.437841 0.312240
+        ///v -0.000160 0.499359 -0.312559
+        ///v -0.000160 -0.437841 -0.312559
+        ///v -0.000160 0.499359 0.312240
+        ///v -0.234460 - [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_shaftmidb {
+            get {
+                return ResourceManager.GetString("HEp_shaftmidb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_shaftmidt.mtl
+        ///o the_node.019_tri_420_geometry.021
+        ///v 0.280999 -0.500641 -0.281319
+        ///v -0.281320 -0.500641 -0.281319
+        ///v -0.281320 -0.500641 0.281000
+        ///v 0.280999 -0.500641 0.281000
+        ///v -0.281320 0.436558 -0.281319
+        ///v 0.280999 0.436558 -0.281319
+        ///v 0.280999 0.436558 0.281000
+        ///v -0.281320 0.436558 0.281000
+        ///v -0.000161 0.436558 -0.281319
+        ///v -0.000160 -0.500641 -0.281319
+        ///v 0.210709 0.436558 -0.281319
+        ///v 0.210709 -0.500641 -0.281319
+        ///v -0.211030 - [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_shaftmidt {
+            get {
+                return ResourceManager.GetString("HEp_shaftmidt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;HE_piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib HEp_shafttop.mtl
+        ///o the_node.013_tri_420_geometry.015
+        ///v 0.437520 0.500160 -0.437519
+        ///v 0.437520 0.000320 0.437200
+        ///v -0.437200 0.500161 -0.437519
+        ///v -0.437200 0.000321 -0.437519
+        ///v 0.437520 0.000321 -0.437519
+        ///v -0.437200 0.000321 0.437200
+        ///v 0.437520 0.500160 0.437200
+        ///v -0.437200 0.500160 0.437200
+        ///v 0.000160 0.500160 0.437200
+        ///v 0.000160 0.000321 -0.437519
+        ///v 0.000160 0.500160 -0.437519
+        ///v 0.000160 0.000321 0.437200
+        ///v 0.328180 0.500160 0.43 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEp_shafttop {
+            get {
+                return ResourceManager.GetString("HEp_shafttop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;piston.blend&apos;
         ///# www.blender.org
         ///mtllib piston_base.mtl

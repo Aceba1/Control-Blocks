@@ -118,22 +118,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="GEOp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GEOp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GEOp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="GEOp_shaftbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_shaftbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GEOp_shafttop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_shafttop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="HEp_shaftbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_shaftbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_shaftmidb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_shaftmidb.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_shaftmidt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_shaftmidt.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEp_shafttop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_shafttop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="piston_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\piston_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\blocks\piston\gso\piston_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\blocks\piston\gso\piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="piston_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\piston_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\blocks\piston\gso\piston_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="piston_shaft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\piston_shaft.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\blocks\piston\gso\piston_shaft.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="sr" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\sr.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\blocks\steeringregulator\sr.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="sr_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\sr_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\blocks\steeringregulator\sr_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
