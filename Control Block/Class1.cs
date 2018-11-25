@@ -309,7 +309,7 @@ namespace Control_Block
                 return;
             }
             scroll = GUILayout.BeginScrollView(scroll);
-            GUILayout.Label("Keybind input");
+            GUILayout.Label(Log);
             GUILayout.EndScrollView();
             GUI.DragWindow();
         }
