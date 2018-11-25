@@ -63,7 +63,7 @@ namespace Control_Block
             { 
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Large Piston Block")
-                    .SetDescription("This piston can push much more than the GSO one... and is heavier.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
+                    .SetDescription("This piston can push much, MUCH more than the GSO one... and is slower.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(129380, "f5b931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
@@ -189,7 +189,7 @@ namespace Control_Block
 
         internal static void SetGeoCorpPiston(ModulePiston piston)
         {
-            piston.MaximumBlockPush = 192;
+            piston.MaximumBlockPush = 256;
             piston.curves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .5f, 0f, 0f)),
