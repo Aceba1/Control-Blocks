@@ -12,7 +12,7 @@ namespace Control_Block
         /// <summary>
         /// Constants for controlling the compensation calculation
         /// </summary>
-        const float InputDeadZone = 0.35f, AngularStrength = .2f, LinearStrength = .1f, VelocityRatio = 6.4f, RotationRatio = 10f;
+        const float InputDeadZone = 0.35f, AngularStrength = .2f, LinearStrength = .1f, VelocityRatio = 7f, RotationRatio = 10f;
         /// <summary>
         /// Inverse InputDeadZone (1 / InputDeadZone)
         /// </summary>
@@ -21,6 +21,7 @@ namespace Control_Block
         /// Result effector based on given input
         /// </summary>
         float VerticalMultiplier = 0f, SteeringMultiplier = 0f;
+
         public bool UseGroundMode { get; private set; } = true;
         MeshRenderer _mr;
         MeshRenderer mr
@@ -69,10 +70,19 @@ namespace Control_Block
             return Value;
         }
 
-        void LateUpdate()
+        Vector3 Target = Vector3.zero;
+
+        void FixedUpdate()
         {
             try
             {
+                if (block.tank == null)
+                    return;
+                if (Vector3.Distance(Target, block.transform.position) > 3f)
+                    Target = block.transform.position;
+
+
+
                 if (base.block.tank.GetComponentInChildren<ModuleSteeringRegulator>() != this)
                 {
                     SetColor(Color.black);
@@ -82,15 +92,16 @@ namespace Control_Block
                 {
                     VerticalMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedDrive), 0f) * _idz;
                     SteeringMultiplier = Mathf.Max(InputDeadZone - Mathf.Abs(cachedTurn), 0f) * _idz;
+
                     {
                         var tr = Quaternion.Inverse(block.tank.control.FirstController.transform.rotation);
                         var rb = block.tank.rbody;
                         var linearVel = tr * rb.velocity;
                         var angularVel = rb.angularVelocity.y;
-
+                        var linearOffset = tr * (block.transform.position - Target);
                         PositionalFixingVector = new Vector3(
-                            -linearVel.x * SteeringMultiplier * LinearStrength, 
-                            -linearVel.z * VerticalMultiplier * LinearStrength, 
+                            -(linearVel.x + linearOffset.x) * SteeringMultiplier * LinearStrength,
+                            -(linearVel.z + linearOffset.z) * VerticalMultiplier * LinearStrength,
                             angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier);
 
                         UseGroundMode = (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio);
