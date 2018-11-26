@@ -363,7 +363,7 @@ namespace Control_Block
             MassPushing = block.CurrentMass;
         }
 
-        private bool GetBlocks(TankBlock Start = null, bool BeginGrab = false)
+        private bool GetBlocks(TankBlock Start = null, bool BeginGrab = false, bool IsStarter = false)
         {
             if (BeginGrab)
             {
@@ -401,7 +401,7 @@ namespace Control_Block
                 bool result = true;
                 foreach (var b in StarterBlocks)
                 {
-                    result = GetBlocks(b);
+                    result = GetBlocks(b,false,true);
                     if (!result)
                         return false;
                 }
@@ -422,7 +422,7 @@ namespace Control_Block
                     {
                         if (cb == block)
                         {
-                            if (BeginGrab)
+                            if (!IsStarter)
                             {
                                 Print("Looped to self! Escaping blockgrab as false");
                                 CurrentCellPush = -1;
