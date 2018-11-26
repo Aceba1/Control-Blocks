@@ -582,7 +582,7 @@ namespace Control_Block
                     trigger = serialData2.Input;
                     IsToggle = serialData2.Toggle;
                     LocalControl = serialData2.Local;
-                    StretchModifier = serialData2.Stretch;
+                    StretchModifier = (int)Mathf.Clamp(serialData2.Stretch, 1, MaxStr);
                     Dirty = true;
                 }
             }
