@@ -69,7 +69,7 @@ namespace Control_Block
                     .SetBlockID(129380, "f5b931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
-                    .SetGrade(3)
+                    .SetGrade(2)
                     .SetPrice(6462)
                     .SetHP(8000)
                     .SetMass(10f)
@@ -118,9 +118,57 @@ namespace Control_Block
                     }, RecipeTable.Recipe.OutputType.Items, "gcfab");
             }
             #endregion
+            #region Hawkeye Piston
+            {
+                var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
+                    .SetName("Enforced Piston Block")
+                    .SetDescription("A strange set of enforced kinetic plates to make a piston that can stretch to 4 times its compressed state. Size can be changed for whatever needs there are.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
+                    .SetBlockID(129381, "e5bc31ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.HE)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(6462)
+                    .SetHP(8000)
+                    .SetMass(6f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.HEp_icon_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToPiston(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blockbottom);
+                AddMeshToPiston(mat, new Vector3(.875f, .47f, .875f), Vector3.down * .25f, par, Properties.Resources.HEp_shaftbottom);
+                AddMeshToPiston(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidb);
+                AddMeshToPiston(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidt);
+                AddMeshToPiston(mat, new Vector3(.875f, .47f, .875f), Vector3.up * .25f, par, Properties.Resources.HEp_shafttop);
+                AddMeshToPiston(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blocktop);
+
+                ControlBlock.SetSizeManual(new IntVector3[] {
+                    new IntVector3(0,0,0)
+                }, new Vector3[]{
+                    new Vector3(0f,-.5f,0f),
+                    new Vector3(0f,0f,-.5f),
+                    new Vector3(0f,.5f, 0f),
+                    new Vector3(0f, 0f,.5f),
+                }).AddComponent<ModulePiston>(SetHawkeyePiston)
+                    .RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 3),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.TitanicAlloy, 1)
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(129380)
+                    }, RecipeTable.Recipe.OutputType.Items, "gcfab");
+            }
+            #endregion
             #region Steering Regulator
             {
-                var SteeringRegulator = new BlockPrefabBuilder("VENSteeringHover (111)")
+                var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Steering Regulator")
                     .SetDescription("A fairly hacky way to stabilize hovertechs from drifting in to the sunset. This will take the wheel when you let go and try to keep your tech from moving, using any steering hovers present.")
                     .SetBlockID(1293839, "12ef3f7f30d4ba8e")
@@ -164,7 +212,7 @@ namespace Control_Block
 
         internal static void AddMeshToPiston(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
         {
-            GameObject sub = new GameObject();
+            GameObject sub = new GameObject("Piston Part");
             sub.layer = Globals.inst.layerTank;
             sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
             sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
@@ -173,6 +221,8 @@ namespace Control_Block
             mhc.size = colliderSize;
             mhc.center = colliderOffset;
             sub.transform.SetParent(par);
+            sub.transform.localPosition = Vector3.zero;
+            sub.transform.localRotation = Quaternion.identity;
         }
 
         internal static void SetGSOPiston(ModulePiston piston)
@@ -180,9 +230,9 @@ namespace Control_Block
             piston.MaximumBlockPush = 72;
             piston.curves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)), //shaft
 
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(.5f, .5f, .6f, .6f), new Keyframe(1f, 1f, 0f, 0f))
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(.5f, .5f, .6f, .6f), new Keyframe(1f, 1f, 0f, 0f)) //block top
             };
             piston.StretchSpeed = 0.08f;
             piston.CanModifyStretch = false;
@@ -204,7 +254,7 @@ namespace Control_Block
             };
             piston.StretchSpeed = 0.03f;
             piston.CanModifyStretch = false;
-            piston.StretchModifier = 2;
+            piston.StretchModifier = 2; piston.MaxStr = 2;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,2,0),
@@ -228,13 +278,11 @@ namespace Control_Block
             };
             piston.StretchSpeed = 0.025f;
             piston.CanModifyStretch = true;
-            piston.MinSt = 1;
-            piston.MaxStr = 3;
-            piston.StretchModifier = 3;
+            piston.StretchModifier = 3; piston.MaxStr = 3;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
-                new IntVector3(0,0,1)
+                new IntVector3(0,0,-1)
             };
         }
 
@@ -399,7 +447,7 @@ namespace Control_Block
             if (!visible || !module) return;
             try
             {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Block Configuration");
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
             }
             catch (Exception e)
             {
@@ -428,6 +476,16 @@ namespace Control_Block
             GUILayout.Label("Keybind input");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind ? "Press a key for use" : module.trigger.ToString()) != IsSettingKeybind;
 
+            if (module.CanModifyStretch)
+            {
+                GUILayout.Label("Maximum Stretch (change while closed) : " + module.StretchModifier.ToString());
+                int temp = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.StretchModifier, 1, module.MaxStr));
+                if (module.open == 0)
+                {
+                    module.StretchModifier = temp;
+                }
+            }
+
             module.IsToggle = GUILayout.Toggle(module.IsToggle, "Is toggle");
 
             module.InverseTrigger = (byte)GUILayout.SelectionGrid(module.InverseTrigger, (module.IsToggle ? toggleOptions : notToggleOptions), 2);
@@ -435,14 +493,18 @@ namespace Control_Block
             module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
 
             GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
-            GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
+
             if (module.CurrentCellPush > module.MaximumBlockPush)
             {
-                GUILayout.Label("- The piston is overburdened! (>"+module.MaximumBlockPush.ToString()+")");
+                GUILayout.Label(" The piston is overburdened! (>"+module.MaximumBlockPush.ToString()+")");
             }
             else if (module.CurrentCellPush == -1)
             {
-                GUILayout.Label("- The piston is structurally locked!");
+                GUILayout.Label(" The piston is structurally locked!");
+            }
+            else
+            {
+                GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
             }
 
             if (GUILayout.Button("Close"))

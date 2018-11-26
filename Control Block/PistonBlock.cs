@@ -14,14 +14,15 @@ namespace Control_Block
         public UnityEngine.AnimationCurve blockcurve => curves[curves.Length - 1];
         public float EvaluatedBlockCurve = 0f;
         public int StretchModifier = 1;
-        public int MinSt = 1, MaxStr = 1;
+        public float MaxStr = 1;
         public bool CanModifyStretch = false;
         public float StretchSpeed = 0.1f;
         public IntVector3[] startblockpos;
 
         protected bool deserializing = false;
         internal bool OVERRIDE = false;
-        private float alphaOpen = 0f, gOfs = 0f;
+        public float alphaOpen { get; private set; } = 0f;
+        private float gOfs = 0f;
         public bool IsToggle;
         public byte InverseTrigger;
         public bool LocalControl = true;
@@ -224,9 +225,9 @@ namespace Control_Block
             }
             if (open != alphaOpen)
             {
-                float oldOpen = blockcurve.Evaluate(open);
-                open = Mathf.Clamp01((open - (StretchSpeed * 0.5f)) + alphaOpen * StretchSpeed);
-                EvaluatedBlockCurve = blockcurve.Evaluate(open);
+                float oldOpen = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
+                open = Mathf.Clamp01((open - (StretchSpeed * 0.5f * (MaxStr / StretchModifier))) + alphaOpen * (StretchSpeed * (MaxStr / StretchModifier)));
+                EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 if (block.tank != null && !block.tank.IsAnchored)
                 {
                     block.tank.transform.position -= block.transform.rotation * Vector3.up * (EvaluatedBlockCurve - oldOpen) * (MassPushing / block.tank.rbody.mass);
@@ -258,7 +259,7 @@ namespace Control_Block
                 if (parts.Length != 0)
                 {
                     for (int I = 0; I < parts.Length; I++)
-                    parts[I].localPosition = Vector3.up * curves[I].Evaluate(Expand ? 1f : 0f);
+                    parts[I].localPosition = Vector3.up * curves[I].Evaluate(Expand ? (StretchModifier / MaxStr) : 0f);
                 }
                 var blockman = block.tank.blockman;
                 Vector3 modifier = block.cachedLocalRotation * ((Expand ? Vector3.up : Vector3.down) * StretchModifier);
@@ -330,11 +331,11 @@ namespace Control_Block
             {
                 open = alphaOpen;
                 SnapRender = false;
-                EvaluatedBlockCurve = blockcurve.Evaluate(open);
+                EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
             }
             for (int I = 0; I < parts.Length; I++)
             {
-                parts[I].localPosition = Vector3.up * curves[I].Evaluate(open);
+                parts[I].localPosition = Vector3.up * curves[I].Evaluate(open * (StretchModifier / MaxStr));
             }
             var rawOfs = EvaluatedBlockCurve - alphaOpen * StretchModifier;
             Vector3 offs = (block.transform.localRotation * Vector3.up) * (rawOfs-gOfs);
@@ -562,7 +563,8 @@ namespace Control_Block
                     Toggle = this.IsToggle,
                     Local = this.LocalControl,
                     Invert = this.InverseTrigger % 2 == 1,
-                    PreferState = this.InverseTrigger >= 2
+                    PreferState = this.InverseTrigger >= 2,
+                    Stretch = this.StretchModifier
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -580,6 +582,7 @@ namespace Control_Block
                     trigger = serialData2.Input;
                     IsToggle = serialData2.Toggle;
                     LocalControl = serialData2.Local;
+                    StretchModifier = serialData2.Stretch;
                     Dirty = true;
                 }
             }
@@ -594,6 +597,7 @@ namespace Control_Block
             public bool Local;
             public bool Invert;
             public bool PreferState;
+            public int Stretch;
         }
     }
 }
