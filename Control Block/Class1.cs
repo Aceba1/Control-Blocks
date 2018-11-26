@@ -163,7 +163,7 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput[]
                     {
                     new CustomRecipe.RecipeOutput(129380)
-                    }, RecipeTable.Recipe.OutputType.Items, "gcfab");
+                    }, RecipeTable.Recipe.OutputType.Items, "hefab");
             }
             #endregion
             #region Steering Regulator
