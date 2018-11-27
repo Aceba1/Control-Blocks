@@ -374,7 +374,7 @@ namespace Control_Block
                 try
                 {
                     var blockman = block.tank.blockman;
-                    
+
                     foreach (IntVector3 sbp in startblockpos)
                     {
                         var _Start = blockman.GetBlockAtPosition((block.cachedLocalRotation * sbp) + block.cachedLocalPosition);
@@ -386,10 +386,22 @@ namespace Control_Block
                         {
                             continue;
                         }
-                        GrabbedBlocks.Add(_Start, new BlockDat(_Start));
-                        CurrentCellPush += _Start.filledCells.Length;
-                        MassPushing += _Start.CurrentMass;
-                        StarterBlocks.Add(_Start);
+                        bool isAttached = false;
+                        foreach (var block in _Start.ConnectedBlocksByAP)
+                        {
+                            if (block != null && block == this.block)
+                            {
+                                isAttached = true;
+                                break;
+                            }
+                        }
+                        if (isAttached)
+                        {
+                            GrabbedBlocks.Add(_Start, new BlockDat(_Start));
+                            CurrentCellPush += _Start.filledCells.Length;
+                            MassPushing += _Start.CurrentMass;
+                            StarterBlocks.Add(_Start);
+                        }
                     }
                 }
                 catch
