@@ -12,7 +12,7 @@ namespace Control_Block
         /// <summary>
         /// Constants for controlling the compensation calculation
         /// </summary>
-        const float InputDeadZone = 0.35f, AngularStrength = .2f, LinearStrength = .1f, VelocityRatio = 7f, RotationRatio = 10f;
+        const float InputDeadZone = 0.35f, AngularStrength = .2f, LinearStrength = .1f, VelocityRatio = 6.4f, RotationRatio = 10f;
         /// <summary>
         /// Inverse InputDeadZone (1 / InputDeadZone)
         /// </summary>
@@ -78,7 +78,7 @@ namespace Control_Block
             {
                 if (block.tank == null)
                     return;
-                if (Vector3.Distance(Target, block.transform.position) > 3f)
+                if (Vector3.Distance(Target, block.transform.position) > 2.5f)
                     Target = block.transform.position;
 
 
@@ -102,9 +102,9 @@ namespace Control_Block
                         PositionalFixingVector = new Vector3(
                             -(linearVel.x + linearOffset.x) * SteeringMultiplier * LinearStrength,
                             -(linearVel.z + linearOffset.z) * VerticalMultiplier * LinearStrength,
-                            angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier);
+                            IfNotInDeadZone(angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier, .01f));
 
-                        UseGroundMode = (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio);
+                        UseGroundMode = (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio + .23f);
                         SetColor(UseGroundMode ? Color.red : Color.white);
                     }
                 }
