@@ -22,7 +22,7 @@ namespace Control_Block
                 var cockpit = new BlockPrefabBuilder("GSOCockpit(111)", false)
                     .SetBlockID(9003, "aba82861496cfa13")
                     .SetName("BF Compact FPV Cab")
-                    .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. (Not licensed by Better Future)\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
+                    .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. Forged by AstraTheDragon\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
                     .SetPrice(2000)
                     .SetHP(600)
                     .SetFaction(FactionSubTypes.BF)
@@ -128,7 +128,7 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("GeoCorp Large Piston")
-                    .SetDescription("This piston can push much, MUCH more than the GSO one... and is slower.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
+                    .SetDescription("This piston can push much, MUCH more than the GSO one... and is smoother.\nForged in the valleys of Uberkartoffel potatoes\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(129380, "f5b931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
