@@ -102,9 +102,9 @@ namespace Control_Block
                         PositionalFixingVector = new Vector3(
                             -(linearVel.x + linearOffset.x) * SteeringMultiplier * LinearStrength,
                             -(linearVel.z + linearOffset.z) * VerticalMultiplier * LinearStrength,
-                            IfNotInDeadZone(angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier, .01f));
+                            IfNotInDeadZone(angularVel * SteeringMultiplier * AngularStrength * VerticalMultiplier, .0125f));
 
-                        UseGroundMode = (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio + .23f);
+                        UseGroundMode = block.tank.control.BoostControl || (SteeringMultiplier == 0) || ((Mathf.Abs(PositionalFixingVector.x) + Mathf.Abs(PositionalFixingVector.y)) * VelocityRatio < Mathf.Abs(PositionalFixingVector.z) * RotationRatio + .26f);
                         SetColor(UseGroundMode ? Color.red : Color.white);
                     }
                 }

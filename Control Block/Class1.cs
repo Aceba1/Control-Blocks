@@ -17,10 +17,73 @@ namespace Control_Block
             harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
             #region Blocks
+            #region BF FPV Cab
+            {
+                var cockpit = new BlockPrefabBuilder("GSOCockpit(111)", false)
+                    .SetBlockID(9003, "aba82861496cfa13")
+                    .SetName("BF Compact FPV Cab")
+                    .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. (Not licensed by Better Future)\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
+                    .SetPrice(2000)
+                    .SetHP(600)
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Control)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFCab_png)))
+                    .SetMass(1.25f)
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero },
+                        new Vector3[]
+                        {
+                            Vector3.down*.5f,
+                            Vector3.left*0.5f,
+                            Vector3.right*0.5f,
+                            Vector3.back*0.5f
+                        });
+
+                var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true);
+
+                cockpit.RemoveChildrenWithComponent<BoxCollider>(true);
+
+                foreach (MeshFilter mf in cockpit.Prefab.GetComponentsInChildren<MeshFilter>())
+                {
+                    if (mf.name == "m_GSO_Cab_111_Base")
+                    {
+                        GameObject.DestroyImmediate(mf);
+                        cockpit.SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.BFCab, "BFCab"), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
+                    }
+                    else if (mf.name.StartsWith("m_GSO_Cab_111_Tyre_"))
+                    {
+                        mf.mesh = GameObjectJSON.MeshFromFile(Properties.Resources.BFCab_wheel, "BFCab_Wheel");
+                        mf.GetComponent<MeshRenderer>().material = bfmat;
+                    }
+                    else if (mf.name.StartsWith("m_GSO_Cab_111_Gun_") || mf.name.StartsWith("m_GSO_Cab_111_Flap_"))
+                    {
+                        GameObject.DestroyImmediate(mf.GetComponent<MeshRenderer>());
+                        GameObject.DestroyImmediate(mf);
+                    }                
+                }
+
+                var view = new GameObject("FirstPersonAnchor");
+                view.AddComponent<ModuleFirstPerson>();
+                view.transform.parent = cockpit.TankBlock.transform;
+                view.transform.localPosition = new Vector3(0f,0.175f,-0.1f);
+                view.transform.localRotation = Quaternion.identity;
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.OleiteJelly, 25),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(9003)
+                    });
+
+                cockpit.RegisterLater();
+            }
+            #endregion
             #region GSO Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
-                    .SetName("Piston Block")
+                    .SetName("GSO Piston")
                     .SetDescription("A configurable piston that can push and pull blocks on a tech.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(1293838, "f53931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
@@ -64,7 +127,7 @@ namespace Control_Block
             #region GeoCorp Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
-                    .SetName("Large Piston Block")
+                    .SetName("GeoCorp Large Piston")
                     .SetDescription("This piston can push much, MUCH more than the GSO one... and is slower.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(129380, "f5b931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GC)
@@ -121,7 +184,7 @@ namespace Control_Block
             #region Hawkeye Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
-                    .SetName("Enforced Piston Block")
+                    .SetName("Hawkeye Telescopic Piston")
                     .SetDescription("A strange set of enforced kinetic plates to make a piston that can stretch to 4 times its compressed state. Size can be changed for whatever needs there are.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(129381, "e5bc31ef3e14ba8e")
                     .SetFaction(FactionSubTypes.HE)
@@ -318,7 +381,7 @@ namespace Control_Block
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 300f, 200f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 600f, 300f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block;
