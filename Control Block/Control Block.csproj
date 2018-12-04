@@ -272,7 +272,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SteeringRegulatorBlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -306,7 +305,6 @@
     <Resource Include="Blocks\Piston\GSO\piston_shaft.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BlockControllerGuide.txt" />
     <Resource Include="Blocks\Cab\BFCab_png" />
     <None Include="Blocks\Piston\HE\HEp_icon_png" />
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_icon_png" />

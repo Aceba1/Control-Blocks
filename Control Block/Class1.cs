@@ -229,42 +229,6 @@ namespace Control_Block
                     }, RecipeTable.Recipe.OutputType.Items, "hefab");
             }
             #endregion
-            #region Steering Regulator
-            {
-                var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
-                    .SetName("Steering Regulator")
-                    .SetDescription("A fairly hacky way to stabilize hovertechs from drifting in to the sunset. This will take the wheel when you let go and try to keep your tech from moving, using any steering hovers present.")
-                    .SetBlockID(1293839, "12ef3f7f30d4ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Accessories)
-                    .SetGrade(0)
-                    .SetPrice(3467)
-                    .SetHP(200)
-                    .SetMass(3.5f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.sr, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                    Vector3.down * 0.5f,
-                    Vector3.left * 0.5f,
-                    Vector3.right * 0.5f,
-                    Vector3.forward * 0.5f,
-                    Vector3.back * 0.5f })
-                    .AddComponent<ModuleSteeringRegulator>()
-                    .RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
-                    {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
-                    new CustomRecipe.RecipeOutput(1293839)
-                    });
-            }
-            #endregion
             #endregion
 
             GameObject _holder = new GameObject();
@@ -440,35 +404,6 @@ namespace Control_Block
                     {
                         module.BeforeBlockAdded(block);
                     }
-                }
-            }
-        }
-        static MethodInfo airMethod = typeof(ModuleBooster).GetMethod("DriveControlAirborne", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance),
-            groundMethod = typeof(ModuleBooster).GetMethod("DriveControlGrounded", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-        [HarmonyPatch(typeof(ModuleBooster), "DriveControlInput")]
-        private static class OverrideBoosterInput
-        {
-            private static bool Prefix(ModuleBooster __instance, float drive, float turn)
-            {
-                var controlBlock = __instance.block.tank.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (!__instance.UsesDriveControls||controlBlock == null || __instance.block.GetComponentInChildren<FanJet>() != null || !__instance.block.tank.grounded)
-                {
-                    return true;
-                }
-                else
-                {
-                    var pv = controlBlock.PositionalFixingVector;
-                    bool UseGrounded = controlBlock.UseGroundMode;
-                    if (UseGrounded)
-                    {
-                        groundMethod.Invoke(__instance, new object[] { drive/* + pv.y*/, turn + pv.z});
-                    }
-                    else
-                    {
-                        airMethod.Invoke(__instance, new object[] { drive + pv.y, turn - pv.x });
-                    }
-                    return false;
                 }
             }
         }
