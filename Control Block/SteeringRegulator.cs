@@ -12,7 +12,7 @@ namespace Control_Block
     {
         public void OnSpawn()
         {
-            HoverMod = 4f; JetMod = 10f; TurbineMod = 4f;
+            HoverMod = 4f; JetMod = 6f; TurbineMod = 4f;
         }
 
         private void OnPool()
@@ -105,7 +105,7 @@ namespace Control_Block
 
         private void Control_driveControlEvent(TankControl.ControlState obj)
         {
-            CanWork = obj.m_State.Drive == 0f && obj.m_State.Turn == 0f;
+            CanWork = obj.Throttle + obj.InputMovement == Vector3.zero;
         }
 
         public void FixedUpdate()
