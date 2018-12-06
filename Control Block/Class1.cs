@@ -13,9 +13,15 @@ namespace Control_Block
     {
         public static void CreateBlocks()
         {
-            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
-            harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
-
+            try
+            {
+                var harmony = HarmonyInstance.Create("aceba1.controlblocks");
+                harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+            }
+            catch(Exception E)
+            {
+                Console.WriteLine(E.ToString());
+            }
             #region Blocks
             #region BF FPV Cab
             {
@@ -229,11 +235,47 @@ namespace Control_Block
                     }, RecipeTable.Recipe.OutputType.Items, "hefab");
             }
             #endregion
+            #region Steering Regulator
+            {
+                var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("Stabilizer PiD S.Regulator Dongle")
+                    .SetDescription("Right click to configure.\nThis is an extension to the Better Future Stabilizer Computer, adding a form of PiD to fight against idle movement on top through the BFSC's access to hovers, hover jets, and turbines\n\nAfter the release of the Better Future Stabilizer, the Steering Regulator had to be pulled from stock due to fatal conflicts within its presence. However, with high hopes for this new BFSC prototype, this has been repurposed for providing one of its core modules to this block. In case the idea was not readily accepted by the BFSC producers to integrate themselves, of course...")
+                    .SetBlockID(1293839, "12ef3f7f30d4ba8e")
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Accessories)
+                    .SetGrade(0)
+                    .SetPrice(3467)
+                    .SetHP(200)
+                    .SetMass(3.5f)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.sr, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                    Vector3.down * 0.5f,
+                    Vector3.left * 0.5f,
+                    Vector3.right * 0.5f,
+                    Vector3.forward * 0.5f,
+                    Vector3.back * 0.5f })
+                    .AddComponent<ModuleSteeringRegulator>()
+                    .RegisterLater();
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293839)
+                    });
+            }
+            #endregion
             #endregion
 
             GameObject _holder = new GameObject();
-            _holder.AddComponent<OptionMenu>();
+            _holder.AddComponent<OptionMenuPiston>();
             _holder.AddComponent<LogGUI>();
+            _holder.AddComponent<OptionMenuSteeringRegulator>();
             UnityEngine.Object.DontDestroyOnLoad(_holder);
         }
 
@@ -407,10 +449,77 @@ namespace Control_Block
                 }
             }
         }
+
+        //SR
+
+        [HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
+        private static class HoverJetStabilizePatch
+        {
+            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput, ref float m_AutoStabiliseStrength, ref Vector3 m_ThrustContributionUp, ref Vector3 m_ThrustContributionRight)
+            {
+                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null)
+                {
+                    Vector3 lhs = sr.lhs * sr.HoverMod;
+                    float num = 1f;
+                    driveInput -= Mathf.Clamp(m_AutoStabiliseStrength * Vector3.Dot(lhs, m_ThrustContributionUp), -num, num);
+                    turnInput -= Mathf.Clamp(m_AutoStabiliseStrength * Vector3.Dot(lhs, m_ThrustContributionRight), -num, num);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
+        private static class FanJetStabilizePatch
+        {
+            private static void Postfix(ref FanJet __instance, ref float m_TargetSpinRate, ref float m_AutoStabiliseStrength, ref Transform m_Effector)
+            {
+                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null)
+                {
+                    if (m_AutoStabiliseStrength > 0f)
+                    {
+                        Rigidbody rbody = sr.rbody;
+                        Vector3 forward = m_Effector.forward;
+                        Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
+                        float num = m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+                        if (Mathf.Abs(num) < 0.1f)
+                        {
+                            num = 0f;
+                        }
+                        __instance.SetSpin(num + m_TargetSpinRate);
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
+        private static class BoosterJetStabilizePatch
+        {
+            private static void Postfix(ref BoosterJet __instance, ref Transform m_Effector, float m_AutoStabiliseStrength, ref float m_FireStrengthCurrent)
+            {
+                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null)
+                {
+                    if (m_AutoStabiliseStrength > 0f)
+                    {
+                        Rigidbody rbody = sr.rbody;
+                        Vector3 forward = m_Effector.forward;
+                        Vector3 pointVelocity = sr.lhs * sr.JetMod;
+                        float num = m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+                        if (num < 0.1f)
+                        {
+                            num = 0f;
+                        }
+                        m_FireStrengthCurrent = Mathf.Clamp(num, m_FireStrengthCurrent, 1f);
+                    }
+                }
+            }
+        }
     }
 
-    class OptionMenu : MonoBehaviour
+    class OptionMenuPiston : MonoBehaviour
     {
+        
         private int ID = 7787;
 
         private bool visible = false;
@@ -425,7 +534,7 @@ namespace Control_Block
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 200f, 300f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 200f, 350f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModulePiston>();
@@ -505,6 +614,74 @@ namespace Control_Block
                 GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
             }
 
+            if (GUILayout.Button("Close"))
+            {
+                visible = false;
+                IsSettingKeybind = false;
+                module = null;
+            }
+            GUI.DragWindow();
+        }
+    }
+    class OptionMenuSteeringRegulator : MonoBehaviour
+    {
+
+        private int ID = 7788;
+
+        private bool visible = false;
+
+        private ModuleSteeringRegulator module;
+
+        private Rect win;
+        private void Update()
+        {
+            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
+            {
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 200f);
+                try
+                {
+                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSteeringRegulator>();
+                }
+                catch
+                {
+                    //Console.WriteLine(e);
+                    module = null;
+                }
+                visible = module;
+                IsSettingKeybind = false;
+            }
+        }
+
+        private void OnGUI()
+        {
+            if (!visible || !module) return;
+            try
+            {
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private bool IsSettingKeybind;
+
+        private void DoWindow(int id)
+        {
+            if (module == null)
+            {
+                visible = false;
+                return;
+            }
+            GUILayout.Label("Sensitivity Radius : " + module.MaxDist.ToString());
+            module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
+            GUILayout.Label("Hover PiD Effect");
+            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 10f)) * .5f;
+            GUILayout.Label("Steering Jet PiD Effect");
+            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 12f));
+            GUILayout.Label("Turbine PiD Effect");
+            module.TurbineMod = GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 10f) * .5f;
             if (GUILayout.Button("Close"))
             {
                 visible = false;
