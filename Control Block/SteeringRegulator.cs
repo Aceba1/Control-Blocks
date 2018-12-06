@@ -19,6 +19,8 @@ namespace Control_Block
         {
             base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
             base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+            base.block.AttachEvent += OnAttach;
+            base.block.DetachEvent += OnDetach;
         }
 
         private void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
@@ -59,13 +61,51 @@ namespace Control_Block
         public float HoverMod = 4f, JetMod = 10f, TurbineMod = 4f;
         public Vector3 lhs { get; private set; } = Vector3.zero;
 
+        MeshRenderer _mr;
+        MeshRenderer mr
+        {
+            get
+            {
+                if (_mr == null)
+                {
+                    _mr = block.GetComponentInChildren<MeshRenderer>();
+                }
+                return _mr;
+            }
+        }
+        public void SetColor(Color color)
+        {
+            mr.material.SetColor("_EmissionColor", color);
+        }
+
         private void LHS()
         {
-            if (MaxDist <= 0f)
+            if (!CanWork || MaxDist <= 0f)
             {
                 lhs = Vector3.zero;
+                SetColor(Color.red);
+                return;
             }
             lhs = (rbody.worldCenterOfMass - this.StabilizerTarget) / MaxDist;
+        }
+
+
+
+        private void OnDetach()
+        {
+            base.block.tank.control.driveControlEvent -= Control_driveControlEvent;
+            SetColor(Color.white);
+        }
+        private void OnAttach()
+        {
+            base.block.tank.control.driveControlEvent += Control_driveControlEvent;
+        }
+
+        public bool CanWork = true;
+
+        private void Control_driveControlEvent(TankControl.ControlState obj)
+        {
+            CanWork = obj.m_State.Drive == 0f && obj.m_State.Turn == 0f;
         }
 
         public void FixedUpdate()
@@ -74,15 +114,23 @@ namespace Control_Block
             {
                 return;
             }
-            if (block.tank.ShouldAutoStabilise || MaxDist <= 0f)
+            if (!block.tank.ShouldAutoStabilise || MaxDist <= 0f)
             {
                 lhs = Vector3.zero;
+
+                SetColor(Color.red);
                 return;
             }
             Vector3 com = this.rbody.worldCenterOfMass;
-            if (Vector3.Distance(this.StabilizerTarget, com) > MaxDist)
+            var dist = Vector3.Distance(this.StabilizerTarget, com);
+            if (dist > MaxDist)
             {
                 this.StabilizerTarget = com + (this.StabilizerTarget - com).normalized * MaxDist;
+                SetColor(Color.red);
+            }
+            else
+            {
+                SetColor(new Color(dist / MaxDist, dist / MaxDist, dist / MaxDist));
             }
             LHS();
         }

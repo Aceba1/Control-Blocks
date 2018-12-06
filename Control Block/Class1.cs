@@ -13,15 +13,8 @@ namespace Control_Block
     {
         public static void CreateBlocks()
         {
-            try
-            {
                 var harmony = HarmonyInstance.Create("aceba1.controlblocks");
                 harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
-            }
-            catch(Exception E)
-            {
-                Console.WriteLine(E.ToString());
-            }
             #region Blocks
             #region BF FPV Cab
             {
@@ -434,6 +427,41 @@ namespace Control_Block
 
     internal class Patches
     {
+        static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
+            F_mTSR, F_mASS, F_mE, F_mPB,
+            B_mE, B_mASS, B_mFSC, B_mPB;
+        static Patches()
+            {
+            try
+            {
+                BindingFlags b = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+                {
+                    Type T = typeof(HoverJet);
+                    H_mASS = T.GetField("m_AutoStabiliseStrength", b);
+                    H_mTCU = T.GetField("m_ThrustContributionUp", b);
+                    H_mTCR = T.GetField("m_ThrustContributionRight", b);
+                    H_pB = T.GetField("parentBlock", b);
+                }
+                {
+                    Type T = typeof(FanJet);
+                    F_mPB = T.GetField("m_ParentBlock", b);
+                    F_mASS = T.GetField("m_AutoStabiliseStrength", b);
+                    F_mTSR = T.GetField("m_TargetSpinRate", b);
+                    F_mE = T.GetField("m_Effector", b);
+                }
+                {
+                    Type T = typeof(BoosterJet);
+                    B_mE = T.GetField("m_Effector", b);
+                    B_mASS = T.GetField("m_AutoStabiliseStrength", b);
+                    B_mFSC = T.GetField("m_FireStrengthCurrent", b);
+                    B_mPB = T.GetField("m_ParentBlock", b);
+                }
+            }
+            catch(Exception E)
+            {
+
+            }
+            }
         [HarmonyPatch(typeof(BlockManager), "AddBlock")]
         private static class BlockManagerFix
         {
@@ -455,15 +483,18 @@ namespace Control_Block
         [HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
         private static class HoverJetStabilizePatch
         {
-            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput, ref float m_AutoStabiliseStrength, ref Vector3 m_ThrustContributionUp, ref Vector3 m_ThrustContributionRight, ref TankBlock parentBlock)
+            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput)
             {
-                ModuleSteeringRegulator sr = parentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null)
+                ModuleSteeringRegulator sr = ((TankBlock)H_pB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null && sr.CanWork)
                 {
-                    Vector3 lhs = sr.lhs * sr.HoverMod;
+                    float ___m_AutoStabiliseStrength = (float)H_mASS.GetValue(__instance);
+                    Vector3 lhs = Quaternion.Inverse(sr.rbody.rotation) * sr.lhs * sr.HoverMod;
                     float num = 1f;
-                    driveInput -= Mathf.Clamp(m_AutoStabiliseStrength * Vector3.Dot(lhs, m_ThrustContributionUp), -num, num);
-                    turnInput -= Mathf.Clamp(m_AutoStabiliseStrength * Vector3.Dot(lhs, m_ThrustContributionRight), -num, num);
+                    driveInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCU.GetValue(__instance));
+                    driveInput = Mathf.Clamp(driveInput, -num, num);
+                    turnInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCR.GetValue(__instance));
+                    turnInput = Mathf.Clamp(turnInput, -num, num);
                 }
             }
         }
@@ -471,22 +502,23 @@ namespace Control_Block
         [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         private static class FanJetStabilizePatch
         {
-            private static void Postfix(ref FanJet __instance, ref float m_TargetSpinRate, ref float m_AutoStabiliseStrength, ref Transform m_Effector, ref TankBlock m_ParentBlock)
+            private static void Postfix(ref FanJet __instance)
             {
-                ModuleSteeringRegulator sr = m_ParentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null)
+                ModuleSteeringRegulator sr = ((TankBlock)F_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null && sr.CanWork)
                 {
-                    if (m_AutoStabiliseStrength > 0f)
+                    float ___m_AutoStabiliseStrength = (float)F_mASS.GetValue(__instance);
+                    if (___m_AutoStabiliseStrength > 0f)
                     {
                         Rigidbody rbody = sr.rbody;
-                        Vector3 forward = m_Effector.forward;
+                        Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
-                        float num = m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
                         if (Mathf.Abs(num) < 0.1f)
                         {
                             num = 0f;
                         }
-                        __instance.SetSpin(num + m_TargetSpinRate);
+                        __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
                     }
                 }
             }
@@ -495,22 +527,24 @@ namespace Control_Block
         [HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
         private static class BoosterJetStabilizePatch
         {
-            private static void Postfix(ref BoosterJet __instance, ref Transform m_Effector, float m_AutoStabiliseStrength, ref float m_FireStrengthCurrent, ref TankBlock m_ParentBlock)
+            private static void Postfix(ref BoosterJet __instance)
             {
-                ModuleSteeringRegulator sr = m_ParentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null)
+                ModuleSteeringRegulator sr = ((TankBlock)B_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+                if (sr != null && sr.CanWork)
                 {
-                    if (m_AutoStabiliseStrength > 0f)
+                    var ___m_AutoStabiliseStrength = (float)B_mASS.GetValue(__instance);
+                    if (___m_AutoStabiliseStrength > 0f)
                     {
                         Rigidbody rbody = sr.rbody;
-                        Vector3 forward = m_Effector.forward;
+                        Vector3 forward = ((Transform)B_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.JetMod;
-                        float num = m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
                         if (num < 0.1f)
                         {
                             num = 0f;
                         }
-                        m_FireStrengthCurrent = Mathf.Clamp(num, m_FireStrengthCurrent, 1f);
+                        var cs = (float)B_mFSC.GetValue(__instance);
+                        B_mFSC.SetValue(__instance, Mathf.Clamp(cs+num,cs, 1f));
                     }
                 }
             }
@@ -648,7 +682,6 @@ namespace Control_Block
                     module = null;
                 }
                 visible = module;
-                IsSettingKeybind = false;
             }
         }
 
@@ -657,15 +690,13 @@ namespace Control_Block
             if (!visible || !module) return;
             try
             {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Stabiliser PiD");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
-
-        private bool IsSettingKeybind;
 
         private void DoWindow(int id)
         {
@@ -674,18 +705,17 @@ namespace Control_Block
                 visible = false;
                 return;
             }
-            GUILayout.Label("Sensitivity Radius : " + module.MaxDist.ToString());
+            GUILayout.Label("Sensitivity RADIUS : " + module.MaxDist.ToString());
             module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
             GUILayout.Label("Hover PiD Effect");
-            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 10f)) * .5f;
+            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 15f)) * .5f;
             GUILayout.Label("Steering Jet PiD Effect");
-            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 12f));
+            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
             GUILayout.Label("Turbine PiD Effect");
-            module.TurbineMod = GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 10f) * .5f;
+            module.TurbineMod = GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f) * .5f;
             if (GUILayout.Button("Close"))
             {
                 visible = false;
-                IsSettingKeybind = false;
                 module = null;
             }
             GUI.DragWindow();
