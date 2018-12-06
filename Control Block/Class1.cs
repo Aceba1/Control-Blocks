@@ -712,7 +712,7 @@ namespace Control_Block
             GUILayout.Label("Steering Jet PiD Effect");
             module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
             GUILayout.Label("Turbine PiD Effect");
-            module.TurbineMod = GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f) * .5f;
+            module.TurbineMod = Mathf.Round(GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f)) * .5f;
             if (GUILayout.Button("Close"))
             {
                 visible = false;
