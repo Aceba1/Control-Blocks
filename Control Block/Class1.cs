@@ -27,7 +27,7 @@ namespace Control_Block
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Control)
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFCab_png)))
-                    .SetMass(1.25f)
+                    .SetMass(.875f)
                     .SetSizeManual(new IntVector3[] { IntVector3.zero },
                         new Vector3[]
                         {
