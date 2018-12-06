@@ -455,9 +455,9 @@ namespace Control_Block
         [HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
         private static class HoverJetStabilizePatch
         {
-            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput, ref float m_AutoStabiliseStrength, ref Vector3 m_ThrustContributionUp, ref Vector3 m_ThrustContributionRight)
+            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput, ref float m_AutoStabiliseStrength, ref Vector3 m_ThrustContributionUp, ref Vector3 m_ThrustContributionRight, ref TankBlock parentBlock)
             {
-                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                ModuleSteeringRegulator sr = parentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
                 if (sr != null)
                 {
                     Vector3 lhs = sr.lhs * sr.HoverMod;
@@ -471,9 +471,9 @@ namespace Control_Block
         [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         private static class FanJetStabilizePatch
         {
-            private static void Postfix(ref FanJet __instance, ref float m_TargetSpinRate, ref float m_AutoStabiliseStrength, ref Transform m_Effector)
+            private static void Postfix(ref FanJet __instance, ref float m_TargetSpinRate, ref float m_AutoStabiliseStrength, ref Transform m_Effector, ref TankBlock m_ParentBlock)
             {
-                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                ModuleSteeringRegulator sr = m_ParentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
                 if (sr != null)
                 {
                     if (m_AutoStabiliseStrength > 0f)
@@ -495,9 +495,9 @@ namespace Control_Block
         [HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
         private static class BoosterJetStabilizePatch
         {
-            private static void Postfix(ref BoosterJet __instance, ref Transform m_Effector, float m_AutoStabiliseStrength, ref float m_FireStrengthCurrent)
+            private static void Postfix(ref BoosterJet __instance, ref Transform m_Effector, float m_AutoStabiliseStrength, ref float m_FireStrengthCurrent, ref TankBlock m_ParentBlock)
             {
-                ModuleSteeringRegulator sr = __instance.transform.parent.GetComponentInChildren<ModuleSteeringRegulator>();
+                ModuleSteeringRegulator sr = m_ParentBlock.tank.GetComponentInChildren<ModuleSteeringRegulator>();
                 if (sr != null)
                 {
                     if (m_AutoStabiliseStrength > 0f)
