@@ -513,10 +513,14 @@ namespace Control_Block
                         Rigidbody rbody = sr.rbody;
                         Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward) - 0.075f;
-                        if (Mathf.Abs(num) < 0f)
+                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+                        if (Mathf.Abs(num) <  0.075f)
                         {
                             num = 0f;
+                        }
+                        else
+                        {
+                            num -= Mathf.Sign(num) * 0.075f;
                         }
                         __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
                     }
@@ -538,13 +542,13 @@ namespace Control_Block
                         Rigidbody rbody = sr.rbody;
                         Vector3 forward = ((Transform)B_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.JetMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
-                        if (num < 0.1f)
+                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward) - .075f;
+                        if (num < 0f)
                         {
                             num = 0f;
                         }
                         var cs = (float)B_mFSC.GetValue(__instance);
-                        B_mFSC.SetValue(__instance, Mathf.Clamp(cs+num,cs, 1f));
+                        B_mFSC.SetValue(__instance, Mathf.Clamp(cs + num, cs, 1f));
                     }
                 }
             }

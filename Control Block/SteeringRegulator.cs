@@ -12,7 +12,7 @@ namespace Control_Block
     {
         public void OnSpawn()
         {
-            HoverMod = 4f; JetMod = 6f; TurbineMod = 4f;
+            HoverMod = 4f; JetMod = 6f; TurbineMod = 2f;
         }
 
         private void OnPool()
