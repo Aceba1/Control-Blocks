@@ -79,6 +79,7 @@ namespace Control_Block
                 cockpit.RegisterLater();
             }
             #endregion
+            #region Pistons
             #region GSO Piston
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
@@ -228,6 +229,7 @@ namespace Control_Block
                     }, RecipeTable.Recipe.OutputType.Items, "hefab");
             }
             #endregion
+            #endregion
             #region Steering Regulator
             {
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
@@ -263,6 +265,8 @@ namespace Control_Block
                     });
             }
             #endregion
+            #region MT Magnets
+            #endregion
             #endregion
 
             GameObject _holder = new GameObject();
@@ -289,7 +293,7 @@ namespace Control_Block
 
         internal static void SetGSOPiston(ModulePiston piston)
         {
-            piston.MaximumBlockPush = 72;
+            piston.MaximumBlockPush = 108;
             piston.curves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)), //shaft
@@ -306,7 +310,7 @@ namespace Control_Block
 
         internal static void SetGeoCorpPiston(ModulePiston piston)
         {
-            piston.MaximumBlockPush = 256;
+            piston.MaximumBlockPush = 384;
             piston.curves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .5f, 0f, 0f)),
@@ -328,7 +332,7 @@ namespace Control_Block
 
         internal static void SetHawkeyePiston(ModulePiston piston)
         {
-            piston.MaximumBlockPush = 80;
+            piston.MaximumBlockPush = 120;
             piston.curves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f,  0f), new Keyframe(.66667f,  .5f,  0f,  0f), new Keyframe(1f,  .5f, 0f, 0f)), //shaft bottom

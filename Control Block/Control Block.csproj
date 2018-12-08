@@ -288,6 +288,7 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
+    <None Include="Blocks\MTMags\mtmag free.obj" />
     <None Include="Blocks\Piston\GeoCorp\GEO_piston.blend" />
     <None Include="Blocks\Piston\GSO\piston.blend" />
     <None Include="Blocks\Piston\HE\HEp_blockbottom.obj" />

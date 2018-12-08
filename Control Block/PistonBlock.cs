@@ -228,7 +228,7 @@ namespace Control_Block
                 float oldOpen = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 open = Mathf.Clamp01((open - (StretchSpeed * 0.5f * (MaxStr / StretchModifier))) + alphaOpen * (StretchSpeed * (MaxStr / StretchModifier)));
                 EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
-                if (block.tank != null && !block.tank.IsAnchored)
+                if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                 {
                     block.tank.transform.position -= block.transform.rotation * Vector3.up * (EvaluatedBlockCurve - oldOpen) * (MassPushing / block.tank.rbody.mass);
                 }
