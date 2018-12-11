@@ -560,5 +560,68 @@ namespace Control_Block.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
+        ///mtllib swivel_base.mtl
+        ///o Cube_Cube.001
+        ///v -1.375000 -0.437500 0.375000
+        ///v -1.375000 0.437500 0.375000
+        ///v -1.375000 -0.437500 -1.375000
+        ///v -1.375000 0.437500 -1.375000
+        ///v 0.375000 -0.437500 0.375000
+        ///v 0.375000 0.437500 0.375000
+        ///v 0.375000 -0.437500 -1.375000
+        ///v 0.375000 0.437500 -1.375000
+        ///v -0.500000 0.500000 0.500000
+        ///v -1.500000 0.500000 -0.500000
+        ///v -0.500000 0.500000 -1.500000
+        ///v 0.500000 0.500000 -0.500006
+        ///v -1.383339 0.500000 -0.025872
+        ///v -1.469217 0.500000  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_base {
+            get {
+                return ResourceManager.GetString("swivel_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
+        ///mtllib swivel_head.mtl
+        ///o Cube.001_Cube.002
+        ///v -0.662912 0.500000 0.662913
+        ///v -0.444495 0.500000 0.828130
+        ///v -0.253331 0.500000 0.908641
+        ///v -0.111313 0.500000 0.934248
+        ///v -0.000000 0.500000 0.937500
+        ///v 0.111313 0.500000 0.934249
+        ///v 0.253331 0.500000 0.908641
+        ///v 0.444495 0.500000 0.828130
+        ///v 0.662913 0.500000 0.662913
+        ///v 0.828130 0.500000 0.444495
+        ///v 0.908641 0.500000 0.253331
+        ///v 0.934248 0.500000 0.111313
+        ///v 0.937500 0.500000 -0.000006
+        ///v 0.934249 0.500000 -0.111313
+        ///v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_head {
+            get {
+                return ResourceManager.GetString("swivel_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] swivel_png {
+            get {
+                object obj = ResourceManager.GetObject("swivel_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

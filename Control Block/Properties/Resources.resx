@@ -184,4 +184,13 @@
   <data name="sr_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\steeringregulator\sr_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="swivel_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\swivel\medium\swivel_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="swivel_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\swivel\medium\swivel_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="swivel_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\swivel\medium\swivel_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
