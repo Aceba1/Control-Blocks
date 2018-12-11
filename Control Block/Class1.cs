@@ -97,9 +97,9 @@ namespace Control_Block
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
                 var par = ControlBlock.Prefab.transform;
 
-                AddMeshToPiston(mat, new Vector3(.95f, .725f, .95f), new Vector3(0f, -.125f, 0f), par, Properties.Resources.piston_base);
-                AddMeshToPiston(mat, new Vector3(.75f, .8f, .75f), Vector3.zero, par, Properties.Resources.piston_shaft);
-                AddMeshToPiston(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
+                AddMeshToBlockMover(mat, new Vector3(.95f, .725f, .95f), new Vector3(0f, -.125f, 0f), par, Properties.Resources.piston_base);
+                AddMeshToBlockMover(mat, new Vector3(.75f, .8f, .75f), Vector3.zero, par, Properties.Resources.piston_shaft);
+                AddMeshToBlockMover(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
 
                 ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.up*0.5f,
@@ -141,10 +141,10 @@ namespace Control_Block
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main");
                 var par = ControlBlock.Prefab.transform;
 
-                AddMeshToPiston(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
-                AddMeshToPiston(mat, new Vector3(1.6f, 1f, 1.6f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shaftbottom);
-                AddMeshToPiston(mat, new Vector3(1.3f, 1f, 1.3f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shafttop);
-                AddMeshToPiston(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 1f, .5f), par, Properties.Resources.GEOp_blocktop);
+                AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
+                AddMeshToBlockMover(mat, new Vector3(1.6f, 1f, 1.6f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shaftbottom);
+                AddMeshToBlockMover(mat, new Vector3(1.3f, 1f, 1.3f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shafttop);
+                AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 1f, .5f), par, Properties.Resources.GEOp_blocktop);
 
                 ControlBlock.SetSizeManual(new IntVector3[] {
                     new IntVector3(0,0,0),
@@ -198,12 +198,12 @@ namespace Control_Block
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
                 var par = ControlBlock.Prefab.transform;
 
-                AddMeshToPiston(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blockbottom);
-                AddMeshToPiston(mat, new Vector3(.875f, .47f, .875f), Vector3.down * .25f, par, Properties.Resources.HEp_shaftbottom);
-                AddMeshToPiston(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidb);
-                AddMeshToPiston(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidt);
-                AddMeshToPiston(mat, new Vector3(.875f, .47f, .875f), Vector3.up * .25f, par, Properties.Resources.HEp_shafttop);
-                AddMeshToPiston(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blocktop);
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blockbottom);
+                AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.down * .25f, par, Properties.Resources.HEp_shaftbottom);
+                AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidb);
+                AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidt);
+                AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.up * .25f, par, Properties.Resources.HEp_shafttop);
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blocktop);
 
                 ControlBlock.SetSizeManual(new IntVector3[] {
                     new IntVector3(0,0,0)
@@ -227,6 +227,46 @@ namespace Control_Block
                     {
                     new CustomRecipe.RecipeOutput(129380)
                     }, RecipeTable.Recipe.OutputType.Items, "hefab");
+            }
+            #endregion
+            #endregion
+            #region Swivels
+            #region GSO Medium
+            if (false)
+            {
+                var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
+                    .SetName("Medium Embedded Swivel")
+                    .SetDescription("A configurable swivel that can rotate blocks on a tech.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
+                    .SetBlockID(1393838, "f64931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.GSO)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(4470)
+                    .SetHP(2000)
+                    .SetMass(2.5f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(1.9f, .95f, 1.9f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_base);
+                AddMeshToBlockMover(mat, new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_head);
+
+                ControlBlock.SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.All)
+                    .AddComponent<ModuleSwivel>(SetMediumSwivel)
+                    .RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293838)
+                    });
             }
             #endregion
             #endregion
@@ -273,12 +313,19 @@ namespace Control_Block
             _holder.AddComponent<OptionMenuPiston>();
             _holder.AddComponent<LogGUI>();
             _holder.AddComponent<OptionMenuSteeringRegulator>();
+            ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
         }
 
-        internal static void AddMeshToPiston(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
+        internal static bool PistonHeart = false;
+        internal static void WorldShift()
         {
-            GameObject sub = new GameObject("Piston Part");
+            PistonHeart = !PistonHeart;
+        }
+
+        internal static void AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
+        {
+            GameObject sub = new GameObject("BlockMover Part");
             sub.layer = Globals.inst.layerTank;
             sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
             sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
@@ -288,6 +335,18 @@ namespace Control_Block
             mhc.center = colliderOffset;
             sub.transform.SetParent(par);
             sub.transform.localPosition = Vector3.zero;
+            sub.transform.localRotation = Quaternion.identity;
+        }
+        internal static void AddMeshToBlockMover(Material mat, Vector3 objPos, Transform par, string Mesh)
+        {
+            GameObject sub = new GameObject("BlockMover Part")
+            {
+                layer = Globals.inst.layerTank
+            };
+            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
+            sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
+            sub.transform.SetParent(par);
+            sub.transform.localPosition = objPos;
             sub.transform.localRotation = Quaternion.identity;
         }
 
@@ -300,6 +359,7 @@ namespace Control_Block
 
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(.5f, .5f, .6f, .6f), new Keyframe(1f, 1f, 0f, 0f)) //block top
             };
+            piston.PartCount = 2;
             piston.StretchSpeed = 0.08f;
             piston.CanModifyStretch = false;
             piston.startblockpos = new IntVector3[]
@@ -318,6 +378,7 @@ namespace Control_Block
 
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 2f, 0f, 0f))
             };
+            piston.PartCount = 3;
             piston.StretchSpeed = 0.03f;
             piston.CanModifyStretch = false;
             piston.StretchModifier = 2; piston.MaxStr = 2;
@@ -342,6 +403,7 @@ namespace Control_Block
 
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(.33333f, 1f, 1f, 1f), new Keyframe(.66667f, 2f, 1f, 1f), new Keyframe(1f, 3f, 1f, 0f)), //block top
             };
+            piston.PartCount = 5;
             piston.StretchSpeed = 0.025f;
             piston.CanModifyStretch = true;
             piston.StretchModifier = 3; piston.MaxStr = 3;
@@ -350,6 +412,27 @@ namespace Control_Block
                 new IntVector3(0,1,0),
                 new IntVector3(0,0,-1)
             };
+        }
+
+        internal static void SetMediumSwivel(ModuleSwivel swivel)
+        {
+            swivel.MaximumBlockPush = 64;
+            swivel.rotCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
+            };
+            swivel.PartCount = 1;
+            swivel.RotateSpeed = 5;
+            swivel.MaxSpeed = 15;
+            swivel.LockAxis = false;
+            swivel.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0),
+                new IntVector3(1,1,0),
+                new IntVector3(0,1,1),
+                new IntVector3(1,1,1)
+            };
+            swivel.localEffectorPos = new Vector3(.5f, 0f, .5f);
         }
 
         public static string LogAllComponents(Transform SearchIn, string Indenting = "")
@@ -473,7 +556,7 @@ namespace Control_Block
             {
                 foreach (TankBlock _b in __instance.IterateBlocks())
                 {
-                    var module = _b.GetComponent<ModulePiston>();
+                    var module = _b.GetComponent<ModuleBlockMover>();
                     if (module)
                     {
                         module.BeforeBlockAdded(block);

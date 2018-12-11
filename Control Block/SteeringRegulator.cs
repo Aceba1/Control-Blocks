@@ -99,6 +99,7 @@ namespace Control_Block
         private void OnAttach()
         {
             base.block.tank.control.driveControlEvent += Control_driveControlEvent;
+            StabilizerTarget = rbody.worldCenterOfMass;
         }
 
         public bool CanWork = true;
@@ -122,16 +123,14 @@ namespace Control_Block
                 return;
             }
             Vector3 com = this.rbody.worldCenterOfMass;
-            var dist = Vector3.Distance(this.StabilizerTarget, com);
-            if (dist > MaxDist)
-            {
-                this.StabilizerTarget = com + (this.StabilizerTarget - com).normalized * MaxDist;
-                SetColor(Color.red);
-            }
-            else
-            {
-                SetColor(new Color(dist / MaxDist, dist / MaxDist, dist / MaxDist));
-            }
+            var dist = Quaternion.Inverse(rbody.rotation) * (this.StabilizerTarget - com);
+            dist.x = Mathf.Clamp(dist.x, -MaxDist, MaxDist);
+            dist.y = Mathf.Clamp(dist.y, -MaxDist, MaxDist);
+            dist.z = Mathf.Clamp(dist.z, -MaxDist, MaxDist);
+            StabilizerTarget = com + (rbody.rotation * dist);
+            var col = Mathf.Clamp01(dist.magnitude / MaxDist);
+
+            SetColor(new Color(col, col, col));
             LHS();
         }
     }
