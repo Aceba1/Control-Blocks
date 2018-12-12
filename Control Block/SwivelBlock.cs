@@ -115,7 +115,15 @@ namespace Control_Block
 
                         aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
                         CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                        CurrentAngle = Mathf.Clamp(CurrentAngle, oldAngle - RotateSpeed + 360, oldAngle + RotateSpeed + 360) - 360;
+                        float Diff = (CurrentAngle - oldAngle + 900) % 360 - 180;
+                        if (Diff < -RotateSpeed)
+                        {
+                            CurrentAngle += (oldAngle - RotateSpeed) - CurrentAngle;
+                        }
+                        else if (Diff > RotateSpeed)
+                        {
+                            CurrentAngle += (oldAngle + RotateSpeed) - CurrentAngle;
+                        }
                         break;
 
                     case Mode.Directional:
@@ -188,7 +196,15 @@ namespace Control_Block
             }
             if (LockAngle)
             {
-                CurrentAngle = Mathf.Clamp(CurrentAngle, AngleCenter - AngleRange + 360, AngleCenter + AngleRange + 360) - 360;
+                float Diff = (CurrentAngle - AngleCenter + 900) % 360 - 180;
+                if (Diff < -AngleRange)
+                {
+                    CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
+                }
+                else if (Diff > AngleRange)
+                {
+                    CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
+                }
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
             if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
