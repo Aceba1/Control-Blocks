@@ -168,7 +168,7 @@ namespace Control_Block
                             }
                             else
                             {
-                                Direction = Mathf.Repeat(CurrentAngle - AngleCenter+180,360)-180;
+                                Direction = -Mathf.Repeat(CurrentAngle - AngleCenter+180,360)-180;
                             }
                             Direction = Mathf.Clamp(Direction, -1f, 1f);
                         }
