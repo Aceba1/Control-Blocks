@@ -38,16 +38,20 @@ namespace Control_Block
         /// Force ghost-push as opened
         /// </summary>
         bool ForceMove = false;
+        /// <summary>
+        /// Repair before render
+        /// </summary>
+        bool UpdateFix = false;
 
         internal override void BeforeBlockAdded(TankBlock block)
         {
             if (alphaOpen != 0f)
             {
-                alphaOpen = 0f;
                 if (IsToggle)
                 {
                     ForceOpen = true;
                 }
+                UpdateFix = true;
                 ResetRenderState(true);
             }
             else
@@ -186,7 +190,7 @@ namespace Control_Block
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
                         tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
-                        tankcache.rbody.centerOfMass -= th * offs;
+                        //tankcache.rbody.centerOfMass -= ;
                         tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
 
                     }
@@ -198,6 +202,12 @@ namespace Control_Block
 
         void Update()
         {
+            if (UpdateFix)
+            {
+                UpdateFix = false;
+                Move(true);
+                SetRenderState();
+            }
             if (InverseTrigger == 2 || InverseTrigger == 3)
                 ButtonIsValid = ButtonIsValid || Input.GetKeyUp(trigger);
         }
@@ -220,7 +230,7 @@ namespace Control_Block
                     for (int I = 0; I < parts.Length; I++)
                         parts[I].localPosition = Vector3.up * curves[I].Evaluate(Expand ? (StretchModifier / MaxStr) : 0f);
                 }
-                Vector3 modifier = block.cachedLocalRotation * ((Expand ? Vector3.up : Vector3.down) * StretchModifier);
+                Vector3 modifier = block.transform.localRotation * ((Expand ? Vector3.up : Vector3.down) * StretchModifier);
                 foreach (var pair in GrabbedBlocks)
                 {
                     var val = pair.Key;
@@ -250,6 +260,11 @@ namespace Control_Block
             tankcache.rbody.centerOfMass += MassPushing * (block.transform.localRotation * Vector3.up) * - gOfs;
             gOfs = 0;
             EvaluatedBlockCurve = 0f;
+            if (block.tank != null)
+            {
+                holder.position = block.tank.transform.position;
+                holder.rotation = block.tank.transform.rotation;
+            }
             foreach (var pair in GrabbedBlocks)
             {
                 var block = pair.Key;

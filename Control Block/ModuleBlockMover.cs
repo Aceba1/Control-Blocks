@@ -4,6 +4,8 @@ using UnityEngine;
 
 abstract class ModuleBlockMover : Module
 {
+    public Transform LoadCOM;
+    public Transform holder;
     public int PartCount = 1;
     public bool Heart;
     public AnimationCurve[] curves;
@@ -33,30 +35,46 @@ abstract class ModuleBlockMover : Module
         return new Vector3(curves[Mod - 3].Evaluate(Position), curves[Mod - 3].Evaluate(Position), curves[Mod - 3].Evaluate(Position));
     }
 
-    private void OnPool()
+    private void OnPool() //Creation
     {
         GrabbedBlocks = new Dictionary<TankBlock, BlockDat>();
         base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
         base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+
+        parts = new Transform[PartCount];
+        for (int I = 0; I < PartCount; I++)
+            parts[I] = block.transform.GetChild(I + 2);
+
+        holder = new GameObject("Holding Agent").transform;
+        holder.parent = parts[PartCount - 1].transform;
+
+        LoadCOM = new GameObject("Load CenterOfMass").transform;
+        LoadCOM.parent = holder;
+
+        a_action = new Action<TankBlock, Tank>(this.BlockAdded);
+        d_action = new Action<TankBlock, Tank>(this.BlockRemoved);
+        block.AttachEvent += Attach;
+        block.DetachEvent += Detatch;
     }
 
     internal abstract void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec);
 
-    private void OnSpawn()
+    private void OnSpawn() //Pull from Object Pool
     {
         Heart = Control_Block.Class1.PistonHeart;
         GrabbedBlocks.Clear();
         Dirty = true;
-        parts = new Transform[PartCount];
-        for (int I = 0; I < PartCount; I++)
-            parts[I] = block.transform.GetChild(I + 2);
-        a_action = new Action<TankBlock, Tank>(this.BlockAdded);
-        d_action = new Action<TankBlock, Tank>(this.BlockRemoved);
-        block.AttachEvent += Attach;
+    }
+
+    internal virtual void Detatch()
+    {
+        ResetBlocks();
     }
 
     internal virtual void Attach()
     {
+        holder.position = block.tank.transform.position;
+        holder.rotation = block.tank.transform.rotation;
         SetDirty();
     }
 
@@ -107,17 +125,30 @@ abstract class ModuleBlockMover : Module
 
     internal void CleanDirty()
     {
-        if (!Dirty)
+        if (!Dirty || !block.IsAttached || block.tank == null)
             return;
         ResetBlocks();
         //StartExtended = !SetToExpand;
         CanMove = GetBlocks(null, true);
+        if (CanMove)
+        {
+            LoadCOM.transform.position = cacheCOM / GrabbedBlocks.Count;
+            //foreach (var b in GrabbedBlocks)
+            //{
+            //    b.Key.transform.parent = holder;
+            //}
+        }
         Dirty = false;
         //Print("Piston " + block.transform.localPosition.ToString() + " is now  c l e a n s e d");
     }
 
     internal void ResetBlocks()
     {
+        foreach (var b in GrabbedBlocks)
+        {
+            b.Key.transform.parent = block.transform.parent;
+        }
+
         GrabbedBlocks.Clear();
         CurrentCellPush = 0;
         MassPushing = block.CurrentMass;
@@ -132,11 +163,15 @@ abstract class ModuleBlockMover : Module
         }
     }
 
+    Vector3 cacheCOM = Vector3.zero;
+
     internal bool GetBlocks(TankBlock Start = null, bool BeginGrab = false, bool IsStarter = false)
     {
         if (BeginGrab)
         {
-            Print("Starting blockgrab for Piston " + block.cachedLocalPosition.ToString());
+            Print("Starting blockgrab for BlockMover " + block.cachedLocalPosition.ToString());
+
+            cacheCOM = Vector3.zero;
 
             var StarterBlocks = new List<TankBlock>();
 
@@ -169,6 +204,7 @@ abstract class ModuleBlockMover : Module
                         GrabbedBlocks.Add(_Start, new BlockDat(_Start));
                         CurrentCellPush += _Start.filledCells.Length;
                         MassPushing += _Start.CurrentMass;
+                        cacheCOM += _Start.centreOfMassWorld;
                         StarterBlocks.Add(_Start);
                     }
                 }
@@ -220,6 +256,7 @@ abstract class ModuleBlockMover : Module
                         Print("Found " + cb.cachedLocalPosition.ToString());
                         CurrentCellPush += cb.filledCells.Length;
                         MassPushing += cb.CurrentMass;
+                        cacheCOM += cb.centreOfMassWorld;
                         if (CurrentCellPush > MaximumBlockPush)
                         {
                             return false;

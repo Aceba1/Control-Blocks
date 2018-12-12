@@ -11,8 +11,8 @@ namespace Control_Block
     {
         public Vector3 localEffectorPos = Vector3.zero;
         public float EvaluatedBlockRotCurve = 0f;
-        public bool LockAxis = false;
-        public float MinAxis = -45f, MaxAxis = 45f;
+        public bool LockAngle = false;
+        public float MinAngle = -45f, Range = 90f;
         public float RotateSpeed = 1f;
         public float MaxSpeed = 15f;
         public bool CanModifySpeed = false;
@@ -35,6 +35,14 @@ namespace Control_Block
         {
             ResetRenderState();
             base.BlockRemoved(block, tank);
+        }
+
+        void Update()
+        {
+            if (ForceMove)
+            {
+                Move();
+            }
         }
 
         bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
@@ -79,23 +87,21 @@ namespace Control_Block
                 }
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
-            if (ForceMove || Dirty || oldAngle != CurrentAngle)
+            if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
             {
                 ForceMove = false;
+                float oldOpen = EvaluatedBlockRotCurve;
                 EvaluatedBlockRotCurve = blockrotcurve.Evaluate(CurrentAngle);
                 if (Class1.PistonHeart == Heart)
                 {
                     Move();
 
-                    //if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
-                    //{
-                    //    float th = (MassPushing / block.tank.rbody.mass);
-                    //    var thing = (EvaluatedBlockRotCurve - oldOpen) * th;
-                    //    tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
-                    //    tankcache.rbody.centerOfMass -= th * offs;
-                    //    tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
-
-                    //}
+                    if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass*4f)
+                    {
+                        float th = (MassPushing / block.tank.rbody.mass);
+                        var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen+180, 360)-180) * th;
+                        tankcache.transform.RotateAround(block.transform.position + (block.transform.rotation * localEffectorPos), block.transform.rotation * Vector3.up, -thing);
+                    }
                 }
                 else Heart = Class1.PistonHeart;
             }
@@ -119,29 +125,26 @@ namespace Control_Block
             foreach (var t in mr) t.material.color = color;
         }
 
-        Vector3 RotateAroundPoint(Vector3 param, Vector3 pivot, Quaternion rot) => (rot * (param - pivot)) + pivot;
-
         private void Move()
         {
             CleanDirty();
             if (CanMove)
             {
+                var lastp = holder.position;
+                var lastr = holder.rotation;
                 if (parts.Length != 0)
                 {
                     for (int I = 0; I < parts.Length; I++)
                         parts[I].localRotation = Quaternion.Euler(0f, rotCurves[I].Evaluate(CurrentAngle), 0f);
                 }
                 var ofs = CurrentAngle;
-                var thig = (block.transform.localRotation * Vector3.up) * (ofs - gOfs);
-                var modifier = Quaternion.Euler(thig);
+                var axis = (block.transform.rotation * Vector3.up);
+                var angle = (Mathf.Repeat(ofs - gOfs + 180, 360) - 180);
                 gOfs = ofs;
-                int iterate = GrabbedBlocks.Count;
                 foreach (var pair in GrabbedBlocks)
                 {
-                    iterate--;
                     var val = pair.Key;
-                    val.transform.localPosition = RotateAroundPoint(val.transform.localPosition, block.transform.localPosition + (block.transform.localRotation * localEffectorPos), modifier);
-                    val.transform.localRotation = modifier * val.transform.localRotation;
+                    val.transform.RotateAround(block.transform.position + (block.transform.rotation * localEffectorPos), axis, angle);
                 }
             }
         }
@@ -158,6 +161,11 @@ namespace Control_Block
             }
             gOfs = 0;
             EvaluatedBlockRotCurve = 0f;
+            if (block.tank != null)
+            {
+                holder.position = block.tank.transform.position;
+                holder.rotation = block.tank.transform.rotation;
+            }
             foreach (var pair in GrabbedBlocks)
             {
                 var block = pair.Key;

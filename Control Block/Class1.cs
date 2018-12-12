@@ -231,8 +231,7 @@ namespace Control_Block
             #endregion
             #endregion
             #region Swivels
-            #region GSO Medium
-            if (false)
+            #region GSO Medium Swivel
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Medium Embedded Swivel")
@@ -274,7 +273,7 @@ namespace Control_Block
             {
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Stabilizer PiD S.Regulator Dongle")
-                    .SetDescription("Right click to configure.\nThis is an extension to the Better Future Stabilizer Computer, adding a form of PiD to fight against idle movement on top through the BFSC's access to hovers, hover jets, and turbines\n\nAfter the release of the Better Future Stabilizer, the Steering Regulator had to be pulled from stock due to fatal conflicts within its presence. However, with high hopes for this new BFSC prototype, this has been repurposed for providing one of its core modules to this block. In case the idea was not readily accepted by the BFSC producers to integrate themselves, of course...")
+                    .SetDescription("Right click to configure.\nThis is an extension to the Better Future Stabilizer Computer, adding a form of PiD to fight against idle movement on top through the BFSC's access to hovers, hover jets, and turbines\n\nAfter the release of the Better Future Stabilizer, the Steering Regulator had to be pulled from stock due to fatal conflicts within its presence. However, with high hopes for this new BFSC prototype, this has been repurposed for providing one of its core modules to this block.\n...However they've adapted their own methods, so this is of little use anymore")
                     .SetBlockID(1293839, "12ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Accessories)
@@ -311,6 +310,7 @@ namespace Control_Block
 
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenuPiston>();
+            _holder.AddComponent<OptionMenuSwivel>();
             _holder.AddComponent<LogGUI>();
             _holder.AddComponent<OptionMenuSteeringRegulator>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
@@ -422,9 +422,10 @@ namespace Control_Block
                 new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
             };
             swivel.PartCount = 1;
+            swivel.CanModifySpeed = true;
             swivel.RotateSpeed = 5;
             swivel.MaxSpeed = 15;
-            swivel.LockAxis = false;
+            swivel.LockAngle = false;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
@@ -733,6 +734,125 @@ namespace Control_Block
             else if (module.CurrentCellPush == -1)
             {
                 GUILayout.Label(" The piston is structurally locked!");
+            }
+            else
+            {
+                GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
+            }
+
+            if (GUILayout.Button("Close"))
+            {
+                visible = false;
+                IsSettingKeybind = false;
+                module = null;
+            }
+            GUI.DragWindow();
+        }
+    }
+    class OptionMenuSwivel : MonoBehaviour
+    {
+
+        private int ID = 7782;
+
+        private bool visible = false;
+
+        private ModuleSwivel module;
+
+        private Rect win;
+
+        //string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
+        //string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
+        private void Update()
+        {
+            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
+            {
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 200f, 350f);
+                try
+                {
+                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSwivel>();
+                }
+                catch
+                {
+                    //Console.WriteLine(e);
+                    module = null;
+                }
+                visible = module;
+                IsSettingKeybind = false;
+            }
+        }
+
+        private void OnGUI()
+        {
+            if (!visible || !module) return;
+            try
+            {
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private bool IsSettingKeybind;
+
+        int SetButton = -1;
+
+        private void DoWindow(int id)
+        {
+            if (module == null)
+            {
+                visible = false;
+                return;
+            }
+            if (IsSettingKeybind)
+            {
+                var e = Event.current;
+                if (e.isKey)
+                {
+                    switch (SetButton)
+                    {
+                        case 0: module.trigger1 = e.keyCode; break;
+                        case 1: module.trigger2 = e.keyCode; break;
+                    }
+                    IsSettingKeybind = false;
+                    SetButton = -1;
+                }
+            }
+            GUILayout.Label("Clockwise Key");
+            IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;
+            if (IsSettingKeybind && SetButton == -1) SetButton = 0;
+            GUILayout.Label("Counter-Clockwise Key");
+            IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 1 ? "Press a key for use" : module.trigger2.ToString()) != IsSettingKeybind;
+            if (IsSettingKeybind && SetButton == -1) SetButton = 1;
+            if (!IsSettingKeybind && SetButton != -1) SetButton = -1;
+
+            if (module.CanModifySpeed)
+            {
+                GUILayout.Label("Rotation Speed : " + module.RotateSpeed.ToString());
+                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed, 1, module.MaxSpeed));
+            }
+            float Angle = (Mathf.Repeat(module.CurrentAngle + 180, 360) - 180);
+
+            GUILayout.Label("Angle : " + ((int)Angle).ToString());
+            var newAngle = GUILayout.HorizontalSlider(Angle, -180, 179);
+            if (newAngle != Angle)
+            {
+                module.CurrentAngle = Mathf.Clamp(newAngle, Angle - module.MaxSpeed, Angle + module.MaxSpeed);
+                module.SetDirty();
+            }
+
+            module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
+
+            GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
+
+            if (module.CurrentCellPush > module.MaximumBlockPush)
+            {
+                GUILayout.Label(" The swivel is overburdened! (>" + module.MaximumBlockPush.ToString() + ")");
+            }
+            else if (module.CurrentCellPush == -1)
+            {
+                GUILayout.Label(" The swivel is structurally locked!");
             }
             else
             {
