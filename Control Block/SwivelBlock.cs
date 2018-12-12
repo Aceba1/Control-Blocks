@@ -7,12 +7,27 @@ using System.Reflection;
 
 namespace Control_Block
 {
+    [RequireComponent(typeof(TargetAimer))]
     class ModuleSwivel : ModuleBlockMover
     {
+        public TargetAimer aimer;
+        public GimbalAimer gimbal;
+
         public Vector3 localEffectorPos = Vector3.zero;
         public float EvaluatedBlockRotCurve = 0f;
         public bool LockAngle = false;
-        public float MinAngle = -45f, Range = 90f;
+        public float AngleCenter = 0f, AngleRange = 45f;
+        public float Direction = 0f;
+        public Mode mode = Mode.Positional;
+        public enum Mode : byte
+        {
+            Positional,
+            Directional,
+            Speed,
+            OnOff,
+            Aim,
+            Cycle
+        }
         public float RotateSpeed = 1f;
         public float MaxSpeed = 15f;
         public bool CanModifySpeed = false;
@@ -75,15 +90,83 @@ namespace Control_Block
             {
                 return;
             }
-            if (VInput && (Dirty || CanMove))
+            if (Dirty || CanMove)
             {
-                if (Input.GetKey(trigger1))
+                switch (mode)
                 {
-                    CurrentAngle += RotateSpeed;
+                    case Mode.Positional:
+                        if (VInput)
+                        {
+                            if (Input.GetKey(trigger1))
+                            {
+                                CurrentAngle += RotateSpeed;
+                            }
+                            if (Input.GetKey(trigger2))
+                            {
+                                CurrentAngle -= RotateSpeed;
+                            }
+                        }
+                        break;
+                    case Mode.Aim:
+                        aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
+                        CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                        break;
+                    case Mode.Directional:
+                        if (VInput)
+                        {
+                            if (Input.GetKey(trigger1))
+                            {
+                                Direction = 1f;
+                            }
+                            if (Input.GetKey(trigger2))
+                            {
+                                Direction = -1f;
+                            }
+                        }
+                        CurrentAngle += Direction * RotateSpeed;
+                        break;
+                    case Mode.Speed:
+                        if (VInput)
+                        {
+                            if (Input.GetKey(trigger1))
+                            {
+                                Direction += 0.025f;
+                            }
+                            else if (Input.GetKey(trigger2))
+                            {
+                                Direction -= 0.025f;
+                            }
+                            Direction = Mathf.Clamp(Direction, -1f, 1f);
+                        }
+                        CurrentAngle += Direction * RotateSpeed;
+                        break;
+                    case Mode.OnOff:
+                        if (VInput)
+                        {
+                            if (Input.GetKeyDown(trigger1))
+                            {
+                                Direction += 1f;
+                            }
+                            else if (Input.GetKeyDown(trigger2))
+                            {
+                                Direction -= 1f;
+                            }
+                            Direction = Mathf.Clamp(Direction, -1f, 1f);
+                        }
+                        CurrentAngle += Direction * RotateSpeed;
+                        break;
                 }
-                if (Input.GetKey(trigger2))
+            }
+            if (LockAngle)
+            {
+                float Diff = (CurrentAngle - AngleCenter + 900) % 360 - 180;
+                if (Diff < -AngleRange)
                 {
-                    CurrentAngle -= RotateSpeed;
+                    CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
+                }
+                else if (Diff > AngleRange)
+                {
+                    CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
                 }
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
@@ -95,7 +178,7 @@ namespace Control_Block
                 if (Class1.PistonHeart == Heart)
                 {
                     Move();
-
+                    
                     if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass*4f)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
@@ -175,6 +258,13 @@ namespace Control_Block
                     block.transform.localRotation = block.cachedLocalRotation;
                 }
             }
+        }
+
+        private void OnPool()
+        {
+            aimer = GetComponent<TargetAimer>();
+            aimer.Init(block, .75f, null);
+            gimbal = GetComponentInChildren<GimbalAimer>();
         }
 
         private void OnSpawn()

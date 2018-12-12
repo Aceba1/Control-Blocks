@@ -249,7 +249,9 @@ namespace Control_Block
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(1.9f, .95f, 1.9f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_base);
-                AddMeshToBlockMover(mat, new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_head);
+                var gimbal = AddMeshToBlockMover(mat, new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_head).AddComponent<GimbalAimer>();
+                gimbal.aimClampMaxPercent = 360;
+                gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
                 ControlBlock.SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.All)
                     .AddComponent<ModuleSwivel>(SetMediumSwivel)
@@ -323,7 +325,7 @@ namespace Control_Block
             PistonHeart = !PistonHeart;
         }
 
-        internal static void AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
+        internal static GameObject AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
         {
             GameObject sub = new GameObject("BlockMover Part");
             sub.layer = Globals.inst.layerTank;
@@ -336,8 +338,9 @@ namespace Control_Block
             sub.transform.SetParent(par);
             sub.transform.localPosition = Vector3.zero;
             sub.transform.localRotation = Quaternion.identity;
+            return sub;
         }
-        internal static void AddMeshToBlockMover(Material mat, Vector3 objPos, Transform par, string Mesh)
+        internal static GameObject AddMeshToBlockMover(Material mat, Vector3 objPos, Transform par, string Mesh)
         {
             GameObject sub = new GameObject("BlockMover Part")
             {
@@ -348,6 +351,7 @@ namespace Control_Block
             sub.transform.SetParent(par);
             sub.transform.localPosition = objPos;
             sub.transform.localRotation = Quaternion.identity;
+            return sub;
         }
 
         internal static void SetGSOPiston(ModulePiston piston)
@@ -660,7 +664,7 @@ namespace Control_Block
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 200f, 350f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 250f, 350f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModulePiston>();
@@ -690,8 +694,10 @@ namespace Control_Block
 
         private bool IsSettingKeybind;
 
+        Vector2 Scroll = Vector2.zero;
         private void DoWindow(int id)
         {
+            Scroll = GUILayout.BeginScrollView(Scroll);
             if (module == null)
             {
                 visible = false;
@@ -747,6 +753,7 @@ namespace Control_Block
                 module = null;
             }
             GUI.DragWindow();
+            GUILayout.EndScrollView();
         }
     }
     class OptionMenuSwivel : MonoBehaviour
@@ -760,13 +767,14 @@ namespace Control_Block
 
         private Rect win;
 
+        string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target" };
         //string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
         //string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 200f, 350f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 300f, 400f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSwivel>();
@@ -798,8 +806,10 @@ namespace Control_Block
 
         int SetButton = -1;
 
+        Vector2 Scroll = Vector2.zero;
         private void DoWindow(int id)
         {
+            Scroll = GUILayout.BeginScrollView(Scroll);
             if (module == null)
             {
                 visible = false;
@@ -822,15 +832,23 @@ namespace Control_Block
             GUILayout.Label("Clockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;
             if (IsSettingKeybind && SetButton == -1) SetButton = 0;
-            GUILayout.Label("Counter-Clockwise Key");
+            GUILayout.Label("CounterClockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 1 ? "Press a key for use" : module.trigger2.ToString()) != IsSettingKeybind;
             if (IsSettingKeybind && SetButton == -1) SetButton = 1;
             if (!IsSettingKeybind && SetButton != -1) SetButton = -1;
 
+            module.LockAngle = GUILayout.Toggle(module.LockAngle,"Restrict Angle");
+            GUILayout.Label("Center of Limit: " + (((module.AngleCenter + 900) % 360) - 180).ToString());
+            module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(module.AngleCenter, -180, 179) + 360) % 360);
+            GUILayout.Label("Range of Limit: " + module.AngleRange.ToString());
+            module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange,0, 179-module.RotateSpeed) % 360);
+
+            module.mode = (ModuleSwivel.Mode)GUILayout.SelectionGrid((int)module.mode, modeOptions, 2);
+
             if (module.CanModifySpeed)
             {
                 GUILayout.Label("Rotation Speed : " + module.RotateSpeed.ToString());
-                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed, 1, module.MaxSpeed));
+                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed * 2, 1, module.MaxSpeed * 2) * .5f);
             }
             float Angle = (Mathf.Repeat(module.CurrentAngle + 180, 360) - 180);
 
@@ -838,13 +856,12 @@ namespace Control_Block
             var newAngle = GUILayout.HorizontalSlider(Angle, -180, 179);
             if (newAngle != Angle)
             {
-                module.CurrentAngle = Mathf.Clamp(newAngle, Angle - module.MaxSpeed, Angle + module.MaxSpeed);
-                module.SetDirty();
+                module.CurrentAngle = Mathf.Clamp(newAngle, Angle - module.MaxSpeed, Angle + module.MaxSpeed) - 360;
             }
 
             module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
 
-            GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
+            GUILayout.Label("Swivel : " + module.block.cachedLocalPosition.ToString());
 
             if (module.CurrentCellPush > module.MaximumBlockPush)
             {
@@ -866,6 +883,7 @@ namespace Control_Block
                 module = null;
             }
             GUI.DragWindow();
+            GUILayout.EndScrollView();
         }
     }
     class OptionMenuSteeringRegulator : MonoBehaviour
