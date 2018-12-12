@@ -306,7 +306,12 @@ namespace Control_Block
                     Input2 = trigger2,
                     Input1 = trigger1,
                     Local = LocalControl,
-                    Speed = RotateSpeed
+                    Speed = RotateSpeed,
+                    Direction = Direction,
+                    minRestrict = AngleCenter,
+                    mode = mode,
+                    rangeRestrict = AngleRange,
+                    Restrict = LockAngle
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -324,6 +329,10 @@ namespace Control_Block
                     trigger2 = serialData2.Input2;
                     LocalControl = serialData2.Local;
                     RotateSpeed = (int)Mathf.Clamp(serialData2.Speed, 0.5f, MaxSpeed);
+                    Direction = serialData2.Direction;
+                    LockAngle = serialData2.Restrict;
+                    AngleCenter = serialData2.minRestrict;
+                    AngleRange = serialData2.rangeRestrict;
                     Dirty = true;
                 }
             }
@@ -337,6 +346,11 @@ namespace Control_Block
             public KeyCode Input2;
             public bool Local;
             public float Speed;
+            public Mode mode;
+            public bool Restrict;
+            public float rangeRestrict;
+            public float Direction;
+            public float minRestrict;
         }
     }
 }
