@@ -299,6 +299,10 @@ namespace Control_Block
 
         private void OnSpawn()
         {
+            EvaluatedBlockRotCurve = 0f;
+            LockAngle = false;
+            AngleCenter = 0f; AngleRange = 45f;
+            Direction = 0f;
             CurrentAngle = 0f;
             Move();
         }
