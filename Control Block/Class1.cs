@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using Harmony;
 using Nuterra.BlockInjector;
-using Harmony;
+using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace Control_Block
 {
@@ -13,10 +10,13 @@ namespace Control_Block
     {
         public static void CreateBlocks()
         {
-                var harmony = HarmonyInstance.Create("aceba1.controlblocks");
-                harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
+            harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+
             #region Blocks
+
             #region BF FPV Cab
+
             {
                 var cockpit = new BlockPrefabBuilder("GSOCockpit(111)", false)
                     .SetBlockID(9003, "aba82861496cfa13")
@@ -57,13 +57,13 @@ namespace Control_Block
                     {
                         GameObject.DestroyImmediate(mf.GetComponent<MeshRenderer>());
                         GameObject.DestroyImmediate(mf);
-                    }                
+                    }
                 }
 
                 var view = new GameObject("FirstPersonAnchor");
                 view.AddComponent<ModuleFirstPerson>();
                 view.transform.parent = cockpit.TankBlock.transform;
-                view.transform.localPosition = new Vector3(0f,0.175f,-0.1f);
+                view.transform.localPosition = new Vector3(0f, 0.175f, -0.1f);
                 view.transform.localRotation = Quaternion.identity;
 
                 CustomRecipe.RegisterRecipe(
@@ -78,9 +78,13 @@ namespace Control_Block
 
                 cockpit.RegisterLater();
             }
-            #endregion
+
+            #endregion BF FPV Cab
+
             #region Pistons
+
             #region GSO Piston
+
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("GSO Piston")
@@ -123,8 +127,11 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293838)
                     });
             }
-            #endregion
+
+            #endregion GSO Piston
+
             #region GeoCorp Piston
+
             {
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("GeoCorp Large Piston")
@@ -164,7 +171,7 @@ namespace Control_Block
                     new Vector3(1f,1.5f,0f),
                     new Vector3(0f,1.5f,1f),
                     new Vector3(1f,1.5f,1f)
-                })  .AddComponent<ModulePiston>(SetGeoCorpPiston)
+                }).AddComponent<ModulePiston>(SetGeoCorpPiston)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -180,8 +187,11 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(129380)
                     }, RecipeTable.Recipe.OutputType.Items, "gcfab");
             }
-            #endregion
+
+            #endregion GeoCorp Piston
+
             #region Hawkeye Piston
+
             {
                 var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
                     .SetName("Hawkeye Telescopic Piston")
@@ -228,10 +238,15 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(129380)
                     }, RecipeTable.Recipe.OutputType.Items, "hefab");
             }
-            #endregion
-            #endregion
+
+            #endregion Hawkeye Piston
+
+            #endregion Pistons
+
             #region Swivels
+
             #region GSO Medium Swivel
+
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Medium Embedded Swivel")
@@ -253,7 +268,7 @@ namespace Control_Block
                 gimbal.aimClampMaxPercent = 360;
                 gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
-                ControlBlock.SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.All)
+                ControlBlock.SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.All)
                     .AddComponent<ModuleSwivel>(SetMediumSwivel)
                     .RegisterLater();
 
@@ -269,9 +284,13 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293838)
                     });
             }
-            #endregion
-            #endregion
+
+            #endregion GSO Medium Swivel
+
+            #endregion Swivels
+
             #region Steering Regulator
+
             {
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Stabilizer PiD S.Regulator Dongle")
@@ -305,10 +324,10 @@ namespace Control_Block
                     new CustomRecipe.RecipeOutput(1293839)
                     });
             }
-            #endregion
-            #region MT Magnets
-            #endregion
-            #endregion
+
+            #endregion Steering Regulator
+
+            #endregion Blocks
 
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenuPiston>();
@@ -320,6 +339,7 @@ namespace Control_Block
         }
 
         internal static bool PistonHeart = false;
+
         internal static void WorldShift()
         {
             PistonHeart = !PistonHeart;
@@ -340,6 +360,7 @@ namespace Control_Block
             sub.transform.localRotation = Quaternion.identity;
             return sub;
         }
+
         internal static GameObject AddMeshToBlockMover(Material mat, Vector3 objPos, Transform par, string Mesh)
         {
             GameObject sub = new GameObject("BlockMover Part")
@@ -459,15 +480,16 @@ namespace Control_Block
 
     internal class LogGUI : MonoBehaviour
     {
-        private int ID = 45925;
+        private readonly int ID = 45925;
 
         private bool visible = false;
 
         private TankBlock module;
 
-        string Log = "";
+        private string Log = "";
 
         private Rect win;
+
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
@@ -490,7 +512,11 @@ namespace Control_Block
 
         private void OnGUI()
         {
-            if (!visible || !module) return;
+            if (!visible || !module)
+            {
+                return;
+            }
+
             try
             {
                 win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Dump");
@@ -501,7 +527,7 @@ namespace Control_Block
             }
         }
 
-        Vector2 scroll = Vector2.zero;
+        private Vector2 scroll = Vector2.zero;
 
         private void DoWindow(int id)
         {
@@ -519,11 +545,12 @@ namespace Control_Block
 
     internal class Patches
     {
-        static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
+        private static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
             F_mTSR, F_mASS, F_mE, F_mPB,
             B_mE, B_mASS, B_mFSC, B_mPB;
+
         static Patches()
-            {
+        {
             try
             {
                 BindingFlags b = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
@@ -549,11 +576,11 @@ namespace Control_Block
                     B_mPB = T.GetField("m_ParentBlock", b);
                 }
             }
-            catch(Exception E)
+            catch
             {
+            }
+        }
 
-            }
-            }
         [HarmonyPatch(typeof(BlockManager), "AddBlock")]
         private static class BlockManagerFix
         {
@@ -606,7 +633,7 @@ namespace Control_Block
                         Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
                         float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
-                        if (Mathf.Abs(num) <  0.075f)
+                        if (Mathf.Abs(num) < 0.075f)
                         {
                             num = 0f;
                         }
@@ -647,19 +674,18 @@ namespace Control_Block
         }
     }
 
-    class OptionMenuPiston : MonoBehaviour
+    internal class OptionMenuPiston : MonoBehaviour
     {
-        
-        private int ID = 7787;
+        private readonly int ID = 7787;
 
         private bool visible = false;
 
         private ModulePiston module;
 
         private Rect win;
+        private readonly string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
+        private readonly string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
 
-        string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
-        string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
@@ -681,7 +707,11 @@ namespace Control_Block
 
         private void OnGUI()
         {
-            if (!visible || !module) return;
+            if (!visible || !module)
+            {
+                return;
+            }
+
             try
             {
                 win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
@@ -694,7 +724,8 @@ namespace Control_Block
 
         private bool IsSettingKeybind;
 
-        Vector2 Scroll = Vector2.zero;
+        private Vector2 Scroll = Vector2.zero;
+
         private void DoWindow(int id)
         {
             Scroll = GUILayout.BeginScrollView(Scroll);
@@ -735,7 +766,7 @@ namespace Control_Block
 
             if (module.CurrentCellPush > module.MaximumBlockPush)
             {
-                GUILayout.Label(" The piston is overburdened! (>"+module.MaximumBlockPush.ToString()+")");
+                GUILayout.Label(" The piston is overburdened! (>" + module.MaximumBlockPush.ToString() + ")");
             }
             else if (module.CurrentCellPush == -1)
             {
@@ -756,18 +787,18 @@ namespace Control_Block
             GUILayout.EndScrollView();
         }
     }
-    class OptionMenuSwivel : MonoBehaviour
-    {
 
-        private int ID = 7782;
+    internal class OptionMenuSwivel : MonoBehaviour
+    {
+        private readonly int ID = 7782;
 
         private bool visible = false;
 
         private ModuleSwivel module;
 
         private Rect win;
+        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target", "Steering" };
 
-        string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target", "Steering" };
         //string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
         //string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
         private void Update()
@@ -791,7 +822,11 @@ namespace Control_Block
 
         private void OnGUI()
         {
-            if (!visible || !module) return;
+            if (!visible || !module)
+            {
+                return;
+            }
+
             try
             {
                 win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
@@ -804,9 +839,10 @@ namespace Control_Block
 
         private bool IsSettingKeybind;
 
-        int SetButton = -1;
+        private int SetButton = -1;
 
-        Vector2 Scroll = Vector2.zero;
+        private Vector2 Scroll = Vector2.zero;
+
         private void DoWindow(int id)
         {
             Scroll = GUILayout.BeginScrollView(Scroll);
@@ -831,17 +867,28 @@ namespace Control_Block
             }
             GUILayout.Label("Clockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;
-            if (IsSettingKeybind && SetButton == -1) SetButton = 0;
+            if (IsSettingKeybind && SetButton == -1)
+            {
+                SetButton = 0;
+            }
+
             GUILayout.Label("CounterClockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 1 ? "Press a key for use" : module.trigger2.ToString()) != IsSettingKeybind;
-            if (IsSettingKeybind && SetButton == -1) SetButton = 1;
-            if (!IsSettingKeybind && SetButton != -1) SetButton = -1;
+            if (IsSettingKeybind && SetButton == -1)
+            {
+                SetButton = 1;
+            }
 
-            module.LockAngle = GUILayout.Toggle(module.LockAngle,"Restrict Angle");
+            if (!IsSettingKeybind && SetButton != -1)
+            {
+                SetButton = -1;
+            }
+
+            module.LockAngle = GUILayout.Toggle(module.LockAngle, "Restrict Angle");
             GUILayout.Label("Center of Limit: " + (Mathf.Repeat(module.AngleCenter + 180, 360) - 180).ToString());
             module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(module.AngleCenter, -180, 179) + 360) % 360);
             GUILayout.Label("Range of Limit: " + module.AngleRange.ToString());
-            module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange,0, 179-module.RotateSpeed) % 360);
+            module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange, 0, 179 - module.RotateSpeed) % 360);
 
             module.mode = (ModuleSwivel.Mode)GUILayout.SelectionGrid((int)module.mode, modeOptions, 2);
 
@@ -886,16 +933,17 @@ namespace Control_Block
             GUILayout.EndScrollView();
         }
     }
-    class OptionMenuSteeringRegulator : MonoBehaviour
-    {
 
-        private int ID = 7788;
+    internal class OptionMenuSteeringRegulator : MonoBehaviour
+    {
+        private readonly int ID = 7788;
 
         private bool visible = false;
 
         private ModuleSteeringRegulator module;
 
         private Rect win;
+
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
@@ -916,7 +964,11 @@ namespace Control_Block
 
         private void OnGUI()
         {
-            if (!visible || !module) return;
+            if (!visible || !module)
+            {
+                return;
+            }
+
             try
             {
                 win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Stabiliser PiD");

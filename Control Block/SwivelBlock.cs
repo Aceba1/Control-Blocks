@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using System.Reflection;
 
 namespace Control_Block
 {
     [RequireComponent(typeof(TargetAimer))]
-    class ModuleSwivel : ModuleBlockMover
+    internal class ModuleSwivel : ModuleBlockMover
     {
         public TargetAimer aimer;
         public GimbalAimer gimbal;
@@ -19,6 +15,7 @@ namespace Control_Block
         public float AngleCenter = 0f, AngleRange = 45f;
         public float Direction = 0f;
         public Mode mode = Mode.Positional;
+
         public enum Mode : byte
         {
             Positional,
@@ -28,6 +25,7 @@ namespace Control_Block
             Aim,
             Turning
         }
+
         public float RotateSpeed = 1f;
         public float MaxSpeed = 15f;
         public bool CanModifySpeed = false;
@@ -37,7 +35,7 @@ namespace Control_Block
         public bool LocalControl = true;
         public KeyCode trigger1 = KeyCode.RightArrow, trigger2 = KeyCode.LeftArrow;
 
-        bool ForceMove = false;
+        private bool ForceMove = false;
 
         protected Tank tankcache;
 
@@ -52,7 +50,7 @@ namespace Control_Block
             base.BlockRemoved(block, tank);
         }
 
-        void Update()
+        private void Update()
         {
             if (ForceMove)
             {
@@ -60,8 +58,9 @@ namespace Control_Block
             }
         }
 
-        bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
-        void FixedUpdate()
+        private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
+
+        private void FixedUpdate()
         {
             var oldAngle = CurrentAngle;
             try
@@ -107,10 +106,18 @@ namespace Control_Block
                             }
                         }
                         break;
+
                     case Mode.Aim:
+                        if (tankcache.beam.IsActive)
+                        {
+                            break;
+                        }
+
                         aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
                         CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                        CurrentAngle = Mathf.Clamp(CurrentAngle, oldAngle - RotateSpeed + 360, oldAngle + RotateSpeed + 360) - 360;
                         break;
+
                     case Mode.Directional:
                         if (VInput)
                         {
@@ -125,6 +132,7 @@ namespace Control_Block
                         }
                         CurrentAngle += Direction * RotateSpeed;
                         break;
+
                     case Mode.Speed:
                         if (VInput)
                         {
@@ -140,6 +148,7 @@ namespace Control_Block
                         }
                         CurrentAngle += Direction * RotateSpeed;
                         break;
+
                     case Mode.OnOff:
                         if (VInput)
                         {
@@ -155,6 +164,7 @@ namespace Control_Block
                         }
                         CurrentAngle += Direction * RotateSpeed;
                         break;
+
                     case Mode.Turning:
                         if (VInput)
                         {
@@ -168,7 +178,7 @@ namespace Control_Block
                             }
                             else
                             {
-                                Direction = -Mathf.Repeat(CurrentAngle - AngleCenter+180,360)-180;
+                                Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
                             }
                             Direction = Mathf.Clamp(Direction, -1f, 1f);
                         }
@@ -178,15 +188,7 @@ namespace Control_Block
             }
             if (LockAngle)
             {
-                float Diff = (CurrentAngle - AngleCenter + 900) % 360 - 180;
-                if (Diff < -AngleRange)
-                {
-                    CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
-                }
-                else if (Diff > AngleRange)
-                {
-                    CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
-                }
+                CurrentAngle = Mathf.Clamp(CurrentAngle, AngleCenter - AngleRange + 360, AngleCenter + AngleRange + 360) - 360;
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
             if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
@@ -197,20 +199,24 @@ namespace Control_Block
                 if (Class1.PistonHeart == Heart)
                 {
                     Move();
-                    
-                    if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass*4f)
+
+                    if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
-                        var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen+180, 360)-180) * th;
+                        var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
                         tankcache.transform.RotateAround(block.transform.position + (block.transform.rotation * localEffectorPos), block.transform.rotation * Vector3.up, -thing);
                     }
                 }
-                else Heart = Class1.PistonHeart;
+                else
+                {
+                    Heart = Class1.PistonHeart;
+                }
             }
         }
 
-        MeshRenderer[] _mr;
-        MeshRenderer[] mr
+        private MeshRenderer[] _mr;
+
+        private MeshRenderer[] mr
         {
             get
             {
@@ -224,7 +230,10 @@ namespace Control_Block
 
         public void SetColor(Color color)
         {
-            foreach (var t in mr) t.material.color = color;
+            foreach (var t in mr)
+            {
+                t.material.color = color;
+            }
         }
 
         private void Move()
@@ -237,7 +246,9 @@ namespace Control_Block
                 if (parts.Length != 0)
                 {
                     for (int I = 0; I < parts.Length; I++)
+                    {
                         parts[I].localRotation = Quaternion.Euler(0f, rotCurves[I].Evaluate(CurrentAngle), 0f);
+                    }
                 }
                 var ofs = CurrentAngle;
                 var axis = (block.transform.rotation * Vector3.up);
@@ -336,22 +347,22 @@ namespace Control_Block
             }
             else
             {
-                SerialData serialData2 = SerialData<ModuleSwivel.SerialData>.Retrieve(blockSpec.saveState);
-                if (serialData2 != null)
+                SerialData sd = SerialData<ModuleSwivel.SerialData>.Retrieve(blockSpec.saveState);
+                if (sd != null)
                 {
-                    CurrentAngle = serialData2.Angle;
+                    CurrentAngle = sd.Angle;
                     if (CurrentAngle != 0f)
                     {
                         ForceMove = true;
                     }
-                    trigger1 = serialData2.Input1;
-                    trigger2 = serialData2.Input2;
-                    LocalControl = serialData2.Local;
-                    RotateSpeed = (int)Mathf.Clamp(serialData2.Speed, 0.5f, MaxSpeed);
-                    Direction = serialData2.Direction;
-                    LockAngle = serialData2.Restrict;
-                    AngleCenter = serialData2.minRestrict;
-                    AngleRange = serialData2.rangeRestrict;
+                    trigger1 = sd.Input1;
+                    trigger2 = sd.Input2;
+                    LocalControl = sd.Local;
+                    RotateSpeed = (int)Mathf.Clamp(sd.Speed, 0.5f, MaxSpeed);
+                    Direction = sd.Direction;
+                    LockAngle = sd.Restrict;
+                    AngleCenter = sd.minRestrict;
+                    AngleRange = sd.rangeRestrict;
                     Dirty = true;
                 }
             }
