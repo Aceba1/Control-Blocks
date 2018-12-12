@@ -420,7 +420,7 @@ namespace Control_Block
 
         internal static void SetMediumSwivel(ModuleSwivel swivel)
         {
-            swivel.MaximumBlockPush = 64;
+            swivel.MaximumBlockPush = 128;
             swivel.rotCurves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
@@ -767,7 +767,7 @@ namespace Control_Block
 
         private Rect win;
 
-        string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target" };
+        string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target", "Steering" };
         //string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
         //string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
         private void Update()
@@ -838,7 +838,7 @@ namespace Control_Block
             if (!IsSettingKeybind && SetButton != -1) SetButton = -1;
 
             module.LockAngle = GUILayout.Toggle(module.LockAngle,"Restrict Angle");
-            GUILayout.Label("Center of Limit: " + (((module.AngleCenter + 900) % 360) - 180).ToString());
+            GUILayout.Label("Center of Limit: " + (Mathf.Repeat(module.AngleCenter + 180, 360) - 180).ToString());
             module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(module.AngleCenter, -180, 179) + 360) % 360);
             GUILayout.Label("Range of Limit: " + module.AngleRange.ToString());
             module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange,0, 179-module.RotateSpeed) % 360);

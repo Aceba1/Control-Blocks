@@ -26,7 +26,7 @@ namespace Control_Block
             Speed,
             OnOff,
             Aim,
-            Cycle
+            Turning
         }
         public float RotateSpeed = 1f;
         public float MaxSpeed = 15f;
@@ -150,6 +150,25 @@ namespace Control_Block
                             else if (Input.GetKeyDown(trigger2))
                             {
                                 Direction -= 1f;
+                            }
+                            Direction = Mathf.Clamp(Direction, -1f, 1f);
+                        }
+                        CurrentAngle += Direction * RotateSpeed;
+                        break;
+                    case Mode.Turning:
+                        if (VInput)
+                        {
+                            if (Input.GetKey(trigger1))
+                            {
+                                Direction = +1;
+                            }
+                            else if (Input.GetKey(trigger2))
+                            {
+                                Direction = -1;
+                            }
+                            else
+                            {
+                                Direction = Mathf.Repeat(CurrentAngle - AngleCenter+180,360)-180;
                             }
                             Direction = Mathf.Clamp(Direction, -1f, 1f);
                         }
