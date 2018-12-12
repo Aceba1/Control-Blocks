@@ -332,12 +332,18 @@
 @setlocal enableextensions enabledelayedexpansion
 
 set modpath="C:\Users\arnceb20\Desktop\Steam Install\Steam Installation Folder\steamapps\common\TerraTech Beta\QMods\Control Block"
-REM set modpath="C:\Program Files (x86)\Steam\steamapps\common\TerraTech Beta\QMods\Control Block"
+set modpath2="C:\Program Files (x86)\Steam\steamapps\common\TerraTech Beta\QMods\Control Block"
 
 if exist !modpath! (
 echo Copying to game
 set e=$(TargetDir)&gt;nul
 xcopy /S /Y /R "!e:~0,-1!" !modpath!
+)
+
+if exist !modpath2! (
+echo Copying to game
+set e=$(TargetDir)&gt;nul
+xcopy /S /Y /R "!e:~0,-1!" !modpath2!
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>
