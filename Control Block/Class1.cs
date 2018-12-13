@@ -350,7 +350,8 @@ namespace Control_Block
                 gimbal.aimClampMaxPercent = 360;
                 gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
-                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero },
+                    new Vector3[] { Vector3.down * .5f, Vector3.up * .5f })
                     .AddComponent<ModuleSwivel>(SetSmallSwivel)
                     .RegisterLater();
 
