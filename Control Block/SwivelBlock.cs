@@ -90,100 +90,96 @@ namespace Control_Block
             }
             if (Dirty || CanMove)
             {
-                switch (mode)
-                {
-                    case Mode.Positional:
-                        if (VInput)
-                        {
-                            if (Input.GetKey(trigger1))
+                if (!tankcache.beam.IsActive)
+                    switch (mode)
+                    {
+                        case Mode.Positional:
+                            if (VInput)
                             {
-                                CurrentAngle += RotateSpeed;
+                                if (Input.GetKey(trigger1))
+                                {
+                                    CurrentAngle += RotateSpeed;
+                                }
+                                if (Input.GetKey(trigger2))
+                                {
+                                    CurrentAngle -= RotateSpeed;
+                                }
                             }
-                            if (Input.GetKey(trigger2))
-                            {
-                                CurrentAngle -= RotateSpeed;
-                            }
-                        }
-                        break;
-
-                    case Mode.Aim:
-                        if (tankcache.beam.IsActive)
-                        {
                             break;
-                        }
 
-                        aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
-                        CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                        break;
+                        case Mode.Aim:
+                            aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
+                            CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                            break;
 
-                    case Mode.Directional:
-                        if (VInput)
-                        {
-                            if (Input.GetKey(trigger1))
+                        case Mode.Directional:
+                            if (VInput)
                             {
-                                Direction = 1f;
+                                if (Input.GetKey(trigger1))
+                                {
+                                    Direction = 1f;
+                                }
+                                if (Input.GetKey(trigger2))
+                                {
+                                    Direction = -1f;
+                                }
                             }
-                            if (Input.GetKey(trigger2))
-                            {
-                                Direction = -1f;
-                            }
-                        }
-                        CurrentAngle += Direction * RotateSpeed;
-                        break;
+                            CurrentAngle += Direction * RotateSpeed;
+                            break;
 
-                    case Mode.Speed:
-                        if (VInput)
-                        {
-                            if (Input.GetKey(trigger1))
+                        case Mode.Speed:
+                            if (VInput)
                             {
-                                Direction += 0.025f;
+                                if (Input.GetKey(trigger1))
+                                {
+                                    Direction += 0.025f;
+                                }
+                                else if (Input.GetKey(trigger2))
+                                {
+                                    Direction -= 0.025f;
+                                }
+                                Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
-                            else if (Input.GetKey(trigger2))
-                            {
-                                Direction -= 0.025f;
-                            }
-                            Direction = Mathf.Clamp(Direction, -1f, 1f);
-                        }
-                        CurrentAngle += Direction * RotateSpeed;
-                        break;
+                            CurrentAngle += Direction * RotateSpeed;
+                            break;
 
-                    case Mode.OnOff:
-                        if (VInput)
-                        {
-                            if (Input.GetKeyDown(trigger1))
+                        case Mode.OnOff:
+                            if (VInput)
                             {
-                                Direction += 1f;
+                                if (Input.GetKeyDown(trigger1))
+                                {
+                                    Direction += 1f;
+                                }
+                                else if (Input.GetKeyDown(trigger2))
+                                {
+                                    Direction -= 1f;
+                                }
+                                Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
-                            else if (Input.GetKeyDown(trigger2))
-                            {
-                                Direction -= 1f;
-                            }
-                            Direction = Mathf.Clamp(Direction, -1f, 1f);
-                        }
-                        CurrentAngle += Direction * RotateSpeed;
-                        break;
+                            CurrentAngle += Direction * RotateSpeed;
+                            break;
 
-                    case Mode.Turning:
-                        if (VInput)
-                        {
-                            Direction = +1;
-                            if (Input.GetKey(trigger1))
+                        case Mode.Turning:
+                            if (VInput)
                             {
                                 Direction = +1;
+                                if (Input.GetKey(trigger1))
+                                {
+                                    Direction = +1;
+                                }
+                                else if (Input.GetKey(trigger2))
+                                {
+                                    Direction = -1;
+                                }
+                                else
+                                {
+                                    Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
+                                }
+                                Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
-                            else if (Input.GetKey(trigger2))
-                            {
-                                Direction = -1;
-                            }
-                            else
-                            {
-                                Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
-                            }
-                            Direction = Mathf.Clamp(Direction, -1f, 1f);
-                        }
-                        CurrentAngle += Direction * RotateSpeed;
-                        break;
-                }
+                            CurrentAngle += Direction * RotateSpeed;
+                            break;
+                    }
             }
             if (LockAngle)
             {
