@@ -797,10 +797,8 @@ namespace Control_Block
         private ModuleSwivel module;
 
         private Rect win;
-        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target", "Steering" };
+        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering" };
 
-        //string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
-        //string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
@@ -885,8 +883,9 @@ namespace Control_Block
             }
 
             module.LockAngle = GUILayout.Toggle(module.LockAngle, "Restrict Angle");
-            GUILayout.Label("Center of Limit: " + (Mathf.Repeat(module.AngleCenter + 180, 360) - 180).ToString());
-            module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(module.AngleCenter, -180, 179) + 360) % 360);
+            float Angle = (Mathf.Repeat(module.AngleCenter + 180, 360) - 180);
+            GUILayout.Label("Center of Limit: " + Angle.ToString());
+            module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(Angle, -180, 179) + 360) % 360);
             GUILayout.Label("Range of Limit: " + module.AngleRange.ToString());
             module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange, 0, 179 - module.RotateSpeed) % 360);
 
@@ -895,9 +894,9 @@ namespace Control_Block
             if (module.CanModifySpeed)
             {
                 GUILayout.Label("Rotation Speed : " + module.RotateSpeed.ToString());
-                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed * 2, 1, module.MaxSpeed * 2) * .5f);
+                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed * 2, 1, module.MaxSpeed * 2)) * .5f;
             }
-            float Angle = (Mathf.Repeat(module.CurrentAngle + 180, 360) - 180);
+            Angle = (Mathf.Repeat(module.CurrentAngle + 180, 360) - 180);
 
             GUILayout.Label("Angle : " + ((int)Angle).ToString());
             var newAngle = GUILayout.HorizontalSlider(Angle, -180, 179);
