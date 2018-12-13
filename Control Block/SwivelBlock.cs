@@ -206,12 +206,18 @@ namespace Control_Block
                 if (Class1.PistonHeart == Heart)
                 {
                     Move();
-
-                    if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
+                    if (CanMove)
                     {
-                        float th = (MassPushing / block.tank.rbody.mass);
-                        var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
-                        tankcache.transform.RotateAround(parts[parts.Length-1].position, block.transform.rotation * Vector3.up, -thing);
+                        if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
+                        {
+                            float th = (MassPushing / block.tank.rbody.mass);
+                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
+                            tankcache.transform.RotateAround(parts[parts.Length - 1].position, block.transform.rotation * Vector3.up, -thing);
+                        }
+                    }
+                    else
+                    {
+                        CurrentAngle = oldAngle;
                     }
                 }
                 else
