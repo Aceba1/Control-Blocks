@@ -333,7 +333,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Small Embedded Swivel")
                     .SetDescription("A smaller swivel, quite rushed, but operational hopefully.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393836, "f74931ef3e14ba8e")
+                    .SetBlockID(1393836, "f84931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
