@@ -4,6 +4,7 @@ using UnityEngine;
 
 abstract class ModuleBlockMover : Module
 {
+    public bool BreakOnCab = false;
     public Transform LoadCOM;
     public Transform holder;
     public int PartCount = 1;
@@ -250,6 +251,12 @@ abstract class ModuleBlockMover : Module
                             Print("Skipping self");
                             continue;
                         }
+                    }
+                    if (BreakOnCab && cb.BlockCategory == BlockCategories.Control)
+                    {
+                        Print("Encountered cab! Escaping blockgrab as false");
+                        CurrentCellPush = -2;
+                        return false;
                     }
                     if (!GrabbedBlocks.ContainsKey(cb))
                     {

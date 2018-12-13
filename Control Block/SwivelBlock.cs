@@ -311,6 +311,7 @@ namespace Control_Block
             AngleCenter = 0f; AngleRange = 45f;
             Direction = 0f;
             CurrentAngle = 0f;
+            mode = Mode.Positional;
             Move();
         }
 
@@ -374,6 +375,7 @@ namespace Control_Block
                     LockAngle = sd.Restrict;
                     AngleCenter = sd.minRestrict;
                     AngleRange = sd.rangeRestrict;
+                    mode = sd.mode;
                     Dirty = true;
                 }
             }

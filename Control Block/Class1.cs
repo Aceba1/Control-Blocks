@@ -502,7 +502,8 @@ namespace Control_Block
         }
         internal static void SetInlineSwivel(ModuleSwivel swivel)
         {
-            swivel.MaximumBlockPush = 128;
+            swivel.BreakOnCab = true;
+            swivel.MaximumBlockPush = 92;
             swivel.rotCurves = new AnimationCurve[]
             {
                 new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
@@ -832,6 +833,10 @@ namespace Control_Block
             {
                 GUILayout.Label(" The piston is structurally locked!");
             }
+            else if (module.CurrentCellPush == -2)
+            {
+                GUILayout.Label(" This piston cannot move any cabs!");
+            }
             else
             {
                 GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
@@ -976,6 +981,10 @@ namespace Control_Block
             else if (module.CurrentCellPush == -1)
             {
                 GUILayout.Label(" The swivel is structurally locked!");
+            }
+            else if (module.CurrentCellPush == -2)
+            {
+                GUILayout.Label(" This swivel cannot move any cabs!");
             }
             else
             {
