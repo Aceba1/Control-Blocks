@@ -304,7 +304,7 @@ namespace Control_Block
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("Venture_Main");
                 var par = ControlBlock.Prefab.transform;
 
-                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_ven_base);
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_ven_base);
                 var gimbal = AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_ven_head).AddComponent<GimbalAimer>();
                 gimbal.aimClampMaxPercent = 360;
                 gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
