@@ -115,15 +115,6 @@ namespace Control_Block
 
                         aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
                         CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                        float Diff = (CurrentAngle - oldAngle + 900) % 360 - 180;
-                        if (Diff < -RotateSpeed)
-                        {
-                            CurrentAngle += (oldAngle - RotateSpeed) - CurrentAngle;
-                        }
-                        else if (Diff > RotateSpeed)
-                        {
-                            CurrentAngle += (oldAngle + RotateSpeed) - CurrentAngle;
-                        }
                         break;
 
                     case Mode.Directional:
