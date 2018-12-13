@@ -310,6 +310,9 @@
     <None Include="Blocks\Swivel\Medium\swivel.blend" />
     <None Include="Blocks\Swivel\Medium\swivel_base.obj" />
     <None Include="Blocks\Swivel\Medium\swivel_head.obj" />
+    <None Include="Blocks\Swivel\Small\swivel.blend" />
+    <None Include="Blocks\Swivel\Small\swivel_small_base.obj" />
+    <None Include="Blocks\Swivel\Small\swivel_small_head.obj" />
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -331,6 +334,9 @@
   <ItemGroup>
     <None Include="Blocks\Swivel\Inline\swivel_ven_png" />
     <Resource Include="Blocks\Swivel\Medium\swivel_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blocks\Swivel\Small\swivel_small_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

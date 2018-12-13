@@ -624,6 +624,68 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_small_base.mtl
+        ///o Cube_Cube.001
+        ///v -0.132021 -0.499998 0.132022
+        ///v 0.132024 -0.499998 -0.132024
+        ///v 0.000002 -0.599998 -0.000002
+        ///v 0.132024 -0.499998 0.132022
+        ///v -0.132021 -0.499998 -0.132024
+        ///v 0.000000 -0.250000 -0.355000
+        ///v 0.000000 0.250000 -0.355000
+        ///v 0.177500 -0.250000 -0.307439
+        ///v 0.177500 0.250000 -0.307439
+        ///v 0.307439 -0.250000 -0.177500
+        ///v 0.307439 0.250000 -0.177500
+        ///v 0.355000 -0.250000 0.000000
+        ///v 0.355000 0.250000 0.000000
+        ///v 0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_small_base {
+            get {
+                return ResourceManager.GetString("swivel_small_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_small_head.mtl
+        ///o Cube.001_Cube.000
+        ///v 0.132021 0.499998 0.132022
+        ///v -0.132024 0.499998 -0.132024
+        ///v -0.000001 0.599998 -0.000001
+        ///v -0.132024 0.499998 0.132022
+        ///v 0.132022 0.499998 -0.132024
+        ///v -0.412500 -0.250000 0.000000
+        ///v -0.412500 0.250000 0.000000
+        ///v -0.206250 -0.250000 -0.357235
+        ///v -0.206250 0.250000 -0.357235
+        ///v 0.206250 -0.250000 -0.357235
+        ///v 0.206250 0.250000 -0.357235
+        ///v 0.412500 -0.250000 0.000000
+        ///v 0.412500 0.250000 0.000000
+        ///v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_small_head {
+            get {
+                return ResourceManager.GetString("swivel_small_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] swivel_small_png {
+            get {
+                object obj = ResourceManager.GetObject("swivel_small_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;Swivel small.blend&apos;
         ///# www.blender.org
         ///mtllib swivel_ven_base.mtl

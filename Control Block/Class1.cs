@@ -328,6 +328,46 @@ namespace Control_Block
 
             #endregion GSO Medium Swivel
 
+            #region GSO Small Swivel
+            {
+                var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
+                    .SetName("Small Embedded Swivel")
+                    .SetDescription("A smaller swivel, quite rushed, but operational hopefully.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
+                    .SetBlockID(1393836, "f74931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.GSO)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(4470)
+                    .SetHP(2000)
+                    .SetMass(1.5f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_small_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_small_base);
+                var gimbal = AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_small_head).AddComponent<GimbalAimer>();
+                gimbal.aimClampMaxPercent = 360;
+                gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                    .AddComponent<ModuleSwivel>(SetSmallSwivel)
+                    .RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293838)
+                    });
+            }
+
+            #endregion GSO Medium Swivel
             #endregion Swivels
 
             #region Steering Regulator
@@ -490,7 +530,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             swivel.CanModifySpeed = true;
             swivel.RotateSpeed = 5;
-            swivel.MaxSpeed = 10f;
+            swivel.MaxSpeed = 12f;
             swivel.LockAngle = false;
             swivel.startblockpos = new IntVector3[]
             {
@@ -519,6 +559,24 @@ namespace Control_Block
                 new IntVector3(1,0,0),
                 new IntVector3(0,0,1),
                 new IntVector3(-1,0,0)
+            };
+        }
+        internal static void SetSmallSwivel(ModuleSwivel swivel)
+        {
+            //swivel.BreakOnCab = true;
+            swivel.MaximumBlockPush = 128;
+            swivel.rotCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
+            };
+            swivel.PartCount = 1;
+            swivel.CanModifySpeed = true;
+            swivel.RotateSpeed = 5f;
+            swivel.MaxSpeed = 8;
+            swivel.LockAngle = false;
+            swivel.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0)
             };
         }
 
