@@ -58,7 +58,7 @@ namespace Control_Block
         }
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
-
+        private bool ButtonNotPressed = true;
         private void FixedUpdate()
         {
             var oldAngle = CurrentAngle;
@@ -144,13 +144,13 @@ namespace Control_Block
                             break;
 
                         case Mode.OnOff:
-                            if (VInput)
+                            if (VInput && ButtonNotPressed)
                             {
-                                if (Input.GetKeyDown(trigger1))
+                                if (Input.GetKey(trigger1))
                                 {
                                     Direction += 1f;
                                 }
-                                else if (Input.GetKeyDown(trigger2))
+                                else if (Input.GetKey(trigger2))
                                 {
                                     Direction -= 1f;
                                 }
@@ -221,6 +221,8 @@ namespace Control_Block
                     Heart = Class1.PistonHeart;
                 }
             }
+            if (mode == Mode.OnOff)
+                ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
         }
 
         private MeshRenderer[] _mr;
