@@ -8,8 +8,7 @@ namespace Control_Block
     {
         public TargetAimer aimer;
         public GimbalAimer gimbal;
-
-        public Vector3 localEffectorPos = Vector3.zero;
+        
         public float EvaluatedBlockRotCurve = 0f;
         public bool LockAngle = false;
         public float AngleCenter = 0f, AngleRange = 45f;
@@ -167,6 +166,7 @@ namespace Control_Block
                     case Mode.Turning:
                         if (VInput)
                         {
+                            Direction = +1;
                             if (Input.GetKey(trigger1))
                             {
                                 Direction = +1;
@@ -211,7 +211,7 @@ namespace Control_Block
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
-                        tankcache.transform.RotateAround(block.transform.position + (block.transform.rotation * localEffectorPos), block.transform.rotation * Vector3.up, -thing);
+                        tankcache.transform.RotateAround(parts[parts.Length-1].position, block.transform.rotation * Vector3.up, -thing);
                     }
                 }
                 else
@@ -264,7 +264,7 @@ namespace Control_Block
                 foreach (var pair in GrabbedBlocks)
                 {
                     var val = pair.Key;
-                    val.transform.RotateAround(block.transform.position + (block.transform.rotation * localEffectorPos), axis, angle);
+                    val.transform.RotateAround(parts[parts.Length - 1].position, axis, angle);
                 }
             }
         }
