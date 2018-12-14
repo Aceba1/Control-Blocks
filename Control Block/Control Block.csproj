@@ -336,7 +336,7 @@
     <Resource Include="Blocks\Swivel\Medium\swivel_png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\Swivel\Small\swivel_small_png" />
+    <Resource Include="Blocks\Swivel\Small\swivel_small_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
