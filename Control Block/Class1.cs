@@ -241,6 +241,48 @@ namespace Control_Block
 
             #endregion Hawkeye Piston
 
+            #region BetterFuture Piston
+
+            {
+                var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("Better Piston")
+                    .SetDescription("Tired of breaking all known laws of friction dynamics? Introducing the Better Piston! Now with half the problems and more of the restrictions!\n Right click to configure.\n\nThis piston posesses the blocks placed on it for movement. It WILL NOT WORK if two of these are grabbing the same group of blocks! Side effects mainly include phasing")
+                    .SetBlockID(1293834, "f63931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(0)
+                    .SetPrice(5000)
+                    .SetHP(2000)
+                    .SetMass(2.5f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blockbottom);
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blocktop);
+
+                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                    Vector3.up * 0.5f,
+                    Vector3.down * 0.5f })
+                    .AddComponent<ModulePiston>(SetBFPiston)
+                    .RegisterLater();
+
+                //CustomRecipe.RegisterRecipe(
+                //    new CustomRecipe.RecipeInput[]
+                //    {
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                //    },
+                //    new CustomRecipe.RecipeOutput[]
+                //    {
+                //    new CustomRecipe.RecipeOutput(1293838)
+                //    });
+            }
+
+            #endregion GSO Piston
+
             #endregion Pistons
 
             #region Swivels
@@ -369,6 +411,7 @@ namespace Control_Block
             }
 
             #endregion GSO Medium Swivel
+
             #endregion Swivels
 
             #region Steering Regulator
@@ -518,6 +561,22 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0),
                 new IntVector3(0,0,-1)
+            };
+        }
+
+        internal static void SetBFPiston(ModulePiston piston)
+        {
+            piston.MaximumBlockPush = 65535;
+            piston.curves = new AnimationCurve[]
+            {
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(1f, 1f, 1f, 0f)) //block top
+            };
+            piston.PartCount = 1;
+            piston.StretchSpeed = 0.12f;
+            piston.CanModifyStretch = false;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0)
             };
         }
 

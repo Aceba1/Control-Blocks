@@ -295,6 +295,9 @@
     <None Include="Blocks\Medium\swivel_head.obj" />
     <None Include="Blocks\Medium\swivel_png" />
     <None Include="Blocks\MTMags\mtmag free.obj" />
+    <None Include="Blocks\Piston\BF\BFpiston.blend" />
+    <None Include="Blocks\Piston\BF\BFp_blockbottom.obj" />
+    <None Include="Blocks\Piston\BF\BFp_blocktop.obj" />
     <None Include="Blocks\Piston\GeoCorp\GEO_piston.blend" />
     <None Include="Blocks\Piston\GSO\piston.blend" />
     <None Include="Blocks\Piston\HE\HEp_blockbottom.obj" />
@@ -337,6 +340,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Blocks\Swivel\Small\swivel_small_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blocks\Piston\BF\BFp_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

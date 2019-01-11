@@ -127,6 +127,15 @@
   <data name="BFCab_wheel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\cab\bfcab_wheel.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="BFp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\bfp_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="BFp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\bfp_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="BFp_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\bfp_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="GEOp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\geocorp\geop_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

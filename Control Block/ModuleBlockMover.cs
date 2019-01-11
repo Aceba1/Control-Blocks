@@ -4,6 +4,7 @@ using UnityEngine;
 
 abstract class ModuleBlockMover : Module
 {
+    public bool UpdateCOM = false;
     public bool BreakOnCab = false;
     public Transform LoadCOM;
     public Transform holder;
@@ -173,6 +174,7 @@ abstract class ModuleBlockMover : Module
             Print("Starting blockgrab for BlockMover " + block.cachedLocalPosition.ToString());
 
             cacheCOM = Vector3.zero;
+            UpdateCOM = true;
 
             var StarterBlocks = new List<TankBlock>();
 

@@ -181,9 +181,17 @@ namespace Control_Block
             {
                 float oldOpen = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 open = Mathf.Clamp01((open - (StretchSpeed * 0.5f * (MaxStr / StretchModifier))) + alphaOpen * (StretchSpeed * (MaxStr / StretchModifier)));
+                if (Mathf.Abs(open - alphaOpen) < 0.01f) open = alphaOpen;
                 EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 if (Class1.PistonHeart == Heart)
                 {
+                    if (UpdateCOM)
+                    {
+                        UpdateCOM = false;
+                        CacheCOM = tankcache.rbody.worldCenterOfMass - LoadCOM.position * (1f - MassPushing / tankcache.rbody.mass);
+                        CacheCOM = tankcache.transform.InverseTransformPoint(CacheCOM);
+                        tankcache.rbody.mass -= MassPushing;
+                    }
                     var offs = SetRenderState();
                     if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                     {
@@ -272,7 +280,7 @@ namespace Control_Block
                     block.transform.localPosition = block.cachedLocalPosition;
             }
         }
-
+        
         public Vector3 SetRenderState()
         {
             if (SnapRender)
@@ -293,7 +301,6 @@ namespace Control_Block
                 var block = pair.Key;
                 if (block.tank == base.block.tank)
                     block.transform.localPosition += offs;
-
             }
             return offs;
         }
