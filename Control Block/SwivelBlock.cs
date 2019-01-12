@@ -209,6 +209,8 @@ namespace Control_Block
                             float th = (MassPushing / block.tank.rbody.mass);
                             var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
                             tankcache.transform.RotateAround(parts[parts.Length - 1].position, block.transform.rotation * Vector3.up, -thing);
+#warning Fix COM
+                            tankcache.RequestPhysicsReset();
                         }
                     }
                     else

@@ -198,7 +198,8 @@ namespace Control_Block
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
                         tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
-                        tankcache.ResetPhysics();
+#warning Fix COM
+                        tankcache.RequestPhysicsReset();
                         //tankcache.rbody.centerOfMass = CacheCOM + tankcache.rbody.transform.InverseTransformVector(LoadCOM.position) * th;
                         //tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
                     }
