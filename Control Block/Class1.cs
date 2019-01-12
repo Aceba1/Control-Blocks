@@ -546,11 +546,11 @@ namespace Control_Block
 
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
-            obj.strength = .75f;
+            obj.strength = .5f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
-            obj.strength = .9f;
+            obj.strength = .75f;
             obj.threshold = 1f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
