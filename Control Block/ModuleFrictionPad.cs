@@ -20,7 +20,7 @@ namespace Control_Block
             {
                 DoIt = false;
                 var block = gameObject.GetComponent<TankBlock>();
-                if (block != null && block.tank != null)
+                if (block != null && block.tank != null && !block.tank.beam.IsActive)
                 {
                     //    collisionData = "COLLIDING";
                     var force = Vector3.ProjectOnPlane(LastPos - (block.transform.position + GetEffector(block)), block.transform.rotation * Vector3.up) * strength;
