@@ -498,7 +498,7 @@ namespace Control_Block
             {
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Non Slip-A-Tron 3000")
-                    .SetDescription("'nuff said")
+                    .SetDescription("'Name by Rasseru")
                     .SetBlockID(1293830, "03ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)

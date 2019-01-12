@@ -29,7 +29,7 @@ namespace Control_Block
                         block.tank.transform.position += force;
                         var pos = block.transform.position + GetEffector(block);
                         var rbody = block.tank.rbody;
-                        block.tank.rbody.AddForceAtPosition(Vector3.ProjectOnPlane(-rbody.GetPointVelocity(pos)+force, block.transform.rotation * Vector3.up) * strength*3 + block.transform.rotation * Vector3.down * threshold*3, pos, ForceMode.Impulse);
+                        block.tank.rbody.AddForceAtPosition((Vector3.ProjectOnPlane(-rbody.GetPointVelocity(pos), block.transform.rotation * Vector3.up) + force * 4) * strength * 4 + block.transform.rotation * Vector3.down * threshold * 6, pos, ForceMode.Impulse);
                     }
                     //else force = force.normalized;
                     //block.tank.rbody.AddForceAtPosition(force * 30f, block.transform.position + (block.transform.rotation * Vector3.up * 0.5f), ForceMode.VelocityChange);
