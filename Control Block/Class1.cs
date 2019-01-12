@@ -475,7 +475,7 @@ namespace Control_Block
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.8f, 0.5f, 0.8f);
+                trigger.size = new Vector3(1.1f, 0.5f, 1.1f);
                 trigger.center = Vector3.up * 0.25f;
 
                 FrictionPad.RegisterLater();
@@ -514,8 +514,8 @@ namespace Control_Block
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.8f, .75f, 1.8f);
-                trigger.center = new Vector3(1f,.125f,1f);
+                trigger.size = new Vector3(2.1f, 1f, 2.1f);
+                trigger.center = new Vector3(1f, 0f, 1f);
 
                 FrictionPad.RegisterLater();
 
