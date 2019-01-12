@@ -266,6 +266,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="ModuleBlockMover.cs" />
+    <Compile Include="ModuleFrictionPad.cs" />
     <Compile Include="SwivelBlock.cs" />
     <Compile Include="PistonBlock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -290,6 +291,7 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
+    <None Include="Blocks\GCfrictionpad.obj" />
     <None Include="Blocks\Medium\swivel.blend" />
     <None Include="Blocks\Medium\swivel_base.obj" />
     <None Include="Blocks\Medium\swivel_head.obj" />
@@ -343,6 +345,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Blocks\Piston\BF\BFp_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blocks\friction pad gc_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

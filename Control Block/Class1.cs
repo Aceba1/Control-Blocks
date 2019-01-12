@@ -246,14 +246,14 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Better Piston")
-                    .SetDescription("Tired of breaking all known laws of friction dynamics? Introducing the Better Piston! Now with half the problems and more of the restrictions!\n Right click to configure.\n\nThis piston posesses the blocks placed on it for movement. It WILL NOT WORK if two of these are grabbing the same group of blocks! Side effects mainly include phasing")
+                    .SetDescription("This piston was designed to solve many problems risen from other pistons, however the prototype mover engine showed signs of tearing the fabric of the universe. So that was thrown out. However, this is the most slick & efficient piston there is on market. Sharp movement, and unjustifiable burden strength!\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
                     .SetBlockID(1293834, "f63931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(0)
-                    .SetPrice(5000)
+                    .SetPrice(10000)
                     .SetHP(2000)
-                    .SetMass(2.5f)
+                    .SetMass(3f)
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
 
                 var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
@@ -281,7 +281,7 @@ namespace Control_Block
                 //    });
             }
 
-            #endregion GSO Piston
+            #endregion BetterFuture Piston
 
             #endregion Pistons
 
@@ -451,6 +451,45 @@ namespace Control_Block
             }
 
             #endregion Steering Regulator
+
+            #region Friction Pad
+
+            {
+                var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
+                    .SetName("Friction Pad")
+                    .SetDescription("Nice and grippy. Little sticky. \n\nRasseru > if they arent called Non Slip-A-Tron 3000's ima be straight up livid\nINTRODUCING THE NON SLIP-A-TRON 3000")
+                    .SetBlockID(1293831, "02ef3f7f30d4ba8e")
+                    .SetFaction(FactionSubTypes.GC)
+                    .SetCategory(BlockCategories.Wheels)
+                    .SetGrade(1)
+                    .SetPrice(500)
+                    .SetHP(600)
+                    .SetMass(0.5f)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpad, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_png)))
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
+                    .AddComponent<ModuleFrictionPad>();
+
+                var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(0.8f, 0.5f, 0.8f);
+                trigger.center = Vector3.up * 0.25f;
+
+                FrictionPad.RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293831)
+                    });
+            }
+
+            #endregion Friction Pad
 
             #endregion Blocks
 

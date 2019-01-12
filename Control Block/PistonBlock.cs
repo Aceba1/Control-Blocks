@@ -188,8 +188,8 @@ namespace Control_Block
                     if (UpdateCOM)
                     {
                         UpdateCOM = false;
-                        CacheCOM = tankcache.rbody.worldCenterOfMass - LoadCOM.position * (1f - MassPushing / tankcache.rbody.mass);
-                        CacheCOM = tankcache.transform.InverseTransformPoint(CacheCOM);
+                        CacheCOM = tankcache.rbody.worldCenterOfMass - LoadCOM.position * (MassPushing / tankcache.rbody.mass);
+                        CacheCOM = tankcache.rbody.transform.InverseTransformVector(CacheCOM);
                         tankcache.rbody.mass -= MassPushing;
                     }
                     var offs = SetRenderState();
@@ -198,9 +198,9 @@ namespace Control_Block
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
                         tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
-                        //tankcache.rbody.centerOfMass -= ;
-                        tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
-
+                        tankcache.ResetPhysics();
+                        //tankcache.rbody.centerOfMass = CacheCOM + tankcache.rbody.transform.InverseTransformVector(LoadCOM.position) * th;
+                        //tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
                     }
                 }
                 else Heart = Class1.PistonHeart;

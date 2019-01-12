@@ -7,6 +7,7 @@ abstract class ModuleBlockMover : Module
     public bool UpdateCOM = false;
     public bool BreakOnCab = false;
     public Transform LoadCOM;
+    public Vector3 CacheCOM;
     public Transform holder;
     public int PartCount = 1;
     public bool Heart;

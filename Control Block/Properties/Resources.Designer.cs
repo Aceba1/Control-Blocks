@@ -121,23 +121,22 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;BFpiston.blend&apos;
         ///# www.blender.org
         ///mtllib BFp_blockbottom.mtl
-        ///o m_BF_MotionEngine_Linear_112_Base_Instance.001
-        ///v -0.146954 0.428834 -0.500000
-        ///v -0.366017 0.428834 -0.366018
-        ///v 0.126918 0.500000 -0.428834
-        ///v -0.500000 0.428834 -0.146954
-        ///v -0.428834 0.500000 -0.126919
-        ///v 0.146954 0.428834 0.500000
-        ///v -0.146954 0.428834 0.500000
-        ///v -0.315695 0.500000 0.315695
-        ///v -0.126918 0.500000 0.428833
-        ///v 0.126918 0.500000 0.428833
-        ///v -0.366017 0.428834 0.366017
-        ///v -0.500000 0.428834 0.146953
-        ///v 0.146954 0.428834 [rest of string was truncated]&quot;;.
+        ///o m_BF_MotionEngine_Linear_112_Base_Instance
+        ///v 0.101537 0.499999 -0.378939
+        ///v 0.277403 0.499999 -0.277403
+        ///v -0.277403 0.499999 -0.277403
+        ///v -0.146954 -0.314892 -0.500000
+        ///v 0.107356 -0.428834 -0.500000
+        ///v 0.146954 -0.314892 -0.500000
+        ///v -0.107356 -0.428834 -0.499999
+        ///v 0.126918 -0.500001 -0.428833
+        ///v 0.366017 -0.428834 -0.366017
+        ///v -0.500000 -0.428834 -0.107355
+        ///v -0.500000 -0.314892 -0.146953
+        ///v -0.500000 -0.428834 0.1073 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blockbottom {
             get {
@@ -146,7 +145,7 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;BFpiston.blend&apos;
         ///# www.blender.org
         ///mtllib BFp_blocktop.mtl
         ///o m_BF_MotionEngine_Linear_112_Base_Instance.001
@@ -162,7 +161,7 @@ namespace Control_Block.Properties {
         ///v 0.126918 0.500000 0.428833
         ///v -0.366017 0.428834 0.366017
         ///v -0.500000 0.428834 0.146953
-        ///v 0.146954 0.428834 -0 [rest of string was truncated]&quot;;.
+        ///v 0.1469 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blocktop {
             get {
@@ -177,6 +176,42 @@ namespace Control_Block.Properties {
             get {
                 object obj = ResourceManager.GetObject("BFp_png", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] friction_pad_gc_png {
+            get {
+                object obj = ResourceManager.GetObject("friction_pad_gc_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
+        ///mtllib GCfrictionpad.mtl
+        ///o m_BF_Block_Faired_111_Instance.001
+        ///v -0.000001 0.599999 0.000000
+        ///v 0.132022 0.499999 0.132023
+        ///v 0.132022 0.500000 -0.132023
+        ///v -0.132023 0.499999 0.132023
+        ///v -0.132023 0.499999 -0.132023
+        ///v 0.475000 0.425000 -0.475000
+        ///v 0.475000 0.425000 0.475000
+        ///v -0.475000 0.425000 0.475000
+        ///v -0.475000 0.425000 -0.475000
+        ///v 0.500000 0.500000 -0.500000
+        ///v 0.500000 0.500000 0.500000
+        ///v -0.500000 0.500000 0.500000
+        ///v -0.500000 0.500000 -0.500000
+        ///v 0.4 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GCfrictionpad {
+            get {
+                return ResourceManager.GetString("GCfrictionpad", resourceCulture);
             }
         }
         
