@@ -58,7 +58,7 @@ namespace Control_Block
         }
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
-        private bool ButtonNotPressed = true;
+        private bool ButtonNotPressed = true, Moved = false;
         private void FixedUpdate()
         {
             var oldAngle = CurrentAngle;
@@ -201,6 +201,7 @@ namespace Control_Block
                 EvaluatedBlockRotCurve = blockrotcurve.Evaluate(CurrentAngle);
                 if (Class1.PistonHeart == Heart)
                 {
+                    Moved = true;
                     Move();
                     if (CanMove)
                     {
@@ -210,7 +211,7 @@ namespace Control_Block
                             var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
                             tankcache.transform.RotateAround(parts[parts.Length - 1].position, block.transform.rotation * Vector3.up, -thing);
 #warning Fix COM
-                            tankcache.RequestPhysicsReset();
+                            //tankcache.RequestPhysicsReset();
                         }
                     }
                     else
@@ -222,6 +223,11 @@ namespace Control_Block
                 {
                     Heart = Class1.PistonHeart;
                 }
+            }
+            else if (Moved && Class1.PistonHeart == Heart)
+            {
+                Moved = false;
+                tankcache.RequestPhysicsReset();
             }
             if (mode == Mode.OnOff)
                 ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
