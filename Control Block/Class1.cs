@@ -475,7 +475,7 @@ namespace Control_Block
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.1f, 0.5f, 1.1f);
+                trigger.size = new Vector3(0.925f, 0.5f, 0.925f);
                 trigger.center = Vector3.up * 0.25f;
 
                 FrictionPad.RegisterLater();
@@ -514,7 +514,7 @@ namespace Control_Block
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(2.1f, 1f, 2.1f);
+                trigger.size = new Vector3(1.9f, 1f, 1.9f);
                 trigger.center = new Vector3(1f, 0f, 1f);
 
                 FrictionPad.RegisterLater();
@@ -531,6 +531,7 @@ namespace Control_Block
             }
 
             #endregion GC Large Pad
+
             #endregion Pads
 
             #endregion Blocks
