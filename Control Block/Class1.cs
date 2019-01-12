@@ -452,12 +452,14 @@ namespace Control_Block
 
             #endregion Steering Regulator
 
-            #region Friction Pad
+            #region Pads
+
+            #region GC Small Pad
 
             {
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
-                    .SetName("Friction Pad")
-                    .SetDescription("Nice and grippy. Little sticky. \n\nRasseru > if they arent called Non Slip-A-Tron 3000's ima be straight up livid\nINTRODUCING THE NON SLIP-A-TRON 3000")
+                    .SetName("Small Friction Pad")
+                    .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
                     .SetBlockID(1293831, "02ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
@@ -465,10 +467,10 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(0.5f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpad, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_png)))
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadsmall, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
-                    .AddComponent<ModuleFrictionPad>();
+                    .AddComponent<ModuleFrictionPad>(SetGCSmallPad);
 
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
@@ -489,7 +491,47 @@ namespace Control_Block
                     });
             }
 
-            #endregion Friction Pad
+            #endregion GC Small Pad
+
+            #region GC Large Pad
+
+            {
+                var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
+                    .SetName("Non Slip-A-Tron 3000")
+                    .SetDescription("'nuff said")
+                    .SetBlockID(1293830, "03ef3f7f30d4ba8e")
+                    .SetFaction(FactionSubTypes.GC)
+                    .SetCategory(BlockCategories.Wheels)
+                    .SetGrade(1)
+                    .SetPrice(2000)
+                    .SetHP(2000)
+                    .SetMass(2f)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadbig, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1,0,1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
+                    .AddComponent<ModuleFrictionPad>(SetGCBigPad);
+
+                var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(1.8f, .75f, 1.8f);
+                trigger.center = new Vector3(1f,.125f,1f);
+
+                FrictionPad.RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 16),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293831)
+                    });
+            }
+
+            #endregion GC Large Pad
+            #endregion Pads
 
             #endregion Blocks
 
@@ -500,6 +542,17 @@ namespace Control_Block
             _holder.AddComponent<OptionMenuSteeringRegulator>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
+        }
+
+        private static void SetGCSmallPad(ModuleFrictionPad obj)
+        {
+            obj.strength = .75f;
+        }
+        private static void SetGCBigPad(ModuleFrictionPad obj)
+        {
+            obj.strength = .9f;
+            obj.threshold = 1f;
+            obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
         internal static bool PistonHeart = false;

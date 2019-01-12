@@ -267,14 +267,14 @@
     <Compile Include="Class1.cs" />
     <Compile Include="ModuleBlockMover.cs" />
     <Compile Include="ModuleFrictionPad.cs" />
-    <Compile Include="SwivelBlock.cs" />
-    <Compile Include="PistonBlock.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SwivelBlock.cs" />
+    <Compile Include="PistonBlock.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteeringRegulator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -291,12 +291,13 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
-    <None Include="Blocks\GCfrictionpad.obj" />
+    <None Include="Blocks\Pads\GCfrictionpadsmall.obj" />
     <None Include="Blocks\Medium\swivel.blend" />
     <None Include="Blocks\Medium\swivel_base.obj" />
     <None Include="Blocks\Medium\swivel_head.obj" />
     <None Include="Blocks\Medium\swivel_png" />
     <None Include="Blocks\MTMags\mtmag free.obj" />
+    <None Include="Blocks\Pads\GCfrictionpadbig.obj" />
     <None Include="Blocks\Piston\BF\BFpiston.blend" />
     <None Include="Blocks\Piston\BF\BFp_blockbottom.obj" />
     <None Include="Blocks\Piston\BF\BFp_blocktop.obj" />
@@ -347,7 +348,10 @@
     <None Include="Blocks\Piston\BF\BFp_png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\friction pad gc_png" />
+    <None Include="Blocks\Pads\friction pad gc small_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blocks\Pads\friction pad gc big_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

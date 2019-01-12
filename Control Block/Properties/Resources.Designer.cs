@@ -182,36 +182,71 @@ namespace Control_Block.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] friction_pad_gc_png {
+        internal static byte[] friction_pad_gc_big_png {
             get {
-                object obj = ResourceManager.GetObject("friction_pad_gc_png", resourceCulture);
+                object obj = ResourceManager.GetObject("friction_pad_gc_big_png", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] friction_pad_gc_small_png {
+            get {
+                object obj = ResourceManager.GetObject("friction_pad_gc_small_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GC friction pad.blend&apos;
+        ///# www.blender.org
+        ///mtllib GCfrictionpadbig.mtl
+        ///o m_BF_Block_Faired_111_Instance.001
+        ///v -0.000002 0.600000 1.000000
+        ///v 0.132021 0.500000 1.132023
+        ///v 0.132021 0.500000 0.867977
+        ///v -0.132024 0.500000 1.132023
+        ///v -0.132024 0.500000 0.867977
+        ///v 1.300000 0.300000 -0.300000
+        ///v 1.300000 0.300000 1.300000
+        ///v -0.300000 0.300000 1.300000
+        ///v -0.300000 0.300000 -0.300000
+        ///v 0.900000 0.100000 0.100000
+        ///v 0.900000 0.100000 0.900000
+        ///v 0.100000 0.100000 0.100000
+        ///v 0.100000 0.100 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GCfrictionpadbig {
+            get {
+                return ResourceManager.GetString("GCfrictionpadbig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;GC friction pad.blend&apos;
         ///# www.blender.org
         ///mtllib GCfrictionpad.mtl
-        ///o m_BF_Block_Faired_111_Instance.001
-        ///v -0.000001 0.599999 0.000000
-        ///v 0.132022 0.499999 0.132023
-        ///v 0.132022 0.500000 -0.132023
-        ///v -0.132023 0.499999 0.132023
-        ///v -0.132023 0.499999 -0.132023
-        ///v 0.475000 0.425000 -0.475000
-        ///v 0.475000 0.425000 0.475000
-        ///v -0.475000 0.425000 0.475000
-        ///v -0.475000 0.425000 -0.475000
-        ///v 0.500000 0.500000 -0.500000
-        ///v 0.500000 0.500000 0.500000
-        ///v -0.500000 0.500000 0.500000
-        ///v -0.500000 0.500000 -0.500000
-        ///v 0.4 [rest of string was truncated]&quot;;.
+        ///o Cylinder
+        ///v 0.000000 0.500000 0.000000
+        ///v 0.000000 0.412500 -0.500000
+        ///v 0.000000 0.500000 -0.500000
+        ///v 0.191342 0.412500 -0.461940
+        ///v 0.191342 0.500000 -0.461940
+        ///v 0.353553 0.412500 -0.353553
+        ///v 0.353553 0.500000 -0.353553
+        ///v 0.461940 0.412500 -0.191342
+        ///v 0.461940 0.500000 -0.191342
+        ///v 0.500000 0.412500 0.000000
+        ///v 0.500000 0.500000 0.000000
+        ///v 0.461940 0.412500 0.191342
+        ///v 0.461940 0.500000 0.191342
+        ///v 0.353553 0.41 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GCfrictionpad {
+        internal static string GCfrictionpadsmall {
             get {
-                return ResourceManager.GetString("GCfrictionpad", resourceCulture);
+                return ResourceManager.GetString("GCfrictionpadsmall", resourceCulture);
             }
         }
         

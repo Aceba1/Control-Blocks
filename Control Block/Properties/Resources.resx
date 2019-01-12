@@ -136,12 +136,6 @@
   <data name="BFp_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\bf\bfp_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="friction_pad_gc_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\friction pad gc_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GCfrictionpad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\gcfrictionpad.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="GEOp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\geocorp\geop_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -225,5 +219,17 @@
   </data>
   <data name="swivel_ven_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\swivel\inline\swivel_ven_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="friction_pad_gc_big_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\friction pad gc big_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="friction_pad_gc_small_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\friction pad gc small_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="GCfrictionpadbig" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\gcfrictionpadbig.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GCfrictionpadsmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\gcfrictionpadsmall.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
