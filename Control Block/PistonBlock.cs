@@ -199,10 +199,10 @@ namespace Control_Block
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
                         tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
 #warning Fix COM
-                        //if (open == alphaOpen)
-                        //{
-                        //    tankcache.RequestPhysicsReset();
-                        //}
+                        if (open == alphaOpen)
+                        {
+                            tankcache.RequestPhysicsReset();
+                        }
                         //tankcache.rbody.centerOfMass = CacheCOM + tankcache.rbody.transform.InverseTransformVector(LoadCOM.position) * th;
                         //tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
                     }
