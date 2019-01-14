@@ -224,11 +224,11 @@ namespace Control_Block
                     Heart = Class1.PistonHeart;
                 }
             }
-            else if (Moved && Class1.PistonHeart == Heart)
-            {
-                Moved = false;
-                tankcache.RequestPhysicsReset();
-            }
+            //else if (Moved && Class1.PistonHeart == Heart)
+            //{
+            //    Moved = false;
+            //    tankcache.RequestPhysicsReset();
+            //}
             if (mode == Mode.OnOff)
                 ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
         }
