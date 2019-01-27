@@ -116,12 +116,11 @@ namespace Control_Block
 
                         case Mode.AimAtPlayer:
                             if (Singleton.playerTank != null)
-                                gimbal.Aim(Singleton.playerTank.rbody.centerOfMass, (RotateSpeed / Time.deltaTime));
+                                gimbal.Aim(Singleton.playerTank.rbody.worldCenterOfMass, (RotateSpeed / Time.deltaTime));
                             else
                                 gimbal.AimDefault((RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
-
                         case Mode.AimAtVelocity:
                             gimbal.AimFree(Quaternion.Inverse(block.transform.rotation) * tankcache.rbody.velocity + block.transform.forward * 0.02f, (RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
