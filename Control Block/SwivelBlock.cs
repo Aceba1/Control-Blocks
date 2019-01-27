@@ -8,8 +8,8 @@ namespace Control_Block
     {
         public TargetAimer aimer;
         public GimbalAimer gimbal;
-        
-        public float EvaluatedBlockRotCurve = 0f;
+
+        public float EvaluatedBlockRotCurve = 0f, oldEvaluatedBlockCurve = 0f;
         public bool LockAngle = false;
         public float AngleCenter = 0f, AngleRange = 45f;
         public float Direction = 0f;
@@ -24,7 +24,9 @@ namespace Control_Block
             Aim,
             Turning,
             AimAtPlayer,
-            AimAtVelocity
+            AimAtVelocity,
+            SpeedBounce,
+            Throttle,
         }
 
         public float RotateSpeed = 1f;
@@ -95,7 +97,15 @@ namespace Control_Block
                 if (!tankcache.beam.IsActive)
                     switch (mode)
                     {
+
+                        case Mode.Aim:
+                            aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
+                            if (aimer.HasTarget) CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                            else goto Positional;
+                            break;
+
                         case Mode.Positional:
+                            Positional:
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
@@ -109,11 +119,6 @@ namespace Control_Block
                             }
                             break;
 
-                        case Mode.Aim:
-                            aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
-                            CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                            break;
-
                         case Mode.AimAtPlayer:
                             if (Singleton.playerTank != null)
                                 gimbal.Aim(Singleton.playerTank.rbody.worldCenterOfMass, (RotateSpeed / Time.deltaTime));
@@ -122,7 +127,7 @@ namespace Control_Block
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
                         case Mode.AimAtVelocity:
-                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + ((block.transform.forward / Time.deltaTime*0.3f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude+0.1f)), (RotateSpeed / Time.deltaTime));
+                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 0.3f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
 
@@ -141,7 +146,9 @@ namespace Control_Block
                             CurrentAngle += Direction * RotateSpeed;
                             break;
 
+                        case Mode.Throttle:
                         case Mode.Speed:
+                        case Mode.SpeedBounce:
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
@@ -151,6 +158,10 @@ namespace Control_Block
                                 else if (Input.GetKey(trigger2))
                                 {
                                     Direction -= 0.025f;
+                                }
+                                else if (mode == Mode.SpeedBounce)
+                                {
+                                    Direction = Mathf.Clamp(0, Direction- 0.025f, Direction+ 0.025f);
                                 }
                                 Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
@@ -176,7 +187,6 @@ namespace Control_Block
                         case Mode.Turning:
                             if (VInput)
                             {
-                                Direction = +1;
                                 if (Input.GetKey(trigger1))
                                 {
                                     Direction = +1;
@@ -189,8 +199,12 @@ namespace Control_Block
                                 {
                                     Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
                                 }
-                                Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
+                            else
+                            {
+                                Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
+                            }
+                            Direction = Mathf.Clamp(Direction, -1f, 1f);
                             CurrentAngle += Direction * RotateSpeed;
                             break;
                     }
@@ -201,17 +215,21 @@ namespace Control_Block
                 if (Diff < -AngleRange)
                 {
                     CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
+                    if (mode == Mode.SpeedBounce) Direction = -Direction;
+                    else Direction = 0;
                 }
                 else if (Diff > AngleRange)
                 {
                     CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
+                    if (mode == Mode.SpeedBounce) Direction = -Direction;
+                    else Direction = 0;
                 }
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
             if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
             {
                 ForceMove = false;
-                float oldOpen = EvaluatedBlockRotCurve;
+                float oldCurrentCurve = EvaluatedBlockRotCurve;
                 EvaluatedBlockRotCurve = blockrotcurve.Evaluate(CurrentAngle);
                 if (Class1.PistonHeart == Heart)
                 {
@@ -219,14 +237,15 @@ namespace Control_Block
                     Move();
                     if (CanMove)
                     {
-                        if ((oldOpen != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
+                        if ((oldCurrentCurve != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                         {
                             float th = (MassPushing / block.tank.rbody.mass);
-                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldOpen + 180, 360) - 180) * th;
+                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldEvaluatedBlockCurve + 180, 360) - 180) * th;
                             tankcache.transform.RotateAround(parts[parts.Length - 1].position, block.transform.rotation * Vector3.up, -thing);
 #warning Fix COM
-                            //tankcache.RequestPhysicsReset();
+                            tankcache.RequestPhysicsReset();
                         }
+                        oldEvaluatedBlockCurve = EvaluatedBlockRotCurve;
                     }
                     else
                     {

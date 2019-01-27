@@ -1093,13 +1093,13 @@ namespace Control_Block
         private ModuleSwivel module;
 
         private Rect win;
-        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim" };
+        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim", "Speed (Bounce)", "Throttle" };
 
         private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 300f, 400f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 400f, 600f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSwivel>();
