@@ -121,13 +121,15 @@ namespace Control_Block
 
                         case Mode.AimAtPlayer:
                             if (Singleton.playerTank != null)
+                            {
                                 gimbal.Aim(Singleton.playerTank.rbody.worldCenterOfMass, (RotateSpeed / Time.deltaTime));
+                            }
                             else
                                 gimbal.AimDefault((RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
                         case Mode.AimAtVelocity:
-                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 0.3f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
+                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 1f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
 
