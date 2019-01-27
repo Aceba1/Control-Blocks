@@ -890,6 +890,26 @@ namespace Control_Block
             }
         }
 
+        //public static bool AwaitingOverride;
+
+        //[HarmonyPatch(typeof(TargetAimer), "GetManualTarget")] // Create new hook to TargetAimer.GetManualTarget
+        //static class ChangeTarget
+        //{
+        //    private static bool Prefix(ref TargetAimer __instance, ref Visible __result)
+        //    {
+        //        if (!AwaitingOverride) return true;
+        //        AwaitingOverride = false;
+        //        var tank = __instance.GetComponentInParent<Tank>();
+        //        var swivel = tank.GetComponentInChildren<ModuleSwivel>();
+        //        if (swivel != null && swivel.mode == ModuleSwivel.Mode.AimAtPlayer)
+        //        {
+        //            __result = Singleton.playerTank.visible;
+        //            return false;
+        //        }
+        //        return true;
+        //    }
+        //}
+
         [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         private static class FanJetStabilizePatch
         {
@@ -1073,7 +1093,7 @@ namespace Control_Block
         private ModuleSwivel module;
 
         private Rect win;
-        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering" };
+        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim" };
 
         private void Update()
         {
