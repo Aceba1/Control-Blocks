@@ -159,7 +159,7 @@ namespace Control_Block
                                 {
                                     Direction -= 0.025f;
                                 }
-                                else if (mode == Mode.SpeedBounce)
+                                else if (mode == Mode.Throttle)
                                 {
                                     Direction = Mathf.Clamp(0, Direction- 0.025f, Direction+ 0.025f);
                                 }
