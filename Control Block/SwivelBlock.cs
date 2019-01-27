@@ -122,7 +122,7 @@ namespace Control_Block
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
                         case Mode.AimAtVelocity:
-                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + ((block.transform.forward / Time.deltaTime) * Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude), (RotateSpeed / Time.deltaTime));
+                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + ((block.transform.forward / Time.deltaTime*0.3f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude+0.1f)), (RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
 
