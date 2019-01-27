@@ -417,7 +417,7 @@ namespace Control_Block
                     trigger1 = sd.Input1;
                     trigger2 = sd.Input2;
                     LocalControl = sd.Local;
-                    RotateSpeed = (int)Mathf.Clamp(sd.Speed, 0.5f, MaxSpeed);
+                    RotateSpeed = Mathf.Clamp(sd.Speed, 0.5f, MaxSpeed);
                     Direction = sd.Direction;
                     LockAngle = sd.Restrict;
                     AngleCenter = sd.minRestrict;
