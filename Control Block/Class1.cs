@@ -1093,7 +1093,7 @@ namespace Control_Block
         private ModuleSwivel module;
 
         private Rect win;
-        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim", "Speed (Bounce)", "Throttle" };
+        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim", "Cycle", "Throttle" };
 
         private void Update()
         {

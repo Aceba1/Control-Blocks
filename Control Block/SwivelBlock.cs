@@ -25,7 +25,7 @@ namespace Control_Block
             Turning,
             AimAtPlayer,
             AimAtVelocity,
-            SpeedBounce,
+            Cycle,
             Throttle,
         }
 
@@ -150,7 +150,6 @@ namespace Control_Block
 
                         case Mode.Throttle:
                         case Mode.Speed:
-                        case Mode.SpeedBounce:
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
@@ -186,6 +185,35 @@ namespace Control_Block
                             CurrentAngle += Direction * RotateSpeed;
                             break;
 
+                        case Mode.Cycle:
+                            if (VInput && ButtonNotPressed)
+                            {
+                                if (Input.GetKey(trigger1))
+                                {
+                                    if (Direction == 0)
+                                        Direction = 1;
+                                    else if (Direction == 2)
+                                        Direction = 1;
+                                    else if (Direction == -2)
+                                        Direction = -1;
+                                    else Direction += Direction;
+
+                                }
+                                else if (Input.GetKey(trigger2))
+                                {
+                                    if (Direction == 0)
+                                        Direction = -1;
+                                    else if (Direction == 2)
+                                        Direction = -1;
+                                    else if (Direction == -2)
+                                        Direction = 1;
+                                    else Direction = -(Direction + Direction);
+                                }
+                            }
+                            if (Direction * Direction == 1)
+                                CurrentAngle += Direction * RotateSpeed;
+                            break;
+
                         case Mode.Turning:
                             if (VInput)
                             {
@@ -217,13 +245,13 @@ namespace Control_Block
                 if (Diff < -AngleRange)
                 {
                     CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
-                    if (mode == Mode.SpeedBounce) Direction = -Direction;
+                    if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
                 else if (Diff > AngleRange)
                 {
                     CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
-                    if (mode == Mode.SpeedBounce) Direction = -Direction;
+                    if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
             }
@@ -264,7 +292,7 @@ namespace Control_Block
                 Moved = false;
                 tankcache.RequestPhysicsReset();
             }
-            if (mode == Mode.OnOff)
+            if (mode == Mode.OnOff || mode == Mode.Cycle)
                 ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
         }
 
