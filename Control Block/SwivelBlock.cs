@@ -62,7 +62,7 @@ namespace Control_Block
         }
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
-        private bool ButtonNotPressed = true, Moved = false;
+        private bool ButtonNotPressed = true, Moved = false, WasAiming = false;
         private void FixedUpdate()
         {
             var oldAngle = CurrentAngle;
@@ -100,8 +100,27 @@ namespace Control_Block
 
                         case Mode.Aim:
                             aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
-                            if (aimer.HasTarget) CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                            else goto Positional;
+                            if (aimer.HasTarget)
+                            {
+                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                                WasAiming = true;
+                            }
+                            else if (WasAiming)
+                            {
+                                gimbal.AimDefault(RotateSpeed / Time.deltaTime);
+                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                                if (Mathf.Abs(CurrentAngle) < 5)
+                                {
+                                    WasAiming = false;
+                                    gimbal.ResetAngles();
+                                    CurrentAngle = 0;
+                                }
+                            }
+                            else
+                            {
+                                gimbal.AimFree(parts[parts.Length - 1].localRotation * Vector3.forward, 0f);
+                                goto Positional;
+                            }
                             break;
 
                         case Mode.Positional:
