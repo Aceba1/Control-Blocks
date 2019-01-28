@@ -107,9 +107,9 @@ namespace Control_Block
                             }
                             else if (WasAiming)
                             {
-                                gimbal.AimDefault(RotateSpeed / Time.deltaTime);
-                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                                if (Mathf.Abs(CurrentAngle) < 5)
+                                Direction = Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f);
+                                CurrentAngle += Direction * RotateSpeed;
+                                if (CurrentAngle == 0)
                                 {
                                     WasAiming = false;
                                     gimbal.ResetAngles();
