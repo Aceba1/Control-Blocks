@@ -99,6 +99,7 @@ namespace Control_Block
                     {
 
                         case Mode.Aim:
+                            aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
                             aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
                             if (aimer.HasTarget)
                             {
@@ -118,7 +119,6 @@ namespace Control_Block
                             }
                             else
                             {
-                                gimbal.AimFree(parts[parts.Length - 1].localRotation * Vector3.forward, 0f);
                                 goto Positional;
                             }
                             break;
@@ -148,7 +148,7 @@ namespace Control_Block
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
                         case Mode.AimAtVelocity:
-                            gimbal.Aim(block.transform.position + tankcache.rbody.GetPointVelocity(block.transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 1f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
+                            gimbal.Aim(parts[parts.Length - 1].transform.position + tankcache.rbody.GetPointVelocity(parts[parts.Length - 1].transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 1f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
                             CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
                             break;
 
@@ -209,28 +209,39 @@ namespace Control_Block
                             {
                                 if (Input.GetKey(trigger1))
                                 {
-                                    if (Direction == 0)
+                                    if (Direction == 0) // Forward 1
                                         Direction = 1;
-                                    else if (Direction == 2)
-                                        Direction = 1;
-                                    else if (Direction == -2)
+                                    else if (Direction == -3) // Continue reverse 1
                                         Direction = -1;
-                                    else Direction += Direction;
-
+                                    else if (Direction == 3) // Continue forward 1
+                                        Direction = 1;
+                                    else if (Direction == -4) // Swap to forward 1
+                                        Direction = 1;
+                                    else if (Direction == 4) // Swap to reverse 1
+                                        Direction = -1;
+                                    else // Set off
+                                        Direction = Mathf.Sign(Direction) * (Mathf.Abs(Direction) + 2);
                                 }
                                 else if (Input.GetKey(trigger2))
                                 {
-                                    if (Direction == 0)
-                                        Direction = -1;
-                                    else if (Direction == 2)
-                                        Direction = -1;
-                                    else if (Direction == -2)
-                                        Direction = 1;
-                                    else Direction = -(Direction + Direction);
+                                    if (Direction == 0) // Reverse 2
+                                        Direction = -2;
+                                    else if (Direction == -4) // Continue reverse 2
+                                        Direction = -2;
+                                    else if (Direction == 4) // Continue forward 2
+                                        Direction = 2;
+                                    else if (Direction == -3) // Swap to forward 2
+                                        Direction = 2;
+                                    else if (Direction == 3) // Swap to reverse 2
+                                        Direction = -2;
+                                    else // Set off
+                                        Direction = Mathf.Sign(Direction) * (Mathf.Abs(Direction) + 2);
                                 }
                             }
-                            if (Direction * Direction == 1)
-                                CurrentAngle += Direction * RotateSpeed;
+                            if (Direction == 1 || Direction == 2)
+                                CurrentAngle += RotateSpeed;
+                            else if (Direction == -2 || Direction == -1)
+                                CurrentAngle -= RotateSpeed;
                             break;
 
                         case Mode.Turning:
@@ -273,6 +284,8 @@ namespace Control_Block
                     if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
+                parts[parts.Length-1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);
+                aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
             }
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
             if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
