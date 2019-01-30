@@ -1099,7 +1099,7 @@ namespace Control_Block
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 400f, 600f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 450f, 600f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSwivel>();
@@ -1202,6 +1202,22 @@ namespace Control_Block
             }
 
             module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
+
+            if (module.mode != ModuleSwivel.Mode.AimAtPlayer && module.mode != ModuleSwivel.Mode.AimAtVelocity)
+            {
+                if (module.mode != ModuleSwivel.Mode.OnOff && module.mode != ModuleSwivel.Mode.Directional)
+                {
+                    GUILayout.Label("Start Pause: " + module.StartDelay.ToString());
+                    module.StartDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.StartDelay, 0, 360));
+                }
+                if (module.mode == ModuleSwivel.Mode.Cycle || module.mode == ModuleSwivel.Mode.Directional || module.mode == ModuleSwivel.Mode.OnOff)
+                {
+                    GUILayout.Label("CW Limiter Pause: " + module.CWDelay.ToString());
+                    module.CWDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.CWDelay, 0, 360));
+                    GUILayout.Label("CCW Limiter Pause: " + module.CCWDelay.ToString());
+                    module.CCWDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.CCWDelay, 0, 360));
+                }
+            }
 
             GUILayout.Label("Swivel : " + module.block.cachedLocalPosition.ToString());
 

@@ -12,20 +12,53 @@ namespace Control_Block
         public float EvaluatedBlockRotCurve = 0f, oldEvaluatedBlockCurve = 0f;
         public bool LockAngle = false;
         public float AngleCenter = 0f, AngleRange = 45f;
+
+        public float StartDelay, CWDelay, CCWDelay, CurrentDelay;
+
         public float Direction = 0f;
         public Mode mode = Mode.Positional;
 
         public enum Mode : byte
         {
+            /// <summary>
+            /// Input, StartDelay
+            /// </summary>
             Positional,
+            /// <summary>
+            /// Input, SideDelay
+            /// </summary>
             Directional,
+            /// <summary>
+            /// Input, StartDelay
+            /// </summary>
             Speed,
+            /// <summary>
+            /// Input, SideDelay
+            /// </summary>
             OnOff,
+            /// <summary>
+            /// When no target, Positional
+            /// </summary>
             Aim,
+            /// <summary>
+            /// Input, StartDelay
+            /// </summary>
             Turning,
+            /// <summary>
+            /// No Input
+            /// </summary>
             AimAtPlayer,
+            /// <summary>
+            /// No Input
+            /// </summary>
             AimAtVelocity,
+            /// <summary>
+            /// Input, StartDelay, SideDelay
+            /// </summary>
             Cycle,
+            /// <summary>
+            /// Input, StartDelay
+            /// </summary>
             Throttle,
         }
 
@@ -129,12 +162,23 @@ namespace Control_Block
                             {
                                 if (Input.GetKey(trigger1))
                                 {
+                                    if (CurrentDelay > 0)
+                                    {
+                                        CurrentDelay -= RotateSpeed;
+                                        break;
+                                    }
                                     CurrentAngle += RotateSpeed;
                                 }
-                                if (Input.GetKey(trigger2))
+                                else if (Input.GetKey(trigger2))
                                 {
+                                    if (CurrentDelay > 0)
+                                    {
+                                        CurrentDelay -= RotateSpeed;
+                                        break;
+                                    }
                                     CurrentAngle -= RotateSpeed;
                                 }
+                                else CurrentDelay = StartDelay;
                             }
                             break;
 
@@ -153,22 +197,40 @@ namespace Control_Block
                             break;
 
                         case Mode.Directional:
+                            if (Direction == 0 && CurrentDelay <= 0)
+                            {
+                                CurrentDelay = StartDelay;
+                            }
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
                                 {
                                     Direction = 1f;
                                 }
-                                if (Input.GetKey(trigger2))
+                                else if (Input.GetKey(trigger2))
                                 {
                                     Direction = -1f;
                                 }
+                            }
+                            if (Direction != 0 && CurrentDelay > 0)
+                            {
+                                CurrentDelay -= RotateSpeed;
+                                break;
                             }
                             CurrentAngle += Direction * RotateSpeed;
                             break;
 
                         case Mode.Throttle:
                         case Mode.Speed:
+                            if (Direction != 0 && CurrentDelay <= 0)
+                            {
+                                CurrentDelay = 0;
+                                Direction = 0;
+                            }
+                            else if (Direction == 0 && CurrentDelay <= 0)
+                            {
+                                CurrentDelay = StartDelay;
+                            }
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
@@ -181,9 +243,14 @@ namespace Control_Block
                                 }
                                 else if (mode == Mode.Throttle)
                                 {
-                                    Direction = Mathf.Clamp(0, Direction- 0.025f, Direction+ 0.025f);
+                                    Direction = Mathf.Clamp(0, Direction - 0.025f, Direction + 0.025f);
                                 }
                                 Direction = Mathf.Clamp(Direction, -1f, 1f);
+                            }
+                            if (Direction != 0 && CurrentDelay > 0)
+                            {
+                                CurrentDelay -= RotateSpeed;
+                                break;
                             }
                             CurrentAngle += Direction * RotateSpeed;
                             break;
@@ -201,50 +268,53 @@ namespace Control_Block
                                 }
                                 Direction = Mathf.Clamp(Direction, -1f, 1f);
                             }
+                            if (Direction != 0 && CurrentDelay > 0)
+                            {
+                                CurrentDelay -= RotateSpeed;
+                                break;
+                            }
                             CurrentAngle += Direction * RotateSpeed;
                             break;
 
                         case Mode.Cycle:
+                            if (Direction == 0 && CurrentDelay <= 0)
+                            {
+                                CurrentDelay = StartDelay;
+                            }
                             if (VInput && ButtonNotPressed)
                             {
                                 if (Input.GetKey(trigger1))
                                 {
-                                    if (Direction == 0) // Forward 1
+                                    if (Direction == 0) // Forward
                                         Direction = 1;
-                                    else if (Direction == -3) // Continue reverse 1
-                                        Direction = -1;
-                                    else if (Direction == 3) // Continue forward 1
-                                        Direction = 1;
-                                    else if (Direction == -4) // Swap to forward 1
-                                        Direction = 1;
-                                    else if (Direction == 4) // Swap to reverse 1
-                                        Direction = -1;
-                                    else // Set off
-                                        Direction = Mathf.Sign(Direction) * (Mathf.Abs(Direction) + 2);
+                                    else Direction = 0;
                                 }
                                 else if (Input.GetKey(trigger2))
                                 {
-                                    if (Direction == 0) // Reverse 2
-                                        Direction = -2;
-                                    else if (Direction == -4) // Continue reverse 2
-                                        Direction = -2;
-                                    else if (Direction == 4) // Continue forward 2
-                                        Direction = 2;
-                                    else if (Direction == -3) // Swap to forward 2
-                                        Direction = 2;
-                                    else if (Direction == 3) // Swap to reverse 2
-                                        Direction = -2;
-                                    else // Set off
-                                        Direction = Mathf.Sign(Direction) * (Mathf.Abs(Direction) + 2);
+                                    if (Direction == 0) // Reverse
+                                        Direction = -1;
+                                    else Direction = 0;
                                 }
                             }
-                            if (Direction == 1 || Direction == 2)
-                                CurrentAngle += RotateSpeed;
-                            else if (Direction == -2 || Direction == -1)
-                                CurrentAngle -= RotateSpeed;
+                            if (Direction != 0)
+                            {
+                                if (CurrentDelay > 0)
+                                    CurrentDelay -= RotateSpeed;
+                                else
+                                    CurrentAngle += Direction * RotateSpeed;
+                            }
+                            else
+                            {
+                                CurrentAngle += Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f) * RotateSpeed;
+                            }
                             break;
 
                         case Mode.Turning:
+
+                            if (Direction == 0 && CurrentDelay <= 0)
+                            {
+                                CurrentDelay = StartDelay;
+                            }
                             if (VInput)
                             {
                                 if (Input.GetKey(trigger1))
@@ -265,6 +335,12 @@ namespace Control_Block
                                 Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
                             }
                             Direction = Mathf.Clamp(Direction, -1f, 1f);
+
+                            if (Direction != 0 && CurrentDelay > 0)
+                            {
+                                CurrentDelay -= RotateSpeed;
+                                break;
+                            }
                             CurrentAngle += Direction * RotateSpeed;
                             break;
                     }
@@ -275,13 +351,25 @@ namespace Control_Block
                 if (Diff < -AngleRange)
                 {
                     CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
-                    if (mode == Mode.Cycle) Direction = -Direction;
+                    if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
+                    {
+                        if (mode == Mode.Cycle)
+                            Direction = -Direction;
+
+                        CurrentDelay = CCWDelay;
+                    }
                     else Direction = 0;
                 }
                 else if (Diff > AngleRange)
                 {
                     CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
-                    if (mode == Mode.Cycle) Direction = -Direction;
+                    if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
+                    {
+                        if (mode == Mode.Cycle)
+                            Direction = -Direction;
+
+                        CurrentDelay = CWDelay;
+                    }
                     else Direction = 0;
                 }
                 parts[parts.Length-1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);
@@ -460,7 +548,11 @@ namespace Control_Block
                     minRestrict = AngleCenter,
                     mode = mode,
                     rangeRestrict = AngleRange,
-                    Restrict = LockAngle
+                    Restrict = LockAngle,
+                    StartDelay = StartDelay,
+                    CWDelay = CWDelay,
+                    CCWDelay = CCWDelay,
+                    CurrentDelay = CurrentDelay
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -482,6 +574,10 @@ namespace Control_Block
                     LockAngle = sd.Restrict;
                     AngleCenter = sd.minRestrict;
                     AngleRange = sd.rangeRestrict;
+                    StartDelay = sd.StartDelay;
+                    CurrentDelay = sd.CurrentDelay;
+                    CWDelay = sd.CWDelay;
+                    CCWDelay = sd.CCWDelay;
                     mode = sd.mode;
                     Dirty = true;
                 }
@@ -501,6 +597,10 @@ namespace Control_Block
             public float rangeRestrict;
             public float Direction;
             public float minRestrict;
+            public float StartDelay;
+            public float CWDelay;
+            public float CCWDelay;
+            public float CurrentDelay;
         }
     }
 }

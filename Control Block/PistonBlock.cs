@@ -185,24 +185,24 @@ namespace Control_Block
                 EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 if (Class1.PistonHeart == Heart)
                 {
-                    if (UpdateCOM)
-                    {
-                        UpdateCOM = false;
-                        CacheCOM = tankcache.rbody.worldCenterOfMass - LoadCOM.position * (MassPushing / tankcache.rbody.mass);
-                        CacheCOM = tankcache.rbody.transform.InverseTransformVector(CacheCOM);
-                        tankcache.rbody.mass -= MassPushing;
-                    }
+                    //if (UpdateCOM)
+                    //{
+                    //    UpdateCOM = false;
+                    //    CacheCOM = tankcache.rbody.worldCenterOfMass - LoadCOM.position * (MassPushing / tankcache.rbody.mass);
+                    //    CacheCOM = tankcache.rbody.transform.InverseTransformVector(CacheCOM);
+                    //    tankcache.rbody.mass -= MassPushing;
+                    //}
                     var offs = SetRenderState();
                     if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
-                        tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
+                        tankcache.transform.position -= block.transform.rotation * Vector3.up * StretchModifier * thing;
 #warning Fix COM
-                        if (open == alphaOpen)
-                        {
+                        //if (open == alphaOpen)
+                        //{
                             tankcache.RequestPhysicsReset();
-                        }
+                        //}
                         //tankcache.rbody.centerOfMass = CacheCOM + tankcache.rbody.transform.InverseTransformVector(LoadCOM.position) * th;
                         //tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
                     }
