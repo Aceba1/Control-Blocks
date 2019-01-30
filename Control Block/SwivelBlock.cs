@@ -33,7 +33,7 @@ namespace Control_Block
             /// </summary>
             Speed,
             /// <summary>
-            /// Input, SideDelay
+            /// Input, StartDelay, SideDelay
             /// </summary>
             OnOff,
             /// <summary>
@@ -222,12 +222,7 @@ namespace Control_Block
 
                         case Mode.Throttle:
                         case Mode.Speed:
-                            if (Direction != 0 && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = 0;
-                                Direction = 0;
-                            }
-                            else if (Direction == 0 && CurrentDelay <= 0)
+                            if (Direction == 0 && ButtonNotPressed && CurrentDelay <= 0)
                             {
                                 CurrentDelay = StartDelay;
                             }
@@ -256,6 +251,10 @@ namespace Control_Block
                             break;
 
                         case Mode.OnOff:
+                            if (Direction == 0)
+                            {
+                                CurrentDelay = StartDelay;
+                            }
                             if (VInput && ButtonNotPressed)
                             {
                                 if (Input.GetKey(trigger1))
@@ -311,7 +310,7 @@ namespace Control_Block
 
                         case Mode.Turning:
 
-                            if (Direction == 0 && CurrentDelay <= 0)
+                            if (Direction == 0 && CurrentAngle == AngleCenter && CurrentDelay <= 0)
                             {
                                 CurrentDelay = StartDelay;
                             }
@@ -352,24 +351,16 @@ namespace Control_Block
                 {
                     CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
                     if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
-                    {
-                        if (mode == Mode.Cycle)
-                            Direction = -Direction;
-
                         CurrentDelay = CCWDelay;
-                    }
+                    if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
                 else if (Diff > AngleRange)
                 {
                     CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
                     if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
-                    {
-                        if (mode == Mode.Cycle)
-                            Direction = -Direction;
-
                         CurrentDelay = CWDelay;
-                    }
+                    if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
                 parts[parts.Length-1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);

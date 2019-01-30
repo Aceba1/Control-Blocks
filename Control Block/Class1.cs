@@ -1205,7 +1205,7 @@ namespace Control_Block
 
             if (module.mode != ModuleSwivel.Mode.AimAtPlayer && module.mode != ModuleSwivel.Mode.AimAtVelocity)
             {
-                if (module.mode != ModuleSwivel.Mode.OnOff && module.mode != ModuleSwivel.Mode.Directional)
+                if (module.mode != ModuleSwivel.Mode.Directional)
                 {
                     GUILayout.Label("Start Pause: " + module.StartDelay.ToString());
                     module.StartDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.StartDelay, 0, 360));
