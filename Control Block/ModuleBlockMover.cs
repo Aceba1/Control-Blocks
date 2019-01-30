@@ -154,7 +154,7 @@ abstract class ModuleBlockMover : Module
 
         GrabbedBlocks.Clear();
         CurrentCellPush = 0;
-        MassPushing = block.CurrentMass;
+        MassPushing = block.CurrentMass * 0.5f;
     }
 
     internal void SetDirty()
