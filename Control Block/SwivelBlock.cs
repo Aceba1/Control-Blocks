@@ -245,13 +245,14 @@ namespace Control_Block
                             if (Direction != 0 && CurrentDelay > 0)
                             {
                                 CurrentDelay -= RotateSpeed;
+                                if (CurrentDelay <= 0) Direction = 0;
                                 break;
                             }
                             CurrentAngle += Direction * RotateSpeed;
                             break;
 
                         case Mode.OnOff:
-                            if (Direction == 0)
+                            if (Direction == 0 && CurrentDelay <= 0)
                             {
                                 CurrentDelay = StartDelay;
                             }
@@ -305,6 +306,7 @@ namespace Control_Block
                             else
                             {
                                 CurrentAngle += Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f) * RotateSpeed;
+                                if (CurrentAngle == 0) CurrentDelay = 0;
                             }
                             break;
 
@@ -381,8 +383,8 @@ namespace Control_Block
                         if ((oldCurrentCurve != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                         {
                             float th = (MassPushing / block.tank.rbody.mass);
-                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldEvaluatedBlockCurve + 180, 360) - 180) * th;
-                            tankcache.transform.RotateAround(parts[parts.Length - 1].position, block.transform.rotation * Vector3.up, -thing);
+                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldEvaluatedBlockCurve + 180f, 360f) - 180f) * th;
+                            tankcache.transform.Rotate(/*parts[parts.Length - 1].position,*/ block.transform.localRotation * Vector3.up, -thing, Space.Self);
 #warning Fix COM
                             tankcache.RequestPhysicsReset();
                         }
@@ -403,7 +405,7 @@ namespace Control_Block
                 Moved = false;
                 tankcache.RequestPhysicsReset();
             }
-            if (mode == Mode.OnOff || mode == Mode.Cycle)
+            if (mode == Mode.OnOff || mode == Mode.Cycle || mode == Mode.Speed || mode == Mode.Throttle)
                 ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
         }
 
@@ -569,6 +571,7 @@ namespace Control_Block
                     CurrentDelay = sd.CurrentDelay;
                     CWDelay = sd.CWDelay;
                     CCWDelay = sd.CCWDelay;
+                    oldEvaluatedBlockCurve = blockrotcurve.Evaluate(CurrentAngle);
                     mode = sd.mode;
                     Dirty = true;
                 }

@@ -267,10 +267,10 @@ abstract class ModuleBlockMover : Module
                         CurrentCellPush += cb.filledCells.Length;
                         MassPushing += cb.CurrentMass;
                         cacheCOM += cb.centreOfMassWorld;
-                        if (CurrentCellPush > MaximumBlockPush)
-                        {
-                            return false;
-                        }
+                        //if (CurrentCellPush > MaximumBlockPush)
+                        //{
+                        //    return false;
+                        //}
                         GrabbedBlocks.Add(cb, new BlockDat(cb));
                         if (!GetBlocks(cb))
                             return false;

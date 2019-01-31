@@ -565,8 +565,7 @@ namespace Control_Block
 
         internal static GameObject AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
         {
-            GameObject sub = new GameObject("BlockMover Part");
-            sub.layer = Globals.inst.layerTank;
+            GameObject sub = new GameObject("BlockMover Part") { layer = Globals.inst.layerTank };
             sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
             sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
 
@@ -847,6 +846,9 @@ namespace Control_Block
                     B_mFSC = T.GetField("m_FireStrengthCurrent", b);
                     B_mPB = T.GetField("m_ParentBlock", b);
                 }
+                {
+                    m_AwaitingPhysicsReset = typeof(Tank).GetField("m_AwaitingPhysicsReset", b);
+                }
             }
             catch
             {
@@ -910,6 +912,27 @@ namespace Control_Block
         //    }
         //}
 
+
+        private static FieldInfo m_AwaitingPhysicsReset;
+        private static Vector3 oldCOM;
+        private static bool CenterToOld = false;
+        [HarmonyPatch(typeof(Tank), "ResetPhysics")]
+        private static class CenterCOM
+        {
+            private static void Prefix(Tank __instance)
+            {
+                if (__instance.IsAnchored||!(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
+                CenterToOld = true;
+                oldCOM = __instance.rbody.worldCenterOfMass;
+            }
+            private static void Postfix(Tank __instance)
+            {
+                if (!CenterToOld) return;
+                CenterToOld = false;
+                __instance.transform.position = (__instance.rbody.position + oldCOM - __instance.rbody.worldCenterOfMass);
+            }
+        }
+
         [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         private static class FanJetStabilizePatch
         {
@@ -925,14 +948,14 @@ namespace Control_Block
                         Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
                         Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
                         float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
-                        if (Mathf.Abs(num) < 0.075f)
-                        {
-                            num = 0f;
-                        }
-                        else
-                        {
-                            num -= Mathf.Sign(num) * 0.075f;
-                        }
+                        //if (Mathf.Abs(num) < 0.0125f)
+                        //{
+                        //    num = 0f;
+                        //}
+                        //else
+                        //{
+                        //    num -= Mathf.Sign(num) * 0.0125f;
+                        //}
                         __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
                     }
                 }

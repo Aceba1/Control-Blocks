@@ -197,7 +197,7 @@ namespace Control_Block
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
                         var thing = (EvaluatedBlockCurve - oldOpen) * th;
-                        tankcache.transform.position -= block.transform.rotation * Vector3.up * thing;
+                        tankcache.rbody.position -= block.transform.rotation * Vector3.up * thing;
 #warning Fix COM
                         //if (open == alphaOpen)
                         //{
