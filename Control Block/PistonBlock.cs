@@ -14,8 +14,7 @@ namespace Control_Block
         public float MaxStr = 1;
         public bool CanModifyStretch = false;
         public float StretchSpeed = 0.1f;
-
-        internal bool OVERRIDE = false;
+        
         public float alphaOpen { get; private set; } = 0f;
         private float gOfs = 0f;
         public bool IsToggle;
@@ -62,9 +61,10 @@ namespace Control_Block
 
         internal override void BlockRemoved(TankBlock block, Tank tank)
         {
-            if (alphaOpen == 1f)
+            if (alphaOpen != 0f)
             {
                 ForceMove = true;
+                UpdateFix = true;
                 ResetRenderState(true);
             }
             else
@@ -82,8 +82,7 @@ namespace Control_Block
             {
                 open = 1f;
                 alphaOpen = 1f;
-                Move(true);
-                //SetRenderState();
+                Move();
                 ForceMove = false;
             }
             try
@@ -162,20 +161,6 @@ namespace Control_Block
                     alphaOpen = 1f;
                     ForceOpen = false;
                 }
-                if (open != alphaOpen)
-                {
-                    Move(alphaOpen != 0f);
-                }
-            }
-            if (OVERRIDE)
-            {
-                OVERRIDE = false;
-                SnapRender = true;
-                if (alphaOpen != 0f)
-                {
-                    Move(true);
-                }
-                SetRenderState();
             }
             if (open != alphaOpen)
             {
@@ -192,7 +177,7 @@ namespace Control_Block
                     //    CacheCOM = tankcache.rbody.transform.InverseTransformVector(CacheCOM);
                     //    tankcache.rbody.mass -= MassPushing;
                     //}
-                    var offs = SetRenderState();
+                    var offs = Move();
                     if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
@@ -217,8 +202,7 @@ namespace Control_Block
             if (UpdateFix)
             {
                 UpdateFix = false;
-                Move(true);
-                SetRenderState();
+                Move();
             }
             if (InverseTrigger == 2 || InverseTrigger == 3)
                 ButtonIsValid = ButtonIsValid || Input.GetKeyUp(trigger);
@@ -232,27 +216,36 @@ namespace Control_Block
                 return open;
             }
         }
-        private void Move(bool Expand)
+        private Vector3 Move()
         {
             CleanDirty();
             if (CanMove)
             {
-                if (parts.Length != 0)
+                if (SnapRender)
                 {
-                    for (int I = 0; I < parts.Length; I++)
-                        parts[I].localPosition = Vector3.up * curves[I].Evaluate(Expand ? (StretchModifier / MaxStr) : 0f);
+                    open = alphaOpen;
+                    SnapRender = false;
+                    EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
                 }
-                Vector3 modifier = block.transform.localRotation * ((Expand ? Vector3.up : Vector3.down) * StretchModifier);
+                for (int I = 0; I < parts.Length; I++)
+                {
+                    parts[I].localPosition = Vector3.up * curves[I].Evaluate(open * (StretchModifier / MaxStr));
+                }
+                var rawOfs = EvaluatedBlockCurve;
+                Vector3 offs = (block.transform.localRotation * Vector3.up) * (rawOfs - gOfs);
+                gOfs = rawOfs;
                 foreach (var pair in GrabbedBlocks)
                 {
-                    var val = pair.Key;
-                    val.transform.localPosition += modifier;
+                    var block = pair.Key;
+                    block.transform.localPosition += offs;
                 }
+                return offs;
             }
             else
             {
                 alphaOpen = open;
             }
+            return default(Vector3);
         }
 
         /// <summary>
@@ -284,34 +277,9 @@ namespace Control_Block
                     block.transform.localPosition = block.cachedLocalPosition;
             }
         }
-        
-        public Vector3 SetRenderState()
-        {
-            if (SnapRender)
-            {
-                open = alphaOpen;
-                SnapRender = false;
-                EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
-            }
-            for (int I = 0; I < parts.Length; I++)
-            {
-                parts[I].localPosition = Vector3.up * curves[I].Evaluate(open * (StretchModifier / MaxStr));
-            }
-            var rawOfs = EvaluatedBlockCurve - alphaOpen * StretchModifier;
-            Vector3 offs = (block.transform.localRotation * Vector3.up) * (rawOfs - gOfs);
-            gOfs = rawOfs;
-            foreach (var pair in GrabbedBlocks)
-            {
-                var block = pair.Key;
-                if (block.tank == base.block.tank)
-                    block.transform.localPosition += offs;
-            }
-            return offs;
-        }
-
         private void OnSpawn()
         {
-            SetRenderState();
+            Move();
         }
 
         internal override void Attach()
@@ -319,7 +287,8 @@ namespace Control_Block
             alphaOpen = 0;
             open = 0;
             gOfs = 0;
-            
+            SnapRender = true;
+            Move();
             tankcache?.AttachEvent.Unsubscribe(a_action);
             tankcache?.DetachEvent.Unsubscribe(d_action);
             tankcache = block.tank;
@@ -380,6 +349,7 @@ namespace Control_Block
                     LocalControl = serialData2.Local;
                     StretchModifier = (int)Mathf.Clamp(serialData2.Stretch, 1, MaxStr);
                     Dirty = true;
+                    UpdateFix = true;
                 }
             }
         }

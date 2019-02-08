@@ -383,8 +383,8 @@ namespace Control_Block
                         if ((oldCurrentCurve != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                         {
                             float th = (MassPushing / block.tank.rbody.mass);
-                            var thing = (Mathf.Repeat(EvaluatedBlockRotCurve - oldEvaluatedBlockCurve + 180f, 360f) - 180f) * th;
-                            tankcache.transform.Rotate(/*parts[parts.Length - 1].position,*/ block.transform.localRotation * Vector3.up, -thing, Space.Self);
+                            var thing = (Mathf.Repeat(oldEvaluatedBlockCurve - EvaluatedBlockRotCurve + 180f, 360f) - 180f) * th;
+                            tankcache.transform.Rotate(/*parts[parts.Length - 1].position,*/ block.transform.localRotation * Vector3.up, thing, Space.Self);
 #warning Fix COM
                             tankcache.RequestPhysicsReset();
                         }

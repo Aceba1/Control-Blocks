@@ -739,6 +739,7 @@ namespace Control_Block
             foreach (Component comp in c)
             {
                 result += "\n" + Indenting + comp.name + " : " + comp.GetType().Name;
+                if (comp is MeshRenderer) result += " : Material (" + ((MeshRenderer)comp).material.name + ")";
             }
             for (int i = SearchIn.transform.childCount - 1; i >= 0; i--)
             {
@@ -855,7 +856,7 @@ namespace Control_Block
             }
         }
 
-        [HarmonyPatch(typeof(BlockManager), "AddBlock")]
+        [HarmonyPatch(typeof(BlockManager), "AddBlockToTech")]
         private static class BlockManagerFix
         {
             private static void Prefix(ref BlockManager __instance, ref TankBlock block, IntVector3 localPos)
