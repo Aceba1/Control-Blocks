@@ -548,11 +548,12 @@ namespace Control_Block
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
             obj.strength = .5f;
+            obj.threshold = 1f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
-            obj.strength = .75f;
-            obj.threshold = 1f;
+            obj.strength = .76f;
+            obj.threshold = 2f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
@@ -591,6 +592,8 @@ namespace Control_Block
             sub.transform.localRotation = Quaternion.identity;
             return sub;
         }
+
+        #region SetBlockData
 
         internal static void SetGSOPiston(ModulePiston piston)
         {
@@ -731,6 +734,8 @@ namespace Control_Block
                 new IntVector3(0,1,0)
             };
         }
+
+        #endregion SetBlockData
 
         public static string LogAllComponents(Transform SearchIn, string Indenting = "")
         {
