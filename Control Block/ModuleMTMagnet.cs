@@ -94,13 +94,13 @@ namespace Control_Block
                         if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                         {
                             block.tank.transform.position += offset * (Am / (Am + Bm));
+                            block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
                         }
-                        block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
                         if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
                         {
                             _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
+                            _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                         }
-                        _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                     }
                 }
             }
