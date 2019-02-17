@@ -528,25 +528,75 @@ namespace Control_Block.Properties {
         /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
         ///# www.blender.org
-        ///mtllib mtmag free.mtl
-        ///o m_EXP_JointSet_2_Bearing_212_Instance
-        ///v -1.500002 0.500000 -0.768279
-        ///v -1.500002 0.500000 -0.231717
-        ///v -0.768283 0.500000 -1.499998
-        ///v -0.231721 0.500000 -1.499998
-        ///v 0.499998 -0.499998 -0.768280
-        ///v 0.499998 0.500000 -0.231717
-        ///v 0.232956 0.500000 0.232959
-        ///v -0.231721 0.500000 0.500002
-        ///v -0.768282 0.500000 0.500002
-        ///v -1.500002 -0.499998 -0.768280
-        ///v -1.500002 -0.499998 -0.231717
-        ///v -1.232960 -0.499998 0.232960
-        ///v -0.768283 -0.499998 0.50 [rest of string was truncated]&quot;;.
+        ///mtllib mtmag ball.mtl
+        ///o m_BF_Block_Faired_111_Instance.001
+        ///v -0.450001 -0.400000 -0.499999
+        ///v 0.449999 -0.400000 -0.500000
+        ///v 0.499999 -0.400000 -0.450001
+        ///v -0.500001 -0.400000 -0.449999
+        ///v -0.500000 -0.400000 0.450001
+        ///v 0.450000 -0.400000 0.499999
+        ///v -0.450000 -0.400000 0.500000
+        ///v 0.500000 -0.400000 0.449999
+        ///v -0.000000 -0.160000 -0.003982
+        ///v 0.499999 -0.500000 -0.500001
+        ///v -0.500001 -0.500000 -0.500000
+        ///v -0.500000 -0.500000 0.500000
+        ///v 0.500000 -0.500000 0.4 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string mtmag_free {
+        internal static string mtmag_ball {
             get {
-                return ResourceManager.GetString("mtmag_free", resourceCulture);
+                return ResourceManager.GetString("mtmag_ball", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
+        ///mtllib mtmag fixed.mtl
+        ///o m_BF_Block_Faired_111_Instance.001_m_BF_Block_Faired_111_Instance.009
+        ///v 0.450000 -0.000000 0.125000
+        ///v -0.405000 -0.000000 -0.450000
+        ///v 0.125000 -0.000000 0.450000
+        ///v 0.450000 -0.000000 0.405000
+        ///v 0.450000 -0.000000 -0.405000
+        ///v -0.450000 -0.000000 -0.125000
+        ///v -0.405000 -0.000000 0.450000
+        ///v 0.125000 -0.000000 -0.450000
+        ///v -0.125000 -0.000000 -0.450000
+        ///v -0.450000 -0.000000 0.405000
+        ///v 0.450000 -0.000000 -0.125000
+        ///v -0.450000 -0.000000 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mtmag_fixed {
+            get {
+                return ResourceManager.GetString("mtmag_fixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
+        ///mtllib mtmag swivel large.mtl
+        ///o Plane.001
+        ///v 0.146447 -0.500000 1.500000
+        ///v 0.323223 -0.500000 1.500000
+        ///v 0.423223 -0.300003 1.500000
+        ///v 0.146447 -0.050003 1.499317
+        ///v 0.500000 -0.064148 1.400322
+        ///v 0.500000 0.399989 1.390877
+        ///v 0.853553 0.399989 1.340877
+        ///v 0.853553 -0.064148 1.400322
+        ///v 0.500000 -0.050003 1.499317
+        ///v 0.853553 -0.050003 1.499317
+        ///v 0.853553 0.399993 1.418785
+        ///v 0.853553 -0.500000 1.500000
+        ///v 0.853553 -0.500000 1.401005
+        ///v 0.146447 -0.500000 1.40100 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mtmag_swivel_large {
+            get {
+                return ResourceManager.GetString("mtmag_swivel_large", resourceCulture);
             }
         }
         

@@ -508,7 +508,7 @@ namespace Control_Block
                     .SetMass(2f)
                     .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadbig, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1,0,1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1, 0, 1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
                     .AddComponent<ModuleFrictionPad>(SetGCBigPad);
 
                 var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
@@ -534,6 +534,133 @@ namespace Control_Block
 
             #endregion Pads
 
+            #region MultiTech Magnets
+
+            #region Fixed MTMag
+
+            {
+                var mtmag = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("FixedJoint MTMag")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                    .SetBlockID(1293700)
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(500)
+                    .SetHP(600)
+                    .SetMass(1f)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_fixed, "mtmag_fixed"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
+                    .AddComponent<ModuleMTMagnet>(SetFixedMTMag);
+
+                AddCollider(new Vector3(1f, 0.5f, 1f), Vector3.down * 0.25f, mtmag.Prefab.transform);
+
+                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(0.925f, 0.5f, 0.925f);
+                trigger.center = Vector3.up * 0.25f;
+
+                mtmag.RegisterLater();
+
+                //CustomRecipe.RegisterRecipe(
+                //    new CustomRecipe.RecipeInput[]
+                //    {
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                //    },
+                //    new CustomRecipe.RecipeOutput[]
+                //    {
+                //    new CustomRecipe.RecipeOutput(/*Edit*/)
+                //    });
+            }
+
+            #endregion Fixed MTMag
+
+            #region Ball MTMag
+
+            {
+                var mtmag = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("BallJoint MTMag")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                    .SetBlockID(1293701)
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(500)
+                    .SetHP(600)
+                    .SetMass(1f)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
+                    .AddComponent<ModuleMTMagnet>(SetBallMTMag);
+
+                AddCollider(new Vector3(0.75f, 0.2f, 0.75f), Vector3.down * 0.4f, mtmag.Prefab.transform);
+
+                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(0.9f, 0.9f, 0.9f);
+                trigger.center = Vector3.zero;
+
+                mtmag.RegisterLater();
+
+                //CustomRecipe.RegisterRecipe(
+                //    new CustomRecipe.RecipeInput[]
+                //    {
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                //    },
+                //    new CustomRecipe.RecipeOutput[]
+                //    {
+                //    new CustomRecipe.RecipeOutput(/*Edit*/)
+                //    });
+            }
+
+            #endregion Ball MTMag
+
+            #region Large Swivel MTMag
+
+            {
+                var mtmag = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("SwivelJoint Large MTMag")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                    .SetBlockID(1293702)
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(500)
+                    .SetHP(600)
+                    .SetMass(3f)
+                    .SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.Bottom)
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_swivel_large, "mtmag_swivel_large"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                    .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
+
+                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(1f,0f,1f), mtmag.Prefab.transform);
+
+                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(1.9f, 0.9f, 1.9f);
+                trigger.center = new Vector3(1f,0.5f,1f);
+
+                mtmag.RegisterLater();
+
+                //CustomRecipe.RegisterRecipe(
+                //    new CustomRecipe.RecipeInput[]
+                //    {
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                //    },
+                //    new CustomRecipe.RecipeOutput[]
+                //    {
+                //    new CustomRecipe.RecipeOutput(/*Edit*/)
+                //    });
+            }
+
+            #endregion Large Swivel MTMag
+
+            #endregion MultiTech Magnets
+
             #endregion Blocks
 
             GameObject _holder = new GameObject();
@@ -545,23 +672,25 @@ namespace Control_Block
             UnityEngine.Object.DontDestroyOnLoad(_holder);
         }
 
-        private static void SetGCSmallPad(ModuleFrictionPad obj)
-        {
-            obj.strength = .5f;
-            obj.threshold = 1f;
-        }
-        private static void SetGCBigPad(ModuleFrictionPad obj)
-        {
-            obj.strength = .76f;
-            obj.threshold = 2f;
-            obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
-        }
-
         internal static bool PistonHeart = false;
 
         internal static void WorldShift()
         {
             PistonHeart = !PistonHeart;
+        }
+
+        internal static GameObject AddCollider(Vector3 colliderSize, Vector3 colliderOffset, Transform par)
+        {
+            GameObject sub = new GameObject("Frictionless Collider") { layer = Globals.inst.layerTank };
+
+            var mhc = sub.AddComponent<BoxCollider>();
+            mhc.size = colliderSize;
+            mhc.center = colliderOffset;
+            mhc.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0.3f };
+            sub.transform.SetParent(par);
+            sub.transform.localPosition = Vector3.zero;
+            sub.transform.localRotation = Quaternion.identity;
+            return sub;
         }
 
         internal static GameObject AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
@@ -595,6 +724,68 @@ namespace Control_Block
 
         #region SetBlockData
 
+        internal static void SetFixedMTMag(ModuleMTMagnet mtmag)
+        {
+            mtmag.Identity = ModuleMTMagnet.MTMagTypes.Fixed;
+            mtmag.TransformCorrection = 0.3f;
+            mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CFixedJoint);
+        }
+        internal static void CFixedJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
+        {
+            var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.anchor = origin.LocalPosWithEffector;
+            Joint.enableCollision = true;
+            Joint.connectedBody = connectedBody;
+            Joint.xMotion = ConfigurableJointMotion.Locked;
+            Joint.yMotion = ConfigurableJointMotion.Locked;
+            Joint.zMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Locked;
+            Joint.angularYMotion = ConfigurableJointMotion.Locked;
+            Joint.angularZMotion = ConfigurableJointMotion.Locked;
+            origin.joint = Joint;
+        }
+        internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
+        {
+            mtmag.Identity = ModuleMTMagnet.MTMagTypes.Swivel;
+            mtmag.TransformCorrection = 0.35f;
+            mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
+            mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CSwivelJoint);
+        }
+        internal static void CSwivelJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
+        {
+            var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.anchor = origin.LocalPosWithEffector;
+            Joint.enableCollision = true;
+            Joint.connectedBody = connectedBody;
+            Joint.xMotion = ConfigurableJointMotion.Locked;
+            Joint.yMotion = ConfigurableJointMotion.Locked;
+            Joint.zMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Locked;
+            Joint.angularYMotion = ConfigurableJointMotion.Free;
+            Joint.angularZMotion = ConfigurableJointMotion.Locked;
+            origin.joint = Joint;
+        }
+        internal static void SetBallMTMag(ModuleMTMagnet mtmag)
+        {
+            mtmag.Identity = ModuleMTMagnet.MTMagTypes.Ball;
+            mtmag.TransformCorrection = 0.2f;
+            mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CBallJoint);
+        }
+        internal static void CBallJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
+        {
+            var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.anchor = origin.LocalPosWithEffector;
+            Joint.enableCollision = true;
+            Joint.connectedBody = connectedBody;
+            Joint.xMotion = ConfigurableJointMotion.Locked;
+            Joint.yMotion = ConfigurableJointMotion.Locked;
+            Joint.zMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Free;
+            Joint.angularYMotion = ConfigurableJointMotion.Free;
+            Joint.angularZMotion = ConfigurableJointMotion.Free;
+            origin.joint = Joint;
+        }
+
         internal static void SetGSOPiston(ModulePiston piston)
         {
             piston.MaximumBlockPush = 108;
@@ -612,7 +803,6 @@ namespace Control_Block
                 new IntVector3(0,1,0)
             };
         }
-
         internal static void SetGeoCorpPiston(ModulePiston piston)
         {
             piston.MaximumBlockPush = 384;
@@ -635,7 +825,6 @@ namespace Control_Block
                 new IntVector3(1,2,1)
             };
         }
-
         internal static void SetHawkeyePiston(ModulePiston piston)
         {
             piston.MaximumBlockPush = 120;
@@ -658,7 +847,6 @@ namespace Control_Block
                 new IntVector3(0,0,-1)
             };
         }
-
         internal static void SetBFPiston(ModulePiston piston)
         {
             piston.MaximumBlockPush = 65535;
@@ -733,6 +921,18 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
+        }
+
+        private static void SetGCSmallPad(ModuleFrictionPad obj)
+        {
+            obj.strength = .5f;
+            obj.threshold = 1f;
+        }
+        private static void SetGCBigPad(ModuleFrictionPad obj)
+        {
+            obj.strength = .76f;
+            obj.threshold = 2f;
+            obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
         #endregion SetBlockData
@@ -927,7 +1127,7 @@ namespace Control_Block
         {
             private static void Prefix(Tank __instance)
             {
-                if (__instance.IsAnchored||!(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
+                if (__instance.IsAnchored || !(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
                 CenterToOld = true;
                 oldCOM = __instance.rbody.worldCenterOfMass;
             }

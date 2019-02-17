@@ -282,6 +282,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="ModuleBlockMover.cs" />
+    <Compile Include="ModuleMTMagnet.cs" />
     <Compile Include="ModuleFrictionPad.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -307,12 +308,14 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
+    <None Include="Blocks\MTMags\mtmag ball.obj" />
+    <None Include="Blocks\MTMags\mtmag fixed.obj" />
+    <None Include="Blocks\MTMags\mtmag swivel large.obj" />
     <None Include="Blocks\Pads\GCfrictionpadsmall.obj" />
     <None Include="Blocks\Medium\swivel.blend" />
     <None Include="Blocks\Medium\swivel_base.obj" />
     <None Include="Blocks\Medium\swivel_head.obj" />
     <None Include="Blocks\Medium\swivel_png" />
-    <None Include="Blocks\MTMags\mtmag free.obj" />
     <None Include="Blocks\Pads\GCfrictionpadbig.obj" />
     <None Include="Blocks\Piston\BF\BFpiston.blend" />
     <None Include="Blocks\Piston\BF\BFp_blockbottom.obj" />

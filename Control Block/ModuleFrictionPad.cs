@@ -13,16 +13,17 @@ namespace Control_Block
         public Vector3 effector = Vector3.up * 0.5f;
         LayerMask layer = LayerMask.GetMask("Terrain", "Scenery", "Landmarks", "Cosmetic");
         bool DoIt;
+        bool Heart = false;
         Vector3 GetEffector(TankBlock b) => b.transform.rotation * effector;
         void OnTriggerStay(Collider other)
         {
+            if (Heart != Class1.PistonHeart) return;
             if (DoIt && ((layer.value | (1<<other.gameObject.layer)) == layer.value))
             {
                 DoIt = false;
                 var block = gameObject.GetComponent<TankBlock>();
                 if (block != null && block.tank != null && !block.tank.beam.IsActive)
                 {
-                    //    collisionData = "COLLIDING";
                     var force = Vector3.ProjectOnPlane(LastPos - (block.transform.position + GetEffector(block)), block.transform.rotation * Vector3.up) * strength;
                     if (force.magnitude < threshold)
                     {
@@ -42,6 +43,10 @@ namespace Control_Block
         {
             //var block = gameObject.GetComponent<TankBlock>();
             DoIt = true;
+        }
+        void Update()
+        {
+            Heart = Class1.PistonHeart;
         }
     }
 }

@@ -123,7 +123,7 @@ abstract class ModuleBlockMover : Module
 
     public void Print(string Message)
     {
-        Console.WriteLine(GetDateTime("CB(", "): ") + Message);
+        //Console.WriteLine(GetDateTime("CB(", "): ") + Message);
     }
 
     internal void CleanDirty()

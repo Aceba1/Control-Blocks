@@ -365,9 +365,9 @@ namespace Control_Block
                     if (mode == Mode.Cycle) Direction = -Direction;
                     else Direction = 0;
                 }
-                parts[parts.Length-1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);
-                aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
             }
+            parts[parts.Length - 1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);
+            aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
             CurrentAngle = Mathf.Repeat(CurrentAngle, 360);
             if ((ForceMove || Dirty || CanMove) && oldAngle != CurrentAngle)
             {
