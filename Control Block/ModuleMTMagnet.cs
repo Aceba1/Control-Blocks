@@ -16,13 +16,14 @@ namespace Control_Block
             Swivel
         }
         public MTMagTypes Identity;
-        public float TransformCorrection = 0.3f, VelocityCorrection = 0.5f;
+        public float TransformCorrection = 0.3f, VelocityCorrection = 0.75f;
         public Action<ModuleMTMagnet, Rigidbody> ConfigureNewJoint;
         public Joint joint;
         public Vector3 Effector = Vector3.up * 0f;
         bool _Binded;
         bool _BondIsValid;
         bool _ExpectBond;
+        bool _BindedTo;
         public ModuleMTMagnet _BoundBody;
         bool Heart = false;
         bool Recalc = false;
@@ -33,7 +34,7 @@ namespace Control_Block
         {
             try
             {
-                if (Heart != Class1.PistonHeart)
+                if (Heart != Class1.PistonHeart || _BindedTo)
                 {
                     return;
                 }
@@ -41,7 +42,7 @@ namespace Control_Block
                 var NewBody = other.GetComponentInParent<ModuleMTMagnet>();
                 if (Recalc || !_Binded)
                 {
-                    if (NewBody != null && !NewBody._Binded && NewBody._BoundBody == null && NewBody.Identity == Identity && NewBody.block.IsAttached && (!NewBody.block.tank.IsAnchored || !block.tank.IsAnchored))
+                    if (((_Binded && NewBody == _BoundBody) || (!_Binded && NewBody != null && !NewBody._Binded && !NewBody._BindedTo && NewBody.Identity == Identity)) && NewBody.block.IsAttached && (!NewBody.block.tank.IsAnchored || !block.tank.IsAnchored))
                     {
                         if (joint != null)
                         {
@@ -51,6 +52,7 @@ namespace Control_Block
                         Recalc = false;
                         _Binded = true;
                         _BoundBody = NewBody;
+                        _BoundBody._BindedTo = true;
                         var oldPos = block.tank.transform.position; var oldrot = block.tank.transform.rotation;
                         switch (Identity)
                         {
@@ -72,7 +74,7 @@ namespace Control_Block
                                 var inv2 = Quaternion.Inverse(transform.rotation);
                                 block.tank.transform.rotation *= Quaternion.FromToRotation(inv2 * transform.up, inv2 * -_BoundBody.transform.up);
                                 block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
-                                Class1.CFixedJoint(this, _BoundBody.block.tank.rbody);
+                                Class1.CSwivelJoint(this, _BoundBody.block.tank.rbody);
                                 break;
                         }
                         block.tank.transform.position = oldPos;
@@ -89,21 +91,27 @@ namespace Control_Block
                         var Bm = _BoundBody.block.tank.rbody.mass;
                         var Am = block.tank.rbody.mass;
                         var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
-                        if (!block.tank.IsAnchored)
+                        if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                         {
                             block.tank.transform.position += offset * (Am / (Am + Bm));
-                            block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
                         }
-                        if (!_BoundBody.block.tank.IsAnchored)
+                        block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
+                        if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
                         {
                             _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
-                            _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                         }
+                        _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                     }
                 }
             }
             catch(Exception E)
             {
+                try
+                {
+                    if (_Binded)
+                    _BoundBody._BindedTo = false;
+                }
+                catch { }
                 Console.WriteLine(E.Message);
                 Console.WriteLine(E.StackTrace);
             }
@@ -116,6 +124,7 @@ namespace Control_Block
                 if (joint != null)
                 {
                     Destroy(joint); // Destroy bond
+                    _BoundBody._BindedTo = false;
                     joint = null;
                     _BoundBody = null;
                 }
@@ -127,17 +136,18 @@ namespace Control_Block
                 if (joint != null)
                 {
                     Destroy(joint); // Destroy bond
+                    //_BoundBody._BindedTo = false;
                     joint = null;
-                    _BoundBody = null;
+                    //_BoundBody = null;
                 }
-                _Binded = false;
+                //_Binded = false;
             }
             if ((_ExpectBond||_Binded) && !_BondIsValid) // If bond body could not be reached
             {
                 if (_ExpectBond) // If it was just loaded
                 {
                     ManTechs.inst.CheckSleepRange(block.tank); // Put the tech to sleep if it is far
-                    if (block.tank.IsSleeping) return;
+                    if (block.tank.IsSleeping) return; // If it is asleep, leave as is
                     if (ManGameMode.inst.GetModePhase() != ManGameMode.GameState.InGame) // If it is still loading the game, freeze the tech
                     {
                         block.tank.SetSleeping(true);
@@ -146,6 +156,12 @@ namespace Control_Block
                     _ExpectBond = false;
                     ManTechs.inst.CheckSleepRange(block.tank);
                 }
+                try
+                {
+                    if (_Binded)
+                        _BoundBody._BindedTo = false;
+                }
+                catch { }
                 if (joint != null)
                 {
                     Destroy(joint); // Destroy bond
@@ -158,24 +174,34 @@ namespace Control_Block
             {
                 _BondIsValid = false;
             }
-            if (_Binded && (_BoundBody == null || (_BoundBody._BoundBody != null && _BoundBody._BoundBody != this)))
+            if (_Binded)
             {
-                if (joint != null)
+                if (_BoundBody == null || (_BoundBody._BoundBody != null && _BoundBody._BoundBody != this))
                 {
-                    Destroy(joint);
-                    joint = null;
-                    _BoundBody = null;
+                    if (joint != null)
+                    {
+                        Destroy(joint);
+                        joint = null;
+                        _BoundBody = null;
+                    }
+                    _ExpectBond = false;
+                    _BondIsValid = false;
+                    _Binded = false;
+                    try
+                    {
+                        _BoundBody._BindedTo = false;
+                    }
+                    catch { }
+                    return;
                 }
-                _ExpectBond = false;
-                _BondIsValid = false;
-                _Binded = false;
-                return;
+                _BoundBody._BindedTo = true;
             }
         }
 
         void Update()
         {
             Heart = Class1.PistonHeart;
+            _BindedTo = false;
         }
 
         private void OnPool()
@@ -184,7 +210,7 @@ namespace Control_Block
             block.DetachEvent += OnDetach;
             foreach(BoxCollider box in gameObject.GetComponentsInChildren<BoxCollider>())
             {
-                if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0.3f };
+                if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0f };
             }
         }
         

@@ -559,8 +559,8 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.925f, 0.5f, 0.925f);
-                trigger.center = Vector3.up * 0.25f;
+                trigger.size = new Vector3(0.925f, .9f, 0.925f);
+                trigger.center = Vector3.up * 0.05f;
 
                 mtmag.RegisterLater();
 
@@ -600,8 +600,8 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.9f, 0.9f, 0.9f);
-                trigger.center = Vector3.zero;
+                trigger.size = new Vector3(1.2f, 1f, 1.2f);
+                trigger.center = Vector3.up * 0.2f;
 
                 mtmag.RegisterLater();
 
@@ -641,7 +641,7 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.9f, 0.9f, 1.9f);
+                trigger.size = new Vector3(1.9f, 1.4f, 1.9f);
                 trigger.center = new Vector3(1f,0.5f,1f);
 
                 mtmag.RegisterLater();
@@ -727,7 +727,8 @@ namespace Control_Block
         internal static void SetFixedMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Fixed;
-            mtmag.TransformCorrection = 0.3f;
+            mtmag.TransformCorrection = 0.4f;
+            mtmag.VelocityCorrection = 0.7f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CFixedJoint);
         }
         internal static void CFixedJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
@@ -747,7 +748,8 @@ namespace Control_Block
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Swivel;
-            mtmag.TransformCorrection = 0.35f;
+            mtmag.TransformCorrection = 0.25f;
+            mtmag.VelocityCorrection = 1.7f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CSwivelJoint);
         }
@@ -768,7 +770,8 @@ namespace Control_Block
         internal static void SetBallMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Ball;
-            mtmag.TransformCorrection = 0.2f;
+            mtmag.TransformCorrection = 0.4f;
+            mtmag.VelocityCorrection = 0.7f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CBallJoint);
         }
         internal static void CBallJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
