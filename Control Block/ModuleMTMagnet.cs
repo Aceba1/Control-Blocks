@@ -208,7 +208,7 @@ namespace Control_Block
         {
             block.AttachEvent += OnAttach;
             block.DetachEvent += OnDetach;
-            foreach(BoxCollider box in gameObject.GetComponentsInChildren<BoxCollider>())
+            foreach(Collider box in gameObject.GetComponentsInChildren<Collider>())
             {
                 if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0f };
             }

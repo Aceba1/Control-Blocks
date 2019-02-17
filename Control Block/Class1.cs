@@ -559,8 +559,8 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.925f, .9f, 0.925f);
-                trigger.center = Vector3.up * 0.05f;
+                trigger.size = new Vector3(0.5f, 0.5f, 0.5f);
+                trigger.center = Vector3.zero;
 
                 mtmag.RegisterLater();
 
@@ -590,18 +590,16 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball_collider, "mtmag_ball_collider"), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetBallMTMag);
 
-                AddCollider(new Vector3(0.75f, 0.2f, 0.75f), Vector3.down * 0.4f, mtmag.Prefab.transform);
-
-                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                var trigger = mtmag.Prefab.gameObject.AddComponent<SphereCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.2f, 1f, 1.2f);
-                trigger.center = Vector3.up * 0.2f;
+                trigger.radius = .8f;
+                trigger.center = Vector3.zero;
 
                 mtmag.RegisterLater();
 
@@ -641,7 +639,7 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.9f, 1.4f, 1.9f);
+                trigger.size = new Vector3(1f, 1f, 1f);
                 trigger.center = new Vector3(1f,0.5f,1f);
 
                 mtmag.RegisterLater();
@@ -744,6 +742,12 @@ namespace Control_Block
             Joint.angularYMotion = ConfigurableJointMotion.Locked;
             Joint.angularZMotion = ConfigurableJointMotion.Locked;
             origin.joint = Joint;
+            var thing = Joint.angularYZLimitSpring;
+            thing.damper = 8f;
+            thing.spring = 80;
+            var thing2 = Joint.angularXLimitSpring;
+            thing2.damper = 8f;
+            thing2.spring = 80;
         }
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
         {
@@ -766,6 +770,12 @@ namespace Control_Block
             Joint.angularYMotion = ConfigurableJointMotion.Free;
             Joint.angularZMotion = ConfigurableJointMotion.Locked;
             origin.joint = Joint;
+            var thing = Joint.angularYZLimitSpring;
+            thing.damper = 8f;
+            thing.spring = 80;
+            var thing2 = Joint.angularXLimitSpring;
+            thing2.damper = 8f;
+            thing2.spring = 80;
         }
         internal static void SetBallMTMag(ModuleMTMagnet mtmag)
         {

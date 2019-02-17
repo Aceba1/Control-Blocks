@@ -308,6 +308,7 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
+    <None Include="Blocks\MTMags\mtmag ball collider.obj" />
     <None Include="Blocks\MTMags\mtmag ball.obj" />
     <None Include="Blocks\MTMags\mtmag fixed.obj" />
     <None Include="Blocks\MTMags\mtmag swivel large.obj" />

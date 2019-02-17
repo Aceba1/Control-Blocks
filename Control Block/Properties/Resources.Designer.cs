@@ -553,6 +553,32 @@ namespace Control_Block.Properties {
         /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
         ///# www.blender.org
+        ///mtllib mtmag ball collider.mtl
+        ///o Cone
+        ///v 0.000000 -0.500000 -0.500000
+        ///v 0.000000 -0.200000 -0.250000
+        ///v 0.353553 -0.500000 -0.353553
+        ///v 0.176777 -0.200000 -0.176777
+        ///v 0.500000 -0.500000 0.000000
+        ///v 0.250000 -0.200000 0.000000
+        ///v 0.353553 -0.500000 0.353553
+        ///v 0.176777 -0.200000 0.176777
+        ///v -0.000000 -0.500000 0.500000
+        ///v -0.000000 -0.200000 0.250000
+        ///v -0.353553 -0.500000 0.353553
+        ///v -0.176777 -0.200000 0.176777
+        ///v -0.500000 -0.500000 -0.000000
+        ///v -0.250000 -0.2000 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mtmag_ball_collider {
+            get {
+                return ResourceManager.GetString("mtmag_ball_collider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;&apos;
+        ///# www.blender.org
         ///mtllib mtmag fixed.mtl
         ///o m_BF_Block_Faired_111_Instance.001_m_BF_Block_Faired_111_Instance.009
         ///v 0.450000 -0.000000 0.125000
