@@ -559,7 +559,7 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.5f, 0.5f, 0.5f);
+                trigger.size = new Vector3(0.5f, 0.375f, 0.5f);
                 trigger.center = Vector3.zero;
 
                 mtmag.RegisterLater();
@@ -590,16 +590,16 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball_collider, "mtmag_ball_collider"), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball_collider,"mtmag_ball_collider"),true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetBallMTMag);
 
-                var trigger = mtmag.Prefab.gameObject.AddComponent<SphereCollider>();
+                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.radius = .8f;
-                trigger.center = Vector3.zero;
+                trigger.size = new Vector3(1.2f, 1f, 1.2f);
+                trigger.center = Vector3.up * 0.2f;
 
                 mtmag.RegisterLater();
 
@@ -732,15 +732,16 @@ namespace Control_Block
         internal static void CFixedJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.autoConfigureConnectedAnchor = false;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;
             Joint.xMotion = ConfigurableJointMotion.Locked;
             Joint.yMotion = ConfigurableJointMotion.Locked;
             Joint.zMotion = ConfigurableJointMotion.Locked;
-            Joint.angularXMotion = ConfigurableJointMotion.Locked;
-            Joint.angularYMotion = ConfigurableJointMotion.Locked;
-            Joint.angularZMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Limited;
+            Joint.angularYMotion = ConfigurableJointMotion.Limited;
+            Joint.angularZMotion = ConfigurableJointMotion.Limited;
             origin.joint = Joint;
             var thing = Joint.angularYZLimitSpring;
             thing.damper = 8f;
@@ -748,6 +749,7 @@ namespace Control_Block
             var thing2 = Joint.angularXLimitSpring;
             thing2.damper = 8f;
             thing2.spring = 80;
+            var thing3 = Joint.angularYLimit;
         }
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
         {
@@ -760,6 +762,7 @@ namespace Control_Block
         internal static void CSwivelJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.autoConfigureConnectedAnchor = false;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;
@@ -787,6 +790,7 @@ namespace Control_Block
         internal static void CBallJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
+            Joint.autoConfigureConnectedAnchor = false;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;

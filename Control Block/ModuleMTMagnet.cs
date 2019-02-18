@@ -57,11 +57,11 @@ namespace Control_Block
                         switch (Identity)
                         {
                             case MTMagTypes.Fixed:
-                                var inv = Quaternion.Inverse(transform.rotation);
-                                block.tank.transform.rotation *= Quaternion.FromToRotation(inv * transform.up, inv * -_BoundBody.transform.up);
+                                var inv = Quaternion.Inverse(_BoundBody.transform.rotation);
+                                block.tank.transform.rotation *= Quaternion.FromToRotation(inv * transform.up, inv * (-_BoundBody.transform.up));
 
                                 var angle = Vector3.SignedAngle(transform.forward, _BoundBody.transform.forward, transform.up) + 360;
-                                block.tank.transform.Rotate(transform.localRotation * Vector3.down, Mathf.Round(angle / 90) * 90 - angle, Space.Self);
+                                block.tank.transform.Rotate(transform.localRotation * Vector3.up, angle - Mathf.Round(angle / 90) * 90, Space.Self);
 
                                 block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
                                 Class1.CFixedJoint(this, _BoundBody.block.tank.rbody);
@@ -208,6 +208,7 @@ namespace Control_Block
         {
             block.AttachEvent += OnAttach;
             block.DetachEvent += OnDetach;
+            if (Identity != MTMagTypes.Ball)
             foreach(Collider box in gameObject.GetComponentsInChildren<Collider>())
             {
                 if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0f };
