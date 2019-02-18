@@ -634,13 +634,13 @@ namespace Control_Block
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
 
-                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(1f,0f,1f), mtmag.Prefab.transform);
+                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f,0f,0.5f), mtmag.Prefab.transform);
 
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
                 trigger.size = new Vector3(1f, 1f, 1f);
-                trigger.center = new Vector3(1f,0.5f,1f);
+                trigger.center = new Vector3(0.5f,0.5f,0.5f);
 
                 mtmag.RegisterLater();
 
