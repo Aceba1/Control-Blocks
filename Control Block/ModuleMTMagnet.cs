@@ -89,24 +89,21 @@ namespace Control_Block
                         _ExpectBond = false;
                     }
                 }
-                if (_Binded)
+                if (_Binded && NewBody == _BoundBody)
                 {
-                    if (NewBody == _BoundBody)
+                    _BondIsValid = true;
+                    var Bm = _BoundBody.block.tank.rbody.mass;
+                    var Am = block.tank.rbody.mass;
+                    var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
+                    if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                     {
-                        _BondIsValid = true;
-                        var Bm = _BoundBody.block.tank.rbody.mass;
-                        var Am = block.tank.rbody.mass;
-                        var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
-                        if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
-                        {
-                            block.tank.transform.position += offset * (Am / (Am + Bm));
-                            block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
-                        }
-                        if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
-                        {
-                            _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
-                            _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
-                        }
+                        block.tank.transform.position += offset * (Am / (Am + Bm));
+                        block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
+                    }
+                    if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
+                    {
+                        _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
+                        _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                     }
                 }
             }
@@ -228,8 +225,9 @@ namespace Control_Block
             {
                 Destroy(joint); // Destroy bond
                 joint = null;
-                Console.WriteLine("Destroyed: Unattached");
                 _Binded = false;
+                _BoundBody._BindedTo = false;
+                _BoundBody = null;
             }
         }
 
@@ -239,8 +237,9 @@ namespace Control_Block
             {
                 Destroy(joint); // Destroy bond
                 joint = null;
-                Console.WriteLine("Destroyed: Attached");
                 _Binded = false;
+                _BoundBody._BindedTo = false;
+                _BoundBody = null;
             }
         }
 

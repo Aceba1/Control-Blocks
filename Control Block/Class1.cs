@@ -559,7 +559,7 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(0.5f, 0.375f, 0.5f);
+                trigger.size = new Vector3(0.5f, 0.4f, 0.5f);
                 trigger.center = Vector3.zero;
 
                 mtmag.RegisterLater();
@@ -582,7 +582,7 @@ namespace Control_Block
             {
                 var mtmag = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("BallJoint MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nThis is literally the best joint. In terms of stability and reliability. Now if only it were bigger...")
                     .SetBlockID(1293701)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
@@ -732,7 +732,7 @@ namespace Control_Block
         internal static void CFixedJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
-            Joint.autoConfigureConnectedAnchor = false;
+            Joint.autoConfigureConnectedAnchor = true;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;
@@ -745,10 +745,10 @@ namespace Control_Block
             origin.joint = Joint;
             var thing = Joint.angularYZLimitSpring;
             thing.damper = 8f;
-            thing.spring = 80;
+            thing.spring = 130;
             var thing2 = Joint.angularXLimitSpring;
             thing2.damper = 8f;
-            thing2.spring = 80;
+            thing2.spring = 130;
             var thing3 = Joint.angularYLimit;
         }
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
@@ -762,23 +762,24 @@ namespace Control_Block
         internal static void CSwivelJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
-            Joint.autoConfigureConnectedAnchor = false;
+            Joint.autoConfigureConnectedAnchor = true;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;
             Joint.xMotion = ConfigurableJointMotion.Locked;
             Joint.yMotion = ConfigurableJointMotion.Locked;
             Joint.zMotion = ConfigurableJointMotion.Locked;
-            Joint.angularXMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Limited;
             Joint.angularYMotion = ConfigurableJointMotion.Free;
-            Joint.angularZMotion = ConfigurableJointMotion.Locked;
+            Joint.angularZMotion = ConfigurableJointMotion.Limited;
             origin.joint = Joint;
             var thing = Joint.angularYZLimitSpring;
             thing.damper = 8f;
-            thing.spring = 80;
+            thing.spring = 130;
             var thing2 = Joint.angularXLimitSpring;
             thing2.damper = 8f;
-            thing2.spring = 80;
+            thing2.spring = 130;
+            var thing3 = Joint.angularYLimit;
         }
         internal static void SetBallMTMag(ModuleMTMagnet mtmag)
         {
@@ -790,7 +791,7 @@ namespace Control_Block
         internal static void CBallJoint(ModuleMTMagnet origin, Rigidbody connectedBody)
         {
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
-            Joint.autoConfigureConnectedAnchor = false;
+            Joint.autoConfigureConnectedAnchor = true;
             Joint.anchor = origin.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = connectedBody;
