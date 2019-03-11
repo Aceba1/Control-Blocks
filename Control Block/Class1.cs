@@ -145,7 +145,7 @@ namespace Control_Block
                     .SetMass(10f)
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.GEOp_icon_png)));
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main");
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main");
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
@@ -343,7 +343,7 @@ namespace Control_Block
                     .SetMass(1f)
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)));
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("Venture_Main");
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_ven_base);
@@ -467,7 +467,7 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(0.5f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadsmall, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadsmall, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
                     .AddComponent<ModuleFrictionPad>(SetGCSmallPad);
@@ -506,7 +506,7 @@ namespace Control_Block
                     .SetPrice(2000)
                     .SetHP(2000)
                     .SetMass(2f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadbig, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GeoCorp_Main", true))
+                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadbig, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1, 0, 1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
                     .AddComponent<ModuleFrictionPad>(SetGCBigPad);
