@@ -19,8 +19,8 @@ namespace Control_Block
         {
             base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
             base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
-            base.block.AttachEvent += OnAttach;
-            base.block.DetachEvent += OnDetach;
+            base.block.AttachEvent.Subscribe(OnAttach);
+            base.block.DetachEvent.Subscribe(OnDetach);
         }
 
         private void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
@@ -93,12 +93,12 @@ namespace Control_Block
 
         private void OnDetach()
         {
-            base.block.tank.control.driveControlEvent -= Control_driveControlEvent;
+            base.block.tank.control.driveControlEvent.Unsubscribe(Control_driveControlEvent);
             SetColor(Color.white);
         }
         private void OnAttach()
         {
-            base.block.tank.control.driveControlEvent += Control_driveControlEvent;
+            base.block.tank.control.driveControlEvent.Subscribe(Control_driveControlEvent);
             StabilizerTarget = rbody.worldCenterOfMass;
         }
 

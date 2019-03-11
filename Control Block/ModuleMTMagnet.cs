@@ -209,8 +209,8 @@ namespace Control_Block
 
         private void OnPool()
         {
-            block.AttachEvent += OnAttach;
-            block.DetachEvent += OnDetach;
+            block.AttachEvent.Subscribe(OnAttach);
+            block.DetachEvent.Subscribe(OnDetach);
             if (Identity != MTMagTypes.Ball)
             foreach(Collider box in gameObject.GetComponentsInChildren<Collider>())
             {

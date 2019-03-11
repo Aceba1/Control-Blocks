@@ -56,8 +56,8 @@ abstract class ModuleBlockMover : Module
 
         a_action = new Action<TankBlock, Tank>(this.BlockAdded);
         d_action = new Action<TankBlock, Tank>(this.BlockRemoved);
-        block.AttachEvent += Attach;
-        block.DetachEvent += Detatch;
+        block.AttachEvent.Subscribe(Attach);
+        block.DetachEvent.Subscribe(Detatch);
     }
 
     internal abstract void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec);
