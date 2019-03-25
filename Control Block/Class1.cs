@@ -46,11 +46,11 @@ namespace Control_Block
                     if (mf.name == "m_GSO_Cab_111_Base")
                     {
                         GameObject.DestroyImmediate(mf);
-                        cockpit.SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.BFCab, "BFCab"), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
+                        cockpit.SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BFCab), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
                     }
                     else if (mf.name.StartsWith("m_GSO_Cab_111_Tyre_"))
                     {
-                        mf.mesh = GameObjectJSON.MeshFromFile(Properties.Resources.BFCab_wheel, "BFCab_Wheel");
+                        mf.mesh = GameObjectJSON.MeshFromData(Properties.Resources.BFCab_wheel);
                         mf.GetComponent<MeshRenderer>().material = bfmat;
                     }
                     else if (mf.name.StartsWith("m_GSO_Cab_111_Gun_") || mf.name.StartsWith("m_GSO_Cab_111_Flap_"))
@@ -427,7 +427,7 @@ namespace Control_Block
                     .SetPrice(3467)
                     .SetHP(200)
                     .SetMass(3.5f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.sr, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.sr), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.down * 0.5f,
@@ -467,7 +467,7 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(0.5f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadsmall, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadsmall), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
                     .AddComponent<ModuleFrictionPad>(SetGCSmallPad);
@@ -506,7 +506,7 @@ namespace Control_Block
                     .SetPrice(2000)
                     .SetHP(2000)
                     .SetMass(2f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.GCfrictionpadbig, "sr_base"), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadbig), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1, 0, 1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
                     .AddComponent<ModuleFrictionPad>(SetGCBigPad);
@@ -541,7 +541,7 @@ namespace Control_Block
             {
                 var mtmag = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("FixedJoint MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\n\n")
                     .SetBlockID(1293700)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
@@ -549,7 +549,7 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_fixed, "mtmag_fixed"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_fixed), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetFixedMTMag);
@@ -586,12 +586,12 @@ namespace Control_Block
                     .SetBlockID(1293701)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(500)
+                    .SetGrade(1)
+                    .SetPrice(800)
                     .SetHP(600)
                     .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball, "mtmag_ball"), GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_ball_collider,"mtmag_ball_collider"),true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
-                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider),true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetBallMTMag);
 
@@ -603,18 +603,57 @@ namespace Control_Block
 
                 mtmag.RegisterLater();
 
-                //CustomRecipe.RegisterRecipe(
-                //    new CustomRecipe.RecipeInput[]
-                //    {
-                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
-                //    },
-                //    new CustomRecipe.RecipeOutput[]
-                //    {
-                //    new CustomRecipe.RecipeOutput(/*Edit*/)
-                //    });
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicGreebles, 3),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293701)
+                    });
             }
 
             #endregion Ball MTMag
+
+            #region Large Ball MTMag
+
+            {
+                var mtmag = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("BallJoint Large MTMag")
+                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nA bigger version of the best joint in all of existence!")
+                    .SetBlockID(1293703)
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(1)
+                    .SetPrice(1500)
+                    .SetHP(600)
+                    .SetMass(1f)
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_large), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider_large), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_large_png)))
+                    .SetSize(new IntVector3(2, 2, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
+                    .AddComponent<ModuleMTMagnet>(SetLargeBallMTMag);
+
+                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                trigger.isTrigger = true;
+
+                trigger.size = new Vector3(1.2f, 1f, 1.2f);
+                trigger.center = Vector3.up * 0.2f;
+
+                mtmag.RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 4),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293703)
+                    });
+            }
+
+            #endregion Large Ball MTMag
 
             #region Large Swivel MTMag
 
@@ -630,7 +669,7 @@ namespace Control_Block
                     .SetHP(600)
                     .SetMass(3f)
                     .SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.Bottom)
-                    .SetModel(GameObjectJSON.MeshFromFile(Properties.Resources.mtmag_swivel_large, "mtmag_swivel_large"), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_swivel_large), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
 
@@ -694,7 +733,7 @@ namespace Control_Block
         internal static GameObject AddMeshToBlockMover(Material mat, Vector3 colliderSize, Vector3 colliderOffset, Transform par, string Mesh)
         {
             GameObject sub = new GameObject("BlockMover Part") { layer = Globals.inst.layerTank };
-            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
+            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromData(Mesh);
             sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
 
             var mhc = sub.AddComponent<BoxCollider>();
@@ -712,7 +751,7 @@ namespace Control_Block
             {
                 layer = Globals.inst.layerTank
             };
-            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromFile(Mesh, "piston_submesh");
+            sub.AddComponent<MeshFilter>().sharedMesh = GameObjectJSON.MeshFromData(Mesh);
             sub.AddComponent<MeshRenderer>().sharedMaterial = mat;
             sub.transform.SetParent(par);
             sub.transform.localPosition = objPos;
@@ -755,7 +794,7 @@ namespace Control_Block
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Swivel;
             mtmag.TransformCorrection = 0.25f;
-            mtmag.VelocityCorrection = 1.7f;
+            mtmag.VelocityCorrection = .85f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CSwivelJoint);
         }
@@ -781,10 +820,18 @@ namespace Control_Block
             thing2.spring = 130;
             var thing3 = Joint.angularYLimit;
         }
+        internal static void SetLargeBallMTMag(ModuleMTMagnet mtmag)
+        {
+            mtmag.Identity = ModuleMTMagnet.MTMagTypes.LargeBall;
+            mtmag.TransformCorrection = 0.2f;
+            mtmag.VelocityCorrection = 0.85f;
+            mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
+            mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CBallJoint);
+        }
         internal static void SetBallMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Ball;
-            mtmag.TransformCorrection = 0.4f;
+            mtmag.TransformCorrection = 0.3f;
             mtmag.VelocityCorrection = 0.7f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, Rigidbody>(CBallJoint);
         }

@@ -309,10 +309,14 @@
     <None Include="Blocks\Cab\BFCab.blend" />
     <Resource Include="Blocks\Cab\BFCab.obj" />
     <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
+    <None Include="Blocks\MTMags\mtmag ball collider large.obj" />
     <None Include="Blocks\MTMags\mtmag ball collider.obj" />
+    <None Include="Blocks\MTMags\mtmag ball large.obj" />
     <None Include="Blocks\MTMags\mtmag ball.obj" />
     <None Include="Blocks\MTMags\mtmag fixed.obj" />
     <None Include="Blocks\MTMags\mtmag swivel large.obj" />
+    <None Include="Blocks\MTMags\mtmag_ball_large_png" />
+    <None Include="Blocks\MTMags\mtmag_ball_png" />
     <None Include="Blocks\Pads\GCfrictionpadsmall.obj" />
     <None Include="Blocks\Medium\swivel.blend" />
     <None Include="Blocks\Medium\swivel_base.obj" />

@@ -15,7 +15,7 @@ namespace Control_Block
         public bool CanModifyStretch = false;
         public float StretchSpeed = 0.1f;
         
-        public float alphaOpen { get; private set; } = 0f;
+        public float AlphaOpen { get; private set; } = 0f;
         private float gOfs = 0f;
         public bool IsToggle;
         public byte InverseTrigger;
@@ -44,7 +44,7 @@ namespace Control_Block
 
         internal override void BeforeBlockAdded(TankBlock block)
         {
-            if (alphaOpen != 0f)
+            if (AlphaOpen != 0f)
             {
                 if (IsToggle)
                 {
@@ -61,7 +61,7 @@ namespace Control_Block
 
         internal override void BlockRemoved(TankBlock block, Tank tank)
         {
-            if (alphaOpen != 0f)
+            if (AlphaOpen != 0f)
             {
                 ForceMove = true;
                 UpdateFix = true;
@@ -81,7 +81,7 @@ namespace Control_Block
             if (ForceMove)
             {
                 open = 1f;
-                alphaOpen = 1f;
+                AlphaOpen = 1f;
                 Move();
                 ForceMove = false;
             }
@@ -111,7 +111,7 @@ namespace Control_Block
             {
                 return;
             }
-            if ((Dirty || CanMove) && open == alphaOpen)
+            if ((Dirty || CanMove) && open == AlphaOpen)
             {
                 if (IsToggle)
                 {
@@ -119,28 +119,28 @@ namespace Control_Block
                     {
                         case 0:
                             if (VInput && Input.GetKeyDown(trigger))
-                                alphaOpen = 1f - alphaOpen;
+                                AlphaOpen = 1f - AlphaOpen;
                             break;
                         case 1:
                             if (VInput && Input.GetKeyUp(trigger))
-                                alphaOpen = 1f - alphaOpen;
+                                AlphaOpen = 1f - AlphaOpen;
                             break;
                         case 2:
-                            if ((alphaOpen == 0f && VInput && Input.GetKeyDown(trigger)) ||
-                                (alphaOpen == 1f && VInput && Input.GetKeyUp(trigger)))
+                            if ((AlphaOpen == 0f && VInput && Input.GetKeyDown(trigger)) ||
+                                (AlphaOpen == 1f && VInput && Input.GetKeyUp(trigger)))
                                 if (ButtonIsValid)
                                 {
                                     ButtonIsValid = false;
-                                    alphaOpen = 1f - alphaOpen;
+                                    AlphaOpen = 1f - AlphaOpen;
                                 }
                             break;
                         case 3:
-                            if ((alphaOpen == 1f && VInput && Input.GetKeyDown(trigger)) ||
-                                (alphaOpen == 0f && VInput && Input.GetKeyUp(trigger)))
+                            if ((AlphaOpen == 1f && VInput && Input.GetKeyDown(trigger)) ||
+                                (AlphaOpen == 0f && VInput && Input.GetKeyUp(trigger)))
                                 if (ButtonIsValid)
                                 {
                                     ButtonIsValid = false;
-                                    alphaOpen = 1f - alphaOpen;
+                                    AlphaOpen = 1f - AlphaOpen;
                                 }
                             break;
                     }
@@ -149,25 +149,25 @@ namespace Control_Block
                 {
                     if ((VInput && Input.GetKey(trigger)) != (InverseTrigger == 1))
                     {
-                        alphaOpen = 1f;
+                        AlphaOpen = 1f;
                     }
                     else
                     {
-                        alphaOpen = 0f;
+                        AlphaOpen = 0f;
                     }
                 }
                 if (ForceOpen)
                 {
-                    alphaOpen = 1f;
+                    AlphaOpen = 1f;
                     ForceOpen = false;
                 }
             }
-            if (open != alphaOpen)
+            if (open != AlphaOpen)
             {
-                float oldOpen = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
-                open = Mathf.Clamp01((open - (StretchSpeed * 0.5f * (MaxStr / StretchModifier))) + alphaOpen * (StretchSpeed * (MaxStr / StretchModifier)));
-                if (Mathf.Abs(open - alphaOpen) < 0.01f) open = alphaOpen;
-                EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
+                float oldOpen = BlockCurve.Evaluate(open * (StretchModifier / MaxStr));
+                open = Mathf.Clamp01((open - (StretchSpeed * 0.5f * (MaxStr / StretchModifier))) + AlphaOpen * (StretchSpeed * (MaxStr / StretchModifier)));
+                if (Mathf.Abs(open - AlphaOpen) < 0.01f) open = AlphaOpen;
+                EvaluatedBlockCurve = BlockCurve.Evaluate(open * (StretchModifier / MaxStr));
                 if (Class1.PistonHeart == Heart)
                 {
                     //if (UpdateCOM)
@@ -223,9 +223,9 @@ namespace Control_Block
             {
                 if (SnapRender)
                 {
-                    open = alphaOpen;
+                    open = AlphaOpen;
                     SnapRender = false;
-                    EvaluatedBlockCurve = blockcurve.Evaluate(open * (StretchModifier / MaxStr));
+                    EvaluatedBlockCurve = BlockCurve.Evaluate(open * (StretchModifier / MaxStr));
                 }
                 for (int I = 0; I < parts.Length; I++)
                 {
@@ -243,7 +243,7 @@ namespace Control_Block
             }
             else
             {
-                alphaOpen = open;
+                AlphaOpen = open;
             }
             return default(Vector3);
         }
@@ -284,7 +284,7 @@ namespace Control_Block
 
         internal override void Attach()
         {
-            alphaOpen = 0;
+            AlphaOpen = 0;
             open = 0;
             gOfs = 0;
             SnapRender = true;
@@ -305,7 +305,7 @@ namespace Control_Block
             trigger = KeyCode.Space;
             IsToggle = false;
             InverseTrigger = 0;
-            alphaOpen = 0f;
+            AlphaOpen = 0f;
             open = 0f;
 
         }
@@ -314,7 +314,7 @@ namespace Control_Block
         {
             if (saving)
             {
-                if (alphaOpen == 1f)
+                if (AlphaOpen == 1f)
                 {
                     ForceMove = true;
                     ResetRenderState(true);
@@ -323,7 +323,7 @@ namespace Control_Block
 
                 ModulePiston.SerialData serialData = new ModulePiston.SerialData()
                 {
-                    IsOpen = this.alphaOpen != 0f,
+                    IsOpen = this.AlphaOpen != 0f,
                     Input = this.trigger,
                     Toggle = this.IsToggle,
                     Local = this.LocalControl,

@@ -373,7 +373,7 @@ namespace Control_Block
             {
                 ForceMove = false;
                 float oldCurrentCurve = EvaluatedBlockRotCurve;
-                EvaluatedBlockRotCurve = blockrotcurve.Evaluate(CurrentAngle);
+                EvaluatedBlockRotCurve = BlockRotCurve.Evaluate(CurrentAngle);
                 if (Class1.PistonHeart == Heart)
                 {
                     Moved = true;
@@ -571,7 +571,7 @@ namespace Control_Block
                     CurrentDelay = sd.CurrentDelay;
                     CWDelay = sd.CWDelay;
                     CCWDelay = sd.CCWDelay;
-                    oldEvaluatedBlockCurve = blockrotcurve.Evaluate(CurrentAngle);
+                    oldEvaluatedBlockCurve = BlockRotCurve.Evaluate(CurrentAngle);
                     mode = sd.mode;
                     Dirty = true;
                 }

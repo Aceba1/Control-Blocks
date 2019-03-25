@@ -13,7 +13,8 @@ namespace Control_Block
         {
             Fixed,
             Ball,
-            Swivel
+            Swivel,
+            LargeBall
         }
         public MTMagTypes Identity;
         public float TransformCorrection = 0.3f, VelocityCorrection = 0.75f;
@@ -68,6 +69,7 @@ namespace Control_Block
                                     Class1.CFixedJoint(this, _BoundBody.block.tank.rbody);
                                     break;
                                 }
+                            case MTMagTypes.LargeBall:
                             case MTMagTypes.Ball:
                                 {
                                     block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
@@ -211,7 +213,7 @@ namespace Control_Block
         {
             block.AttachEvent.Subscribe(OnAttach);
             block.DetachEvent.Subscribe(OnDetach);
-            if (Identity != MTMagTypes.Ball)
+            if (Identity != MTMagTypes.Ball || Identity != MTMagTypes.LargeBall)
             foreach(Collider box in gameObject.GetComponentsInChildren<Collider>())
             {
                 if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0f };

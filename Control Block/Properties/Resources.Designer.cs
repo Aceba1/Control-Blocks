@@ -99,20 +99,20 @@ namespace Control_Block.Properties {
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;BFCab.blend&apos;
         ///# www.blender.org
         ///mtllib BFCab_wheel.mtl
-        ///o m_GSO_Cab_111_Tyre_4.002
-        ///v -0.093644 -0.000000 -0.157456
+        ///o m_GSO_Cab_111_Tyre_4.004_m_GSO_Cab_111_Tyre_4.001
+        ///v -0.093644 0.000000 -0.157456
+        ///v -0.093644 0.111339 -0.111338
         ///v 0.093644 0.111339 -0.111338
-        ///v 0.093644 -0.000000 -0.157456
+        ///v 0.093644 0.000000 -0.157456
+        ///v 0.093644 0.157457 0.000000
+        ///v -0.093644 0.157457 0.000000
+        ///v -0.093644 -0.111338 -0.111338
         ///v 0.093644 -0.111338 -0.111338
         ///v -0.093644 -0.157456 -0.000000
+        ///v 0.093644 -0.157456 -0.000000
         ///v -0.093644 -0.111338 0.111339
-        ///v -0.093644 -0.000000 0.157457
-        ///v 0.093644 0.157457 -0.000000
-        ///v -0.093644 0.157457 -0.000000
-        ///v -0.093644 0.111339 0.111339
-        ///v -0.093644 0.111339 -0.111338
-        ///v -0.093644 -0.111338 -0.111338
-        ///v 0.093644 0.111339 0.11 [rest of string was truncated]&quot;;.
+        ///v 0.093644 -0.111338 0.111339
+        ///v - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFCab_wheel {
             get {
@@ -573,6 +573,77 @@ namespace Control_Block.Properties {
         internal static string mtmag_ball_collider {
             get {
                 return ResourceManager.GetString("mtmag_ball_collider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 47) OBJ File: &apos;Ball.blend&apos;
+        ///# www.blender.org
+        ///mtllib mtmag ball collider large.mtl
+        ///o Cone
+        ///v 0.500000 -0.500000 -0.207106
+        ///v 0.500000 0.100000 -0.000000
+        ///v 0.853554 0.100000 0.146446
+        ///v 1.207106 -0.500000 -0.207106
+        ///v 1.000000 0.100000 0.500000
+        ///v 1.207106 -0.500000 0.500000
+        ///v 0.853554 0.100000 0.853554
+        ///v 1.207106 -0.500000 1.207106
+        ///v 0.500000 0.100000 1.000000
+        ///v 0.500000 -0.500000 1.207106
+        ///v 0.146446 0.100000 0.853554
+        ///v -0.207106 -0.500000 1.207106
+        ///v 0.000000 0.100000 0.500000
+        ///v -0.207106 -0. [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mtmag_ball_collider_large {
+            get {
+                return ResourceManager.GetString("mtmag_ball_collider_large", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 47) OBJ File: &apos;Ball.blend&apos;
+        ///# www.blender.org
+        ///mtllib mtmag ball large.mtl
+        ///o m_BF_Block_Faired_111_Instance.001
+        ///v 0.786182 -0.247577 1.190903
+        ///v 0.213819 -0.247577 -0.190903
+        ///v 0.500000 -0.250000 1.191324
+        ///v 0.786181 -0.247577 -0.190903
+        ///v 0.213819 -0.247577 1.190903
+        ///v 1.190903 -0.247577 0.213819
+        ///v 0.500000 -0.250000 -0.191324
+        ///v 0.500000 -0.500000 -0.145367
+        ///v 0.189096 -0.497458 -0.145108
+        ///v -0.146268 -0.497472 -0.145367
+        ///v -0.145340 -0.497579 0.190105
+        ///v -0.145930 -0.500000 0.500000
+        ///v -0.145716  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mtmag_ball_large {
+            get {
+                return ResourceManager.GetString("mtmag_ball_large", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mtmag_ball_large_png {
+            get {
+                object obj = ResourceManager.GetObject("mtmag_ball_large_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mtmag_ball_png {
+            get {
+                object obj = ResourceManager.GetObject("mtmag_ball_png", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

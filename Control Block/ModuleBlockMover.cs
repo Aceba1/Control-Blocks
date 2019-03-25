@@ -14,8 +14,8 @@ abstract class ModuleBlockMover : Module
     public AnimationCurve[] curves;
     public bool useRotCurves = false;
     public AnimationCurve[] rotCurves;
-    public AnimationCurve blockcurve => curves[curves.Length - 1];
-    public AnimationCurve blockrotcurve => rotCurves[rotCurves.Length - 1];
+    public AnimationCurve BlockCurve => curves[curves.Length - 1];
+    public AnimationCurve BlockRotCurve => rotCurves[rotCurves.Length - 1];
     public Transform[] parts;
     public IntVector3[] startblockpos;
     public int MaximumBlockPush = 64;
