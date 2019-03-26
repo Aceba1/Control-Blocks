@@ -18,7 +18,7 @@ namespace Control_Block
         }
         public MTMagTypes Identity;
         public float TransformCorrection = 0.3f, VelocityCorrection = 0.75f;
-        public Action<ModuleMTMagnet, Rigidbody> ConfigureNewJoint;
+        public Action<ModuleMTMagnet, ModuleMTMagnet> ConfigureNewJoint;
         public Joint joint;
         public Vector3 Effector = Vector3.up * 0f;
         bool _Binded;
@@ -28,7 +28,7 @@ namespace Control_Block
         public ModuleMTMagnet _BoundBody;
         bool Heart = false;
         bool Recalc = false;
-        public Vector3 LocalPosWithEffector => block.transform.localPosition + Effector;
+        public Vector3 LocalPosWithEffector => block.transform.localPosition + (block.transform.localRotation * Effector);
         public Vector3 GetEffector => block.transform.rotation * Effector;
 
         void OnTriggerStay(Collider other)
@@ -39,15 +39,17 @@ namespace Control_Block
                 {
                     return;
                 }
-                if (!block.IsAttached) return;
+                if (!block.IsAttached || block.tank.beam.IsActive) return; //If block is not attached or if the tank is in build beam, leave
                 var NewBody = other.GetComponentInParent<ModuleMTMagnet>();
                 if (Recalc || !_Binded)
                 {
-                    if (((_Binded && NewBody == _BoundBody) || (!_Binded && NewBody != null && !NewBody._Binded && !NewBody._BindedTo && NewBody.Identity == Identity)) && NewBody.block.IsAttached && (!NewBody.block.tank.IsAnchored || !block.tank.IsAnchored))
+                    if (((_Binded && NewBody == _BoundBody) // Same body as before, OR
+                        || (!_Binded && NewBody != null && !NewBody._Binded && !NewBody._BindedTo && NewBody.Identity == Identity)) // Bond is possible, THEN
+                        && NewBody.block.IsAttached && (!NewBody.block.tank.IsAnchored || !block.tank.IsAnchored)) // If other block is indeed attached and at least one of the two techs is unanchored
                     {
                         if (joint != null)
                         {
-                            Destroy(joint); // Destroy bond
+                            Destroy(joint); // Destroy bond for updating
                             joint = null;
                         }
                         Recalc = false;
@@ -65,30 +67,37 @@ namespace Control_Block
                                     var angle = Vector3.SignedAngle(transform.forward, _BoundBody.transform.forward, transform.up) + 360;
                                     block.tank.transform.Rotate(transform.localRotation * Vector3.up, angle - Mathf.Round(angle / 90) * 90, Space.Self);
 
-                                    block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
-                                    Class1.CFixedJoint(this, _BoundBody.block.tank.rbody);
+                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    Class1.CFixedJoint(this, _BoundBody);
                                     break;
                                 }
                             case MTMagTypes.LargeBall:
                             case MTMagTypes.Ball:
                                 {
-                                    block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
-                                    Class1.CBallJoint(this, _BoundBody.block.tank.rbody);
+                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    Class1.CBallJoint(this, _BoundBody);
                                     break;
                                 }
                             case MTMagTypes.Swivel:
                                 {
                                     var inv2 = Quaternion.Inverse(_BoundBody.transform.rotation);
                                     block.tank.transform.rotation *= Quaternion.FromToRotation(inv2 * transform.up, inv2 * (-_BoundBody.transform.up));
-                                    block.tank.transform.position += _BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector;
-                                    Class1.CSwivelJoint(this, _BoundBody.block.tank.rbody);
+                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    Class1.CSwivelJoint(this, _BoundBody);
                                     break;
                                 }
                         }
                         block.tank.transform.position = oldPos;
                         block.tank.transform.rotation = oldrot;
                         _BondIsValid = true;
-                        _ExpectBond = false;
+                        if (_ExpectBond)
+                        {
+                            if (block.tank.IsSleeping)
+                            {
+                                block.tank.SetSleeping(false);
+                            }
+                            _ExpectBond = false;
+                        }
                     }
                 }
                 if (_Binded && NewBody == _BoundBody)
@@ -97,15 +106,16 @@ namespace Control_Block
                     var Bm = _BoundBody.block.tank.rbody.mass;
                     var Am = block.tank.rbody.mass;
                     var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
+                    var tension = Vector3.Project(block.tank.rbody.velocity - _BoundBody.block.tank.rbody.velocity, offset);
                     if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                     {
                         block.tank.transform.position += offset * (Am / (Am + Bm));
-                        block.tank.rbody.AddForceAtPosition(offset * VelocityCorrection, block.transform.position + GetEffector);
+                        block.tank.rbody.AddForceAtPosition((-offset-tension) * VelocityCorrection, block.transform.position + GetEffector);
                     }
                     if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
                     {
                         _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
-                        _BoundBody.block.tank.rbody.AddForceAtPosition(-offset * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
+                        _BoundBody.block.tank.rbody.AddForceAtPosition((offset+tension) * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                     }
                 }
             }
@@ -147,19 +157,29 @@ namespace Control_Block
                 }
                 //_Binded = false;
             }
+            
             if ((_ExpectBond||_Binded) && !_BondIsValid) // If bond body could not be reached
             {
                 if (_ExpectBond) // If it was just loaded
                 {
-                    ManTechs.inst.CheckSleepRange(block.tank); // Put the tech to sleep if it is far
-                    if (block.tank.IsSleeping) return; // If it is asleep, leave as is
+                    if ((block.tank.boundsCentreWorld - Singleton.cameraTrans.position).sqrMagnitude > 40000)
+                    {
+                        if (!block.tank.IsSleeping)
+                        {
+                            block.tank.SetSleeping(true);
+                        }
+                        return;
+                    }
                     if (ManGameMode.inst.GetModePhase() != ManGameMode.GameState.InGame) // If it is still loading the game, freeze the tech
                     {
                         block.tank.SetSleeping(true);
                         return;
                     }
                     _ExpectBond = false;
-                    ManTechs.inst.CheckSleepRange(block.tank);
+                    if (block.tank.IsSleeping)
+                    {
+                        block.tank.SetSleeping(false);
+                    }
                 }
                 try
                 {
