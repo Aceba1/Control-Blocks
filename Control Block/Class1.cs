@@ -765,7 +765,7 @@ namespace Control_Block
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Fixed;
             mtmag.TransformCorrection = 0.4f;
-            mtmag.VelocityCorrection = 0.7f;
+            mtmag.VelocityCorrection = 0.4f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CFixedJoint);
         }
         internal static void CFixedJoint(ModuleMTMagnet origin, ModuleMTMagnet body)
@@ -794,8 +794,8 @@ namespace Control_Block
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Swivel;
-            mtmag.TransformCorrection = 0.25f;
-            mtmag.VelocityCorrection = .85f;
+            mtmag.TransformCorrection = 0.3f;
+            mtmag.VelocityCorrection = 0.4f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CSwivelJoint);
         }
@@ -804,17 +804,17 @@ namespace Control_Block
             var Joint = origin.block.tank.gameObject.AddComponent<ConfigurableJoint>();
             Joint.autoConfigureConnectedAnchor = false;
             Joint.anchor = origin.LocalPosWithEffector;
-            Joint.axis = origin.transform.right;
-            Joint.secondaryAxis = body.transform.right;
+            Joint.axis = origin.transform.up;
+            Joint.secondaryAxis = -body.transform.up;
             Joint.connectedAnchor = body.LocalPosWithEffector;
             Joint.enableCollision = true;
             Joint.connectedBody = body.block.tank.rbody;
             Joint.xMotion = ConfigurableJointMotion.Locked;
             Joint.yMotion = ConfigurableJointMotion.Locked;
             Joint.zMotion = ConfigurableJointMotion.Locked;
-            Joint.angularXMotion = ConfigurableJointMotion.Locked;
+            Joint.angularXMotion = ConfigurableJointMotion.Free;
             Joint.angularYMotion = ConfigurableJointMotion.Locked;
-            Joint.angularZMotion = ConfigurableJointMotion.Free;
+            Joint.angularZMotion = ConfigurableJointMotion.Locked;
             origin.joint = Joint;
             //var thing = Joint.angularYZLimitSpring;
             //thing.damper = 8f;
@@ -828,7 +828,7 @@ namespace Control_Block
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.LargeBall;
             mtmag.TransformCorrection = 0.2f;
-            mtmag.VelocityCorrection = 0.95f;
+            mtmag.VelocityCorrection = 0.5f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CBallJoint);
         }
@@ -836,7 +836,7 @@ namespace Control_Block
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Ball;
             mtmag.TransformCorrection = 0.3f;
-            mtmag.VelocityCorrection = 0.85f;
+            mtmag.VelocityCorrection = 0.5f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CBallJoint);
         }
         internal static void CBallJoint(ModuleMTMagnet origin, ModuleMTMagnet body)

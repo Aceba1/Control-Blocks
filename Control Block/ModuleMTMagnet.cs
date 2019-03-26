@@ -17,7 +17,7 @@ namespace Control_Block
             LargeBall
         }
         public MTMagTypes Identity;
-        public float TransformCorrection = 0.3f, VelocityCorrection = 0.75f;
+        public float TransformCorrection = 0.3f, VelocityCorrection = 0.4f;
         public Action<ModuleMTMagnet, ModuleMTMagnet> ConfigureNewJoint;
         public Joint joint;
         public Vector3 Effector = Vector3.up * 0f;
@@ -106,7 +106,7 @@ namespace Control_Block
                     var Bm = _BoundBody.block.tank.rbody.mass;
                     var Am = block.tank.rbody.mass;
                     var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
-                    var tension = Vector3.Project(block.tank.rbody.velocity - _BoundBody.block.tank.rbody.velocity, offset);
+                    var tension = Vector3.Project(block.tank.rbody.velocity - _BoundBody.block.tank.rbody.velocity, offset) ;
                     if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                     {
                         block.tank.transform.position += offset * (Am / (Am + Bm));
