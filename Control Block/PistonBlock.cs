@@ -9,6 +9,7 @@ namespace Control_Block
 {
     class ModulePiston : ModuleBlockMover
     {
+        public float LastCurveDiff = 0f;
         public float EvaluatedBlockCurve = 0f;
         public int StretchModifier = 1;
         public float MaxStr = 1;
@@ -72,6 +73,11 @@ namespace Control_Block
                 ResetRenderState(false);
             }
             base.BlockRemoved(block, tank);
+        }
+
+        private void LateUpdate()
+        {
+            LastCurveDiff = 100f;
         }
 
         bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
@@ -161,6 +167,10 @@ namespace Control_Block
                     AlphaOpen = 1f;
                     ForceOpen = false;
                 }
+                //if (open != AlphaOpen)
+                //{
+                //    SFXIsOn = true;
+                //}
             }
             if (open != AlphaOpen)
             {
@@ -181,12 +191,14 @@ namespace Control_Block
                     if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
-                        var thing = (EvaluatedBlockCurve - oldOpen) * th;
+                        LastCurveDiff = EvaluatedBlockCurve - oldOpen;
+                        var thing = LastCurveDiff * th;
                         tankcache.rbody.position -= block.transform.rotation * Vector3.up * thing;
 #warning Fix COM
-                        //if (open == alphaOpen)
+                        //if (open == AlphaOpen)
                         //{
-                            tankcache.RequestPhysicsReset();
+                        //    SFXIsOn = false;
+                        tankcache.RequestPhysicsReset();
                         //}
                         //tankcache.rbody.centerOfMass = CacheCOM + tankcache.rbody.transform.InverseTransformVector(LoadCOM.position) * th;
                         //tankcache.dragSphere.transform.position = tankcache.rbody.worldCenterOfMass;
@@ -199,6 +211,7 @@ namespace Control_Block
 
         void Update()
         {
+            UpdateSFX(LastCurveDiff);
             if (UpdateFix)
             {
                 UpdateFix = false;
@@ -294,6 +307,7 @@ namespace Control_Block
             tankcache = block.tank;
             tankcache.AttachEvent.Subscribe(a_action);
             tankcache.DetachEvent.Subscribe(d_action);
+            base.Attach();
         }
 
         private void OnDisable()

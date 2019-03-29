@@ -27,15 +27,17 @@ namespace Control_Block
         bool _BindedTo;
         public ModuleMTMagnet _BoundBody;
         bool Heart = false;
+        bool HeartChanged = false;
         bool Recalc = false;
         public Vector3 LocalPosWithEffector => block.transform.localPosition + (block.transform.localRotation * Effector);
         public Vector3 GetEffector => block.transform.rotation * Effector;
+        private Vector3 GetEffectorOffsetDownBy10 => block.transform.rotation * (Effector + Vector3.down * 10f);
 
         void OnTriggerStay(Collider other)
         {
             try
             {
-                if (Heart != Class1.PistonHeart || _BindedTo)
+                if (HeartChanged || _BindedTo)
                 {
                     return;
                 }
@@ -56,39 +58,39 @@ namespace Control_Block
                         _Binded = true;
                         _BoundBody = NewBody;
                         _BoundBody._BindedTo = true;
-                        var oldPos = block.tank.transform.position; var oldrot = block.tank.transform.rotation;
+                        //var oldPos = block.tank.transform.position; var oldrot = block.tank.transform.rotation;
                         switch (Identity)
                         {
                             case MTMagTypes.Fixed:
                                 {
-                                    var inv = Quaternion.Inverse(_BoundBody.transform.rotation);
-                                    block.tank.transform.rotation *= Quaternion.FromToRotation(inv * transform.up, inv * (-_BoundBody.transform.up));
+                                    //var inv = Quaternion.Inverse(_BoundBody.transform.rotation);
+                                    //block.tank.transform.rotation *= Quaternion.FromToRotation(inv * transform.up, inv * (-_BoundBody.transform.up));
 
-                                    var angle = Vector3.SignedAngle(transform.forward, _BoundBody.transform.forward, transform.up) + 360;
-                                    block.tank.transform.Rotate(transform.localRotation * Vector3.up, angle - Mathf.Round(angle / 90) * 90, Space.Self);
+                                    //var angle = Vector3.SignedAngle(transform.forward, _BoundBody.transform.forward, transform.up) + 360;
+                                    //block.tank.transform.Rotate(transform.localRotation * Vector3.up, angle - Mathf.Round(angle / 90) * 90, Space.Self);
 
-                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    //block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
                                     Class1.CFixedJoint(this, _BoundBody);
                                     break;
                                 }
                             case MTMagTypes.LargeBall:
                             case MTMagTypes.Ball:
                                 {
-                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    //block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
                                     Class1.CBallJoint(this, _BoundBody);
                                     break;
                                 }
                             case MTMagTypes.Swivel:
                                 {
-                                    var inv2 = Quaternion.Inverse(_BoundBody.transform.rotation);
-                                    block.tank.transform.rotation *= Quaternion.FromToRotation(inv2 * transform.up, inv2 * (-_BoundBody.transform.up));
-                                    block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
+                                    //var inv2 = Quaternion.Inverse(_BoundBody.transform.rotation);
+                                    //block.tank.transform.rotation *= Quaternion.FromToRotation(inv2 * transform.up, inv2 * (-_BoundBody.transform.up));
+                                    //block.tank.transform.position = _BoundBody.block.transform.position + _BoundBody.GetEffector - GetEffector;
                                     Class1.CSwivelJoint(this, _BoundBody);
                                     break;
                                 }
                         }
-                        block.tank.transform.position = oldPos;
-                        block.tank.transform.rotation = oldrot;
+                        //block.tank.transform.position = oldPos;
+                        //block.tank.transform.rotation = oldrot;
                         _BondIsValid = true;
                         if (_ExpectBond)
                         {
@@ -106,16 +108,19 @@ namespace Control_Block
                     var Bm = _BoundBody.block.tank.rbody.mass;
                     var Am = block.tank.rbody.mass;
                     var offset = (_BoundBody.block.transform.position + _BoundBody.GetEffector - block.transform.position - GetEffector) * TransformCorrection;
-                    var tension = Vector3.Project(block.tank.rbody.velocity - _BoundBody.block.tank.rbody.velocity, offset) ;
+                    var tension = Vector3.Project(_BoundBody.block.tank.rbody.velocity - block.tank.rbody.velocity, (_BoundBody.block.transform.position + _BoundBody.GetEffectorOffsetDownBy10 - block.transform.position - GetEffectorOffsetDownBy10)) ;
                     if (!block.tank.IsAnchored && !block.tank.beam.IsActive)
                     {
                         block.tank.transform.position += offset * (Am / (Am + Bm));
-                        block.tank.rbody.AddForceAtPosition((-offset-tension) * VelocityCorrection, block.transform.position + GetEffector);
+                        block.tank.rbody.AddForceAtPosition((offset + tension) * VelocityCorrection, block.transform.position + GetEffector);
+                        debugLR.enabled = true;
+                        debugLR.SetPosition(0, GetEffector);
+                        debugLR.SetPosition(1, transform.InverseTransformVector((offset + tension) * 30f));
                     }
                     if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
                     {
                         _BoundBody.block.tank.transform.position -= offset * (Bm / (Am + Bm));
-                        _BoundBody.block.tank.rbody.AddForceAtPosition((offset+tension) * VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
+                        _BoundBody.block.tank.rbody.AddForceAtPosition((offset + tension) * -VelocityCorrection, _BoundBody.block.transform.position + GetEffector);
                     }
                 }
             }
@@ -148,6 +153,7 @@ namespace Control_Block
             }
             if (Heart != Class1.PistonHeart)
             {
+                HeartChanged = true;
                 if (joint != null)
                 {
                     Destroy(joint); // Destroy bond
@@ -157,7 +163,10 @@ namespace Control_Block
                 }
                 //_Binded = false;
             }
-            
+            else
+            {
+                HeartChanged = false;
+            }
             if ((_ExpectBond||_Binded) && !_BondIsValid) // If bond body could not be reached
             {
                 if (_ExpectBond) // If it was just loaded
@@ -225,7 +234,6 @@ namespace Control_Block
 
         void Update()
         {
-            Heart = Class1.PistonHeart;
             _BindedTo = false;
         }
 
@@ -238,10 +246,24 @@ namespace Control_Block
             {
                 if (!box.isTrigger) box.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0f };
             }
+            var g = new GameObject();
+            g.transform.parent = transform;
+            g.transform.localPosition = Vector3.zero;
+            g.transform.localRotation = Quaternion.identity;
+            debugLR = g.AddComponent<LineRenderer>();
+            debugLR.positionCount = 2;
+            debugLR.startWidth = 1f;
+            debugLR.endWidth = 0.5f;
+            debugLR.useWorldSpace = true;
+            debugLR.material = Nuterra.BlockInjector.GameObjectJSON.MaterialFromShader();
+            debugLR.enabled = false;
         }
-        
+
+        LineRenderer debugLR;
+
         private void OnDetach()
         {
+            debugLR.enabled = false;
             _ExpectBond = false;
             if (_Binded)
             {
@@ -255,6 +277,7 @@ namespace Control_Block
 
         private void OnAttach()
         {
+            debugLR.enabled = true;
             if (_Binded)
             {
                 Destroy(joint); // Destroy bond

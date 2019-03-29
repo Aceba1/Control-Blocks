@@ -6,6 +6,7 @@ namespace Control_Block
     [RequireComponent(typeof(TargetAimer))]
     internal class ModuleSwivel : ModuleBlockMover
     {
+        public float LastCurveDiff = 0f;
         public TargetAimer aimer;
         public GimbalAimer gimbal;
 
@@ -88,10 +89,16 @@ namespace Control_Block
 
         private void Update()
         {
+            UpdateSFX(LastCurveDiff);
             if (ForceMove)
             {
                 Move();
             }
+        }
+
+        private void LateUpdate()
+        {
+            LastCurveDiff = 100f;
         }
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
@@ -376,14 +383,19 @@ namespace Control_Block
                 EvaluatedBlockRotCurve = BlockRotCurve.Evaluate(CurrentAngle);
                 if (Class1.PistonHeart == Heart)
                 {
-                    Moved = true;
+                    if (!Moved)
+                    {
+                        //SFXIsOn = true;
+                        Moved = true;
+                    }
                     Move();
                     if (CanMove)
                     {
                         if ((oldCurrentCurve != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                         {
                             float th = (MassPushing / block.tank.rbody.mass);
-                            var thing = (Mathf.Repeat(oldEvaluatedBlockCurve - EvaluatedBlockRotCurve + 180f, 360f) - 180f) * th;
+                            LastCurveDiff = Mathf.Repeat(oldEvaluatedBlockCurve - EvaluatedBlockRotCurve + 180f, 360f) - 180f;
+                            var thing = LastCurveDiff * th;
                             tankcache.transform.Rotate(/*parts[parts.Length - 1].position,*/ block.transform.localRotation * Vector3.up, thing, Space.Self);
 #warning Fix COM
                             tankcache.RequestPhysicsReset();
@@ -403,6 +415,7 @@ namespace Control_Block
             else if (Moved && Class1.PistonHeart == Heart)
             {
                 Moved = false;
+                //SFXIsOn = false;
                 tankcache.RequestPhysicsReset();
             }
             if (mode == Mode.OnOff || mode == Mode.Cycle || mode == Mode.Speed || mode == Mode.Throttle)
@@ -511,6 +524,7 @@ namespace Control_Block
             tankcache = block.tank;
             tankcache.AttachEvent.Subscribe(a_action);
             tankcache.DetachEvent.Subscribe(d_action);
+            base.Attach();
         }
 
         private void OnDisable()

@@ -598,7 +598,7 @@ namespace Control_Block
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
-                trigger.size = new Vector3(1.2f, 1f, 1.2f);
+                trigger.size = new Vector3(.8f, .7f, .8f);
                 trigger.center = Vector3.up * 0.2f;
 
                 mtmag.RegisterLater();
@@ -764,8 +764,8 @@ namespace Control_Block
         internal static void SetFixedMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Fixed;
-            mtmag.TransformCorrection = 0.4f;
-            mtmag.VelocityCorrection = 0.4f;
+            mtmag.TransformCorrection = 0.5f;
+            mtmag.VelocityCorrection = 0.5f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CFixedJoint);
         }
         internal static void CFixedJoint(ModuleMTMagnet origin, ModuleMTMagnet body)
@@ -794,8 +794,8 @@ namespace Control_Block
         internal static void SetLargeSwivelMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Swivel;
-            mtmag.TransformCorrection = 0.3f;
-            mtmag.VelocityCorrection = 0.4f;
+            mtmag.TransformCorrection = 0.9f;
+            mtmag.VelocityCorrection = 0.8f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CSwivelJoint);
         }
@@ -827,8 +827,8 @@ namespace Control_Block
         internal static void SetLargeBallMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.LargeBall;
-            mtmag.TransformCorrection = 0.2f;
-            mtmag.VelocityCorrection = 0.5f;
+            mtmag.TransformCorrection = 0.9f;
+            mtmag.VelocityCorrection = 0.9f;
             mtmag.Effector = new Vector3(0.5f, 0.5f, 0.5f);
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CBallJoint);
         }
@@ -836,7 +836,7 @@ namespace Control_Block
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Ball;
             mtmag.TransformCorrection = 0.3f;
-            mtmag.VelocityCorrection = 0.5f;
+            mtmag.VelocityCorrection = 0.6f;
             mtmag.ConfigureNewJoint = new Action<ModuleMTMagnet, ModuleMTMagnet>(CBallJoint);
         }
         internal static void CBallJoint(ModuleMTMagnet origin, ModuleMTMagnet body)
@@ -872,6 +872,8 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
+            piston.SFX = TechAudio.SFXType.GSODrillSmall;
+            piston.IsSFXLooping = false;
         }
         internal static void SetGeoCorpPiston(ModulePiston piston)
         {
@@ -894,6 +896,8 @@ namespace Control_Block
                 new IntVector3(1,2,0),
                 new IntVector3(1,2,1)
             };
+            piston.SFX = TechAudio.SFXType.GCPlasmaCutter;
+            piston.IsSFXLooping = false;
         }
         internal static void SetHawkeyePiston(ModulePiston piston)
         {
@@ -916,6 +920,8 @@ namespace Control_Block
                 new IntVector3(0,1,0),
                 new IntVector3(0,0,-1)
             };
+            piston.SFX = TechAudio.SFXType.GCBuzzSaw;
+            piston.IsSFXLooping = false;
         }
         internal static void SetBFPiston(ModulePiston piston)
         {
@@ -931,6 +937,8 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
+            piston.SFX = TechAudio.SFXType.VENFlameThrower;
+            piston.IsSFXLooping = false;
         }
 
         internal static void SetMediumSwivel(ModuleSwivel swivel)
@@ -952,6 +960,8 @@ namespace Control_Block
                 new IntVector3(0,1,1),
                 new IntVector3(1,1,1)
             };
+            swivel.SFX = TechAudio.SFXType.GSODrillLarge;
+            swivel.IsSFXLooping = true;
         }
         internal static void SetInlineSwivel(ModuleSwivel swivel)
         {
@@ -973,6 +983,8 @@ namespace Control_Block
                 new IntVector3(0,0,1),
                 new IntVector3(-1,0,0)
             };
+            swivel.SFX = TechAudio.SFXType.GSODrillSmall;
+            swivel.IsSFXLooping = true;
         }
         internal static void SetSmallSwivel(ModuleSwivel swivel)
         {
@@ -991,6 +1003,8 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
+            swivel.SFX = TechAudio.SFXType.GSODrillSmall;
+            swivel.IsSFXLooping = true;
         }
 
         private static void SetGCSmallPad(ModuleFrictionPad obj)
@@ -1059,6 +1073,10 @@ namespace Control_Block
 
         private void OnGUI()
         {
+            OptionMenuPiston.inst.stack_OnGUI();
+            OptionMenuSwivel.inst.stack_OnGUI();
+            OptionMenuSteeringRegulator.inst.stack_OnGUI();
+
             if (!visible || !module)
             {
                 return;
@@ -1267,6 +1285,12 @@ namespace Control_Block
 
     internal class OptionMenuPiston : MonoBehaviour
     {
+        public OptionMenuPiston()
+        {
+            inst = this;
+        }
+        public static OptionMenuPiston inst;
+
         private readonly int ID = 7787;
 
         private bool visible = false;
@@ -1296,7 +1320,7 @@ namespace Control_Block
             }
         }
 
-        private void OnGUI()
+        public void stack_OnGUI()
         {
             if (!visible || !module)
             {
@@ -1334,6 +1358,10 @@ namespace Control_Block
                     IsSettingKeybind = false;
                 }
             }
+
+            GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
+            module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
+
             GUILayout.Label("Keybind input");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind ? "Press a key for use" : module.trigger.ToString()) != IsSettingKeybind;
 
@@ -1385,6 +1413,11 @@ namespace Control_Block
 
     internal class OptionMenuSwivel : MonoBehaviour
     {
+        public OptionMenuSwivel()
+        {
+            inst = this;
+        }
+        public static OptionMenuSwivel inst;
         private readonly int ID = 7782;
 
         private bool visible = false;
@@ -1413,7 +1446,7 @@ namespace Control_Block
             }
         }
 
-        private void OnGUI()
+        public void stack_OnGUI()
         {
             if (!visible || !module)
             {
@@ -1458,6 +1491,10 @@ namespace Control_Block
                     SetButton = -1;
                 }
             }
+
+            GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
+            module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
+
             GUILayout.Label("Clockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;
             if (IsSettingKeybind && SetButton == -1)
@@ -1550,6 +1587,12 @@ namespace Control_Block
 
     internal class OptionMenuSteeringRegulator : MonoBehaviour
     {
+        public OptionMenuSteeringRegulator()
+        {
+            inst = this;
+        }
+        public static OptionMenuSteeringRegulator inst;
+
         private readonly int ID = 7788;
 
         private bool visible = false;
@@ -1576,7 +1619,7 @@ namespace Control_Block
             }
         }
 
-        private void OnGUI()
+        public void stack_OnGUI()
         {
             if (!visible || !module)
             {

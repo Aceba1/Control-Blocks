@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract class ModuleBlockMover : Module
+abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 {
+    public TechAudio.SFXType SFX;
+    public bool IsSFXLooping = false;
     public bool UpdateCOM = false;
     public bool BreakOnCab = false;
     public Transform LoadCOM;
@@ -25,6 +27,47 @@ abstract class ModuleBlockMover : Module
     public bool CanMove { get; internal set; } = false;
     public Dictionary<TankBlock, BlockDat> GrabbedBlocks;
     public Action<TankBlock, Tank> a_action, d_action;
+
+    public TechAudio.SFXType SFXType
+    {
+        get
+        {
+            return this.SFX;
+        }
+    }
+    public event Action<TechAudio.AudioTickData, FMODEvent.FMODParams> OnAudioTickUpdate;
+    public float SFXVolume = 1f;
+    //public bool SFXIsOn = false;
+
+    public void UpdateSFX(float Speed)
+    {
+        PlaySFX(!Speed.Approximately(0f, 0.01f), Mathf.Clamp01(Mathf.Abs(Speed) * SFXVolume));
+    }
+
+    bool AudioBroken = false;
+
+    internal void PlaySFX(bool On, float Speed)
+    {
+        if (this.OnAudioTickUpdate != null)
+        {
+            TechAudio.AudioTickData value = new TechAudio.AudioTickData
+            {
+                module = this,
+                provider = this,
+                sfxType = SFX,
+                numTriggered = (On ? 1 : 0),
+                triggerCooldown = 0.5f,
+                isNoteOn = On,
+                adsrTime01 = Speed
+            };
+            this.OnAudioTickUpdate(value, null);
+        }
+        else if (!AudioBroken && block.IsAttached)
+        {
+            AudioBroken = true;
+            throw new NullReferenceException("OnAudioTickUpdate is not active on an active block!");
+        }
+    }
 
     public Quaternion GetRotCurve(int Index, float Position)
     {
@@ -71,11 +114,14 @@ abstract class ModuleBlockMover : Module
 
     internal virtual void Detatch()
     {
+        //SFXIsOn = false;
+        base.block.tank.TechAudio.RemoveModule<ModuleBlockMover>(this);
         ResetBlocks();
     }
 
     internal virtual void Attach()
     {
+        block.tank.TechAudio.AddModule<ModuleBlockMover>(this);
         holder.position = block.tank.transform.position;
         holder.rotation = block.tank.transform.rotation;
         SetDirty();
