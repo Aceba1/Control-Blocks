@@ -6,7 +6,6 @@ namespace Control_Block
     [RequireComponent(typeof(TargetAimer))]
     internal class ModuleSwivel : ModuleBlockMover
     {
-        public float LastCurveDiff = 0f;
         public TargetAimer aimer;
         public GimbalAimer gimbal;
 
@@ -94,11 +93,6 @@ namespace Control_Block
             {
                 Move();
             }
-        }
-
-        private void LateUpdate()
-        {
-            LastCurveDiff = 100f;
         }
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
@@ -391,10 +385,10 @@ namespace Control_Block
                     Move();
                     if (CanMove)
                     {
+                        LastCurveDiff = Mathf.Repeat(oldEvaluatedBlockCurve - EvaluatedBlockRotCurve + 180f, 360f) - 180f;
                         if ((oldCurrentCurve != EvaluatedBlockRotCurve) && block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f && MassPushing > block.CurrentMass)
                         {
                             float th = (MassPushing / block.tank.rbody.mass);
-                            LastCurveDiff = Mathf.Repeat(oldEvaluatedBlockCurve - EvaluatedBlockRotCurve + 180f, 360f) - 180f;
                             var thing = LastCurveDiff * th;
                             tankcache.transform.Rotate(/*parts[parts.Length - 1].position,*/ block.transform.localRotation * Vector3.up, thing, Space.Self);
 #warning Fix COM
@@ -415,6 +409,7 @@ namespace Control_Block
             else if (Moved && Class1.PistonHeart == Heart)
             {
                 Moved = false;
+                LastCurveDiff = 0f;
                 //SFXIsOn = false;
                 tankcache.RequestPhysicsReset();
             }
@@ -435,6 +430,8 @@ namespace Control_Block
                 return _mr;
             }
         }
+
+        public float LastCurveDiff { get; set; } = 0f;
 
         public void SetColor(Color color)
         {

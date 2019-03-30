@@ -5,7 +5,6 @@ using UnityEngine;
 abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 {
     public TechAudio.SFXType SFX;
-    public bool IsSFXLooping = false;
     public bool UpdateCOM = false;
     public bool BreakOnCab = false;
     public Transform LoadCOM;
@@ -41,7 +40,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 
     public void UpdateSFX(float Speed)
     {
-        PlaySFX(!Speed.Approximately(0f, 0.01f), Mathf.Clamp01(Mathf.Abs(Speed) * SFXVolume));
+        PlaySFX(!(Speed * SFXVolume).Approximately(0f, 0.05f), Mathf.Clamp01(Mathf.Abs(Speed) * SFXVolume));
     }
 
     bool AudioBroken = false;
@@ -60,7 +59,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                 isNoteOn = On,
                 adsrTime01 = Speed
             };
-            this.OnAudioTickUpdate(value, null);
+            this.OnAudioTickUpdate(value, new FMODEvent.FMODParams("Rate", Speed));
         }
         else if (!AudioBroken && block.IsAttached)
         {

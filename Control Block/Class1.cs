@@ -761,6 +761,8 @@ namespace Control_Block
 
         #region SetBlockData
 
+        #region MultiMagnets
+
         internal static void SetFixedMTMag(ModuleMTMagnet mtmag)
         {
             mtmag.Identity = ModuleMTMagnet.MTMagTypes.Fixed;
@@ -856,6 +858,10 @@ namespace Control_Block
             origin.joint = Joint;
         }
 
+        #endregion
+
+        #region Pistons
+
         internal static void SetGSOPiston(ModulePiston piston)
         {
             piston.MaximumBlockPush = 108;
@@ -873,7 +879,7 @@ namespace Control_Block
                 new IntVector3(0,1,0)
             };
             piston.SFX = TechAudio.SFXType.GSODrillSmall;
-            piston.IsSFXLooping = false;
+            piston.SFXVolume = 17f;
         }
         internal static void SetGeoCorpPiston(ModulePiston piston)
         {
@@ -897,7 +903,7 @@ namespace Control_Block
                 new IntVector3(1,2,1)
             };
             piston.SFX = TechAudio.SFXType.GCPlasmaCutter;
-            piston.IsSFXLooping = false;
+            piston.SFXVolume = 20f;
         }
         internal static void SetHawkeyePiston(ModulePiston piston)
         {
@@ -921,7 +927,7 @@ namespace Control_Block
                 new IntVector3(0,0,-1)
             };
             piston.SFX = TechAudio.SFXType.GCBuzzSaw;
-            piston.IsSFXLooping = false;
+            piston.SFXVolume = 16f;
         }
         internal static void SetBFPiston(ModulePiston piston)
         {
@@ -938,8 +944,12 @@ namespace Control_Block
                 new IntVector3(0,1,0)
             };
             piston.SFX = TechAudio.SFXType.VENFlameThrower;
-            piston.IsSFXLooping = false;
+            piston.SFXVolume = 15f;
         }
+
+        #endregion
+
+        #region Swivels
 
         internal static void SetMediumSwivel(ModuleSwivel swivel)
         {
@@ -961,7 +971,7 @@ namespace Control_Block
                 new IntVector3(1,1,1)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillLarge;
-            swivel.IsSFXLooping = true;
+            swivel.SFXVolume = 0.05f;
         }
         internal static void SetInlineSwivel(ModuleSwivel swivel)
         {
@@ -984,7 +994,7 @@ namespace Control_Block
                 new IntVector3(-1,0,0)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
-            swivel.IsSFXLooping = true;
+            swivel.SFXVolume = 0.07f;
         }
         internal static void SetSmallSwivel(ModuleSwivel swivel)
         {
@@ -1004,8 +1014,12 @@ namespace Control_Block
                 new IntVector3(0,1,0)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
-            swivel.IsSFXLooping = true;
+            swivel.SFXVolume = 0.13f;
         }
+
+        #endregion
+
+        #region FrictionPads
 
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
@@ -1018,6 +1032,8 @@ namespace Control_Block
             obj.threshold = 2f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
+
+        #endregion
 
         #endregion SetBlockData
 
@@ -1053,6 +1069,19 @@ namespace Control_Block
 
         private void Update()
         {
+            if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.PageDown))
+            {
+                var m_ParamDatabase = typeof(FMODEventInstance).GetField("m_ParamDatabase", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, int>>;
+                foreach (var item in m_ParamDatabase)
+                {
+                    Console.WriteLine(item.Key);
+                    foreach (var subitem in item.Value)
+                    {
+                        Console.WriteLine($" {subitem.Key} : {subitem.Value}");
+                    }
+                }
+            }
+
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
             {
                 win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 600f, 300f);

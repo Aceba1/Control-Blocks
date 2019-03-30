@@ -9,7 +9,6 @@ namespace Control_Block
 {
     class ModulePiston : ModuleBlockMover
     {
-        public float LastCurveDiff = 0f;
         public float EvaluatedBlockCurve = 0f;
         public int StretchModifier = 1;
         public float MaxStr = 1;
@@ -73,11 +72,6 @@ namespace Control_Block
                 ResetRenderState(false);
             }
             base.BlockRemoved(block, tank);
-        }
-
-        private void LateUpdate()
-        {
-            LastCurveDiff = 100f;
         }
 
         bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
@@ -187,15 +181,16 @@ namespace Control_Block
                     //    CacheCOM = tankcache.rbody.transform.InverseTransformVector(CacheCOM);
                     //    tankcache.rbody.mass -= MassPushing;
                     //}
+                    LastCurveDiff = EvaluatedBlockCurve - oldOpen;
+
                     var offs = Move();
                     if (block.tank != null && !block.tank.IsAnchored && block.tank.rbody.mass > 0f)
                     {
                         float th = (MassPushing / block.tank.rbody.mass);
-                        LastCurveDiff = EvaluatedBlockCurve - oldOpen;
                         var thing = LastCurveDiff * th;
                         tankcache.rbody.position -= block.transform.rotation * Vector3.up * thing;
 #warning Fix COM
-                        //if (open == AlphaOpen)
+                        
                         //{
                         //    SFXIsOn = false;
                         tankcache.RequestPhysicsReset();
@@ -205,6 +200,9 @@ namespace Control_Block
                     }
                 }
                 else Heart = Class1.PistonHeart;
+
+                if (open == AlphaOpen)
+                    LastCurveDiff = 0f;
             }
             SnapRender = false;
         }
@@ -229,6 +227,9 @@ namespace Control_Block
                 return open;
             }
         }
+
+        public float LastCurveDiff { get; set; } = 0f;
+
         private Vector3 Move()
         {
             CleanDirty();
