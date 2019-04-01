@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Control_Block;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 {
@@ -12,6 +14,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     public Transform holder;
     public int PartCount = 1;
     public bool Heart;
+    public bool useVectorsForCurves = false;
     public AnimationCurve[] curves;
     public bool useRotCurves = false;
     public AnimationCurve[] rotCurves;
@@ -36,14 +39,13 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     }
     public event Action<TechAudio.AudioTickData, FMODEvent.FMODParams> OnAudioTickUpdate;
     public float SFXVolume = 1f;
-    //public bool SFXIsOn = false;
+    public string SFXParam = "Rate";
 
     public void UpdateSFX(float Speed)
     {
-        PlaySFX(!(Speed * SFXVolume).Approximately(0f, 0.05f), Mathf.Clamp01(Mathf.Abs(Speed) * SFXVolume));
+        bool on = !(Speed * SFXVolume).Approximately(0f, 0.1f);
+        PlaySFX(on, Mathf.Abs(Speed) * SFXVolume);
     }
-
-    bool AudioBroken = false;
 
     internal void PlaySFX(bool On, float Speed)
     {
@@ -55,29 +57,24 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                 provider = this,
                 sfxType = SFX,
                 numTriggered = (On ? 1 : 0),
-                triggerCooldown = 0.5f,
+                triggerCooldown = 0f,
                 isNoteOn = On,
-                adsrTime01 = Speed
+                adsrTime01 = 0f,
             };
-            this.OnAudioTickUpdate(value, new FMODEvent.FMODParams("Rate", Speed));
-        }
-        else if (!AudioBroken && block.IsAttached)
-        {
-            AudioBroken = true;
-            throw new NullReferenceException("OnAudioTickUpdate is not active on an active block!");
+            this.OnAudioTickUpdate(value, On ? new FMODEvent.FMODParams(SFXParam, Speed) : null);
         }
     }
 
     public Quaternion GetRotCurve(int Index, float Position)
     {
         int Mod = Index * 3;
-        return Quaternion.Euler(rotCurves[Mod - 3].Evaluate(Position), rotCurves[Mod - 3].Evaluate(Position), rotCurves[Mod - 3].Evaluate(Position));
+        return Quaternion.Euler(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position));
     }
 
     public Vector3 GetPosCurve(int Index, float Position)
     {
         int Mod = Index * 3;
-        return new Vector3(curves[Mod - 3].Evaluate(Position), curves[Mod - 3].Evaluate(Position), curves[Mod - 3].Evaluate(Position));
+        return new Vector3(curves[Mod].Evaluate(Position), curves[Mod + 1].Evaluate(Position), curves[Mod + 2].Evaluate(Position));
     }
 
     private void OnPool() //Creation
@@ -332,5 +329,99 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             Print(E2.Message + "\n" + E2.StackTrace + "\n" + (Start == null ? "Scanned block is null!" : ""));
         }
         return true;
+    }
+
+    public const TTMsgType NetMsgPistonID = (TTMsgType)32113, NetMsgSwivelID = (TTMsgType)32114;
+    internal static bool IsNetworkingInitiated = false;
+    public static void InitiateNetworking()
+    {
+        if (IsNetworkingInitiated)
+        {
+            throw new Exception("Something tried to initiate the networking component of BlockMovers twice!\n" + System.Reflection.Assembly.GetCallingAssembly().FullName);
+        }
+        IsNetworkingInitiated = true;
+        Nuterra.NetHandler.Subscribe<BlockMoverPistonMessage>(NetMsgPistonID, ReceivePistonChange);//, RequestMoverChange);
+        Nuterra.NetHandler.Subscribe<BlockMoverSwivelMessage>(NetMsgSwivelID, ReceiveSwivelChange);//, RequestMoverChange);
+    }
+
+    private static void ReceivePistonChange(BlockMoverPistonMessage obj) => obj.block.GetComponent<ModulePiston>().ReceiveFromNet(obj);
+    private static void ReceiveSwivelChange(BlockMoverSwivelMessage obj) => obj.block.GetComponent<ModuleSwivel>().ReceiveFromNet(obj);
+
+    //private static void RequestMoverChange(BlockMoverMessage obj)
+    //{
+
+    //}
+
+    //public abstract void SendToNet();
+
+    public class BlockMoverMessage : UnityEngine.Networking.MessageBase
+    {
+        public BlockMoverMessage() { }
+        public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+        {
+            tank = ClientScene.FindLocalObject(new NetworkInstanceId(reader.ReadUInt32())).GetComponent<Tank>();
+            block = tank.blockman.GetBlockWithID(reader.ReadPackedUInt32());
+        }
+
+        public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+        {
+            writer.Write(tank.netTech.netId.Value);
+            writer.Write(block.blockPoolID);
+        }
+        public TankBlock block;
+        public Tank tank;
+    }
+
+    public class BlockMoverPistonMessage : BlockMoverMessage
+    {
+        public BlockMoverPistonMessage() { }
+        public BlockMoverPistonMessage(TankBlock Block, byte CurrentPosition, byte TargetPosition)
+        {
+            tank = Block.tank;
+            block = Block;
+            currentPosition = CurrentPosition;
+            targetPosition = TargetPosition;
+        }
+        public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+        {
+            base.Deserialize(reader);
+            currentPosition = reader.ReadByte();
+            targetPosition = reader.ReadByte();
+        }
+
+        public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+        {
+            base.Serialize(writer);
+            writer.Write(currentPosition);
+            writer.Write(targetPosition);
+        }
+        public byte currentPosition, targetPosition;
+    }
+
+    public class BlockMoverSwivelMessage : BlockMoverMessage
+    {
+        public BlockMoverSwivelMessage() { }
+        public BlockMoverSwivelMessage(TankBlock Block, float CurrentAngle, float CurrentVelocity)
+        {
+            tank = Block.tank;
+            block = Block;
+            currentAngle = CurrentAngle;
+            currentVelocity = CurrentVelocity;
+        }
+        public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+        {
+            base.Deserialize(reader);
+            currentAngle = reader.ReadInt16() / 4f;
+            currentVelocity = reader.ReadSingle();
+        }
+
+        public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+        {
+            base.Serialize(writer);
+            writer.Write((short)Mathf.RoundToInt(currentAngle * 4));
+            writer.Write(currentVelocity);
+        }
+        public float currentAngle;
+        public float currentVelocity;
     }
 }

@@ -111,7 +111,8 @@ namespace Control_Block
             {
                 return;
             }
-            if ((Dirty || CanMove) && open == AlphaOpen)
+            bool Net = ManGameMode.inst.IsCurrentModeMultiplayer();
+            if (!(Net && tankcache != ManNetwork.inst.MyPlayer.CurTech.tech) && (Dirty || CanMove && open == AlphaOpen))
             {
                 if (IsToggle)
                 {
@@ -161,10 +162,13 @@ namespace Control_Block
                     AlphaOpen = 1f;
                     ForceOpen = false;
                 }
-                //if (open != AlphaOpen)
-                //{
-                //    SFXIsOn = true;
-                //}
+                if (Net && open != AlphaOpen)
+                {
+                    Nuterra.NetHandler.BroadcastMessageToAllExcept(
+                        NetMsgPistonID,
+                        new BlockMoverPistonMessage(block, (byte)Mathf.RoundToInt(open * MaxStr), (byte)Mathf.RoundToInt(AlphaOpen * MaxStr)),
+                        true);
+                }
             }
             if (open != AlphaOpen)
             {
@@ -367,6 +371,12 @@ namespace Control_Block
                     UpdateFix = true;
                 }
             }
+        }
+
+        public void ReceiveFromNet(BlockMoverPistonMessage data)
+        {
+            open = data.currentPosition / MaxStr;
+            AlphaOpen = data.targetPosition / MaxStr;
         }
 
         [Serializable]

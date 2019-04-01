@@ -707,6 +707,8 @@ namespace Control_Block
             _holder.AddComponent<OptionMenuSteeringRegulator>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
+
+            
         }
 
         internal static bool PistonHeart = false;
@@ -869,7 +871,7 @@ namespace Control_Block
             {
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)), //shaft
 
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(.5f, .5f, .6f, .6f), new Keyframe(1f, 1f, 0f, 0f)) //block top
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f)) //block top
             };
             piston.PartCount = 2;
             piston.StretchSpeed = 0.08f;
@@ -878,7 +880,7 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
-            piston.SFX = TechAudio.SFXType.GSODrillSmall;
+            piston.SFX = TechAudio.SFXType.GSODrillLarge;
             piston.SFXVolume = 17f;
         }
         internal static void SetGeoCorpPiston(ModulePiston piston)
@@ -926,7 +928,7 @@ namespace Control_Block
                 new IntVector3(0,1,0),
                 new IntVector3(0,0,-1)
             };
-            piston.SFX = TechAudio.SFXType.GCBuzzSaw;
+            piston.SFX = TechAudio.SFXType.GCTripleBore;
             piston.SFXVolume = 16f;
         }
         internal static void SetBFPiston(ModulePiston piston)
@@ -943,8 +945,8 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
-            piston.SFX = TechAudio.SFXType.VENFlameThrower;
-            piston.SFXVolume = 15f;
+            piston.SFX = TechAudio.SFXType.FlameThrowerPlasma;
+            piston.SFXVolume = 5f;
         }
 
         #endregion
@@ -970,7 +972,7 @@ namespace Control_Block
                 new IntVector3(0,1,1),
                 new IntVector3(1,1,1)
             };
-            swivel.SFX = TechAudio.SFXType.GSODrillLarge;
+            swivel.SFX = TechAudio.SFXType.GCTripleBore;
             swivel.SFXVolume = 0.05f;
         }
         internal static void SetInlineSwivel(ModuleSwivel swivel)
@@ -994,7 +996,7 @@ namespace Control_Block
                 new IntVector3(-1,0,0)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
-            swivel.SFXVolume = 0.07f;
+            swivel.SFXVolume = 0.1f;
         }
         internal static void SetSmallSwivel(ModuleSwivel swivel)
         {
@@ -1388,8 +1390,8 @@ namespace Control_Block
                 }
             }
 
-            GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
-            module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
+            //GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
+            //module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
 
             GUILayout.Label("Keybind input");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind ? "Press a key for use" : module.trigger.ToString()) != IsSettingKeybind;
@@ -1521,8 +1523,8 @@ namespace Control_Block
                 }
             }
 
-            GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
-            module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
+            //GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
+            //module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
 
             GUILayout.Label("Clockwise Key");
             IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;

@@ -24,38 +24,47 @@ namespace Control_Block
             /// Input, StartDelay
             /// </summary>
             Positional,
+
             /// <summary>
             /// Input, SideDelay
             /// </summary>
             Directional,
+
             /// <summary>
             /// Input, StartDelay
             /// </summary>
             Speed,
+
             /// <summary>
             /// Input, StartDelay, SideDelay
             /// </summary>
             OnOff,
+
             /// <summary>
             /// When no target, Positional
             /// </summary>
             Aim,
+
             /// <summary>
             /// Input, StartDelay
             /// </summary>
             Turning,
+
             /// <summary>
             /// No Input
             /// </summary>
             AimAtPlayer,
+
             /// <summary>
             /// No Input
             /// </summary>
             AimAtVelocity,
+
             /// <summary>
             /// Input, StartDelay, SideDelay
             /// </summary>
             Cycle,
+
             /// <summary>
             /// Input, StartDelay
             /// </summary>
@@ -97,6 +106,7 @@ namespace Control_Block
 
         private bool VInput { get => !LocalControl || (LocalControl && (tankcache == Singleton.playerTank)); }
         private bool ButtonNotPressed = true, Moved = false, WasAiming = false;
+
         private void FixedUpdate()
         {
             var oldAngle = CurrentAngle;
@@ -126,245 +136,307 @@ namespace Control_Block
             {
                 return;
             }
+            bool Net = ManGameMode.inst.IsCurrentModeMultiplayer();
+            bool IsControlledByNet = (Net && tankcache != ManNetwork.inst.MyPlayer.CurTech.tech);
+            float diff = 0f;
             if (Dirty || CanMove)
             {
                 if (!tankcache.beam.IsActive)
-                    switch (mode)
+                {
+                    if (IsControlledByNet)
                     {
-
-                        case Mode.Aim:
-                            aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
-                            aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
-                            if (aimer.HasTarget)
-                            {
-                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                                WasAiming = true;
-                            }
-                            else if (WasAiming)
-                            {
-                                Direction = Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f);
-                                CurrentAngle += Direction * RotateSpeed;
-                                if (CurrentAngle == 0)
+                        CurrentAngle += LastSentVelocity;
+                    }
+                    else
+                    {
+                        switch (mode)
+                        {
+                            case Mode.Aim:
+                                aimer.AimAtWorldPos(parts[parts.Length - 1].rotation * Vector3.forward + parts[parts.Length - 1].transform.position, 100000000);
+                                aimer.UpdateAndAimAtTarget(RotateSpeed / Time.deltaTime);
+                                if (aimer.HasTarget)
                                 {
-                                    WasAiming = false;
-                                    gimbal.ResetAngles();
-                                    CurrentAngle = 0;
+                                    CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                                    WasAiming = true;
                                 }
-                            }
-                            else
-                            {
-                                goto Positional;
-                            }
-                            break;
-
-                        case Mode.Positional:
-                            Positional:
-                            if (VInput)
-                            {
-                                if (Input.GetKey(trigger1))
+                                else if (WasAiming)
                                 {
-                                    if (CurrentDelay > 0)
-                                    {
-                                        CurrentDelay -= RotateSpeed;
-                                        break;
-                                    }
-                                    CurrentAngle += RotateSpeed;
-                                }
-                                else if (Input.GetKey(trigger2))
-                                {
-                                    if (CurrentDelay > 0)
-                                    {
-                                        CurrentDelay -= RotateSpeed;
-                                        break;
-                                    }
-                                    CurrentAngle -= RotateSpeed;
-                                }
-                                else CurrentDelay = StartDelay;
-                            }
-                            break;
-
-                        case Mode.AimAtPlayer:
-                            if (Singleton.playerTank != null)
-                            {
-                                gimbal.Aim(Singleton.playerTank.rbody.worldCenterOfMass, (RotateSpeed / Time.deltaTime));
-                            }
-                            else
-                                gimbal.AimDefault((RotateSpeed / Time.deltaTime));
-                            CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                            break;
-                        case Mode.AimAtVelocity:
-                            gimbal.Aim(parts[parts.Length - 1].transform.position + tankcache.rbody.GetPointVelocity(parts[parts.Length - 1].transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 1f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
-                            CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
-                            break;
-
-                        case Mode.Directional:
-                            if (Direction == 0 && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = StartDelay;
-                            }
-                            if (VInput)
-                            {
-                                if (Input.GetKey(trigger1))
-                                {
-                                    Direction = 1f;
-                                }
-                                else if (Input.GetKey(trigger2))
-                                {
-                                    Direction = -1f;
-                                }
-                            }
-                            if (Direction != 0 && CurrentDelay > 0)
-                            {
-                                CurrentDelay -= RotateSpeed;
-                                break;
-                            }
-                            CurrentAngle += Direction * RotateSpeed;
-                            break;
-
-                        case Mode.Throttle:
-                        case Mode.Speed:
-                            if (Direction == 0 && ButtonNotPressed && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = StartDelay;
-                            }
-                            if (VInput)
-                            {
-                                if (Input.GetKey(trigger1))
-                                {
-                                    Direction += 0.025f;
-                                }
-                                else if (Input.GetKey(trigger2))
-                                {
-                                    Direction -= 0.025f;
-                                }
-                                else if (mode == Mode.Throttle)
-                                {
-                                    Direction = Mathf.Clamp(0, Direction - 0.025f, Direction + 0.025f);
-                                }
-                                Direction = Mathf.Clamp(Direction, -1f, 1f);
-                            }
-                            if (Direction != 0 && CurrentDelay > 0)
-                            {
-                                CurrentDelay -= RotateSpeed;
-                                if (CurrentDelay <= 0) Direction = 0;
-                                break;
-                            }
-                            CurrentAngle += Direction * RotateSpeed;
-                            break;
-
-                        case Mode.OnOff:
-                            if (Direction == 0 && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = StartDelay;
-                            }
-                            if (VInput && ButtonNotPressed)
-                            {
-                                if (Input.GetKey(trigger1))
-                                {
-                                    Direction += 1f;
-                                }
-                                else if (Input.GetKey(trigger2))
-                                {
-                                    Direction -= 1f;
-                                }
-                                Direction = Mathf.Clamp(Direction, -1f, 1f);
-                            }
-                            if (Direction != 0 && CurrentDelay > 0)
-                            {
-                                CurrentDelay -= RotateSpeed;
-                                break;
-                            }
-                            CurrentAngle += Direction * RotateSpeed;
-                            break;
-
-                        case Mode.Cycle:
-                            if (Direction == 0 && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = StartDelay;
-                            }
-                            if (VInput && ButtonNotPressed)
-                            {
-                                if (Input.GetKey(trigger1))
-                                {
-                                    if (Direction == 0) // Forward
-                                        Direction = 1;
-                                    else Direction = 0;
-                                }
-                                else if (Input.GetKey(trigger2))
-                                {
-                                    if (Direction == 0) // Reverse
-                                        Direction = -1;
-                                    else Direction = 0;
-                                }
-                            }
-                            if (Direction != 0)
-                            {
-                                if (CurrentDelay > 0)
-                                    CurrentDelay -= RotateSpeed;
-                                else
+                                    Direction = Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f);
                                     CurrentAngle += Direction * RotateSpeed;
-                            }
-                            else
-                            {
-                                CurrentAngle += Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f) * RotateSpeed;
-                                if (CurrentAngle == 0) CurrentDelay = 0;
-                            }
-                            break;
-
-                        case Mode.Turning:
-
-                            if (Direction == 0 && CurrentAngle == AngleCenter && CurrentDelay <= 0)
-                            {
-                                CurrentDelay = StartDelay;
-                            }
-                            if (VInput)
-                            {
-                                if (Input.GetKey(trigger1))
-                                {
-                                    Direction = +1;
+                                    if (CurrentAngle == 0)
+                                    {
+                                        WasAiming = false;
+                                        gimbal.ResetAngles();
+                                        CurrentAngle = 0;
+                                    }
                                 }
-                                else if (Input.GetKey(trigger2))
+                                else
                                 {
-                                    Direction = -1;
+                                    goto Positional;
+                                }
+                                break;
+
+                            case Mode.Positional:
+                                Positional:
+                                if (VInput)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        if (CurrentDelay > 0)
+                                        {
+                                            CurrentDelay -= RotateSpeed;
+                                            break;
+                                        }
+                                        CurrentAngle += RotateSpeed;
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        if (CurrentDelay > 0)
+                                        {
+                                            CurrentDelay -= RotateSpeed;
+                                            break;
+                                        }
+                                        CurrentAngle -= RotateSpeed;
+                                    }
+                                    else
+                                    {
+                                        CurrentDelay = StartDelay;
+                                    }
+                                }
+                                break;
+
+                            case Mode.AimAtPlayer:
+                                if (Singleton.playerTank != null)
+                                {
+                                    gimbal.Aim(Singleton.playerTank.rbody.worldCenterOfMass, (RotateSpeed / Time.deltaTime));
+                                }
+                                else
+                                {
+                                    gimbal.AimDefault((RotateSpeed / Time.deltaTime));
+                                }
+
+                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                                break;
+
+                            case Mode.AimAtVelocity:
+                                gimbal.Aim(parts[parts.Length - 1].transform.position + tankcache.rbody.GetPointVelocity(parts[parts.Length - 1].transform.position) + (((LockAngle ? block.transform.forward : Vector3.down) / Time.deltaTime * 1f) * (Vector3.ProjectOnPlane(block.transform.up, Vector3.up).magnitude + 0.1f)), (RotateSpeed / Time.deltaTime));
+                                CurrentAngle = parts[parts.Length - 1].localRotation.eulerAngles.y;
+                                break;
+
+                            case Mode.Directional:
+                                if (Direction == 0 && CurrentDelay <= 0)
+                                {
+                                    CurrentDelay = StartDelay;
+                                }
+                                if (VInput)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        Direction = 1f;
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        Direction = -1f;
+                                    }
+                                }
+                                if (Direction != 0 && CurrentDelay > 0)
+                                {
+                                    CurrentDelay -= RotateSpeed;
+                                    break;
+                                }
+                                CurrentAngle += Direction * RotateSpeed;
+                                break;
+
+                            case Mode.Throttle:
+                            case Mode.Speed:
+                                if (Direction == 0 && ButtonNotPressed && CurrentDelay <= 0)
+                                {
+                                    CurrentDelay = StartDelay;
+                                }
+                                if (VInput)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        Direction += 0.025f;
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        Direction -= 0.025f;
+                                    }
+                                    else if (mode == Mode.Throttle)
+                                    {
+                                        Direction = Mathf.Clamp(0, Direction - 0.025f, Direction + 0.025f);
+                                    }
+                                    Direction = Mathf.Clamp(Direction, -1f, 1f);
+                                }
+                                if (Direction != 0 && CurrentDelay > 0)
+                                {
+                                    CurrentDelay -= RotateSpeed;
+                                    if (CurrentDelay <= 0)
+                                    {
+                                        Direction = 0;
+                                    }
+
+                                    break;
+                                }
+                                CurrentAngle += Direction * RotateSpeed;
+                                break;
+
+                            case Mode.OnOff:
+                                if (Direction == 0 && CurrentDelay <= 0)
+                                {
+                                    CurrentDelay = StartDelay;
+                                }
+                                if (VInput && ButtonNotPressed)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        Direction += 1f;
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        Direction -= 1f;
+                                    }
+                                    Direction = Mathf.Clamp(Direction, -1f, 1f);
+                                }
+                                if (Direction != 0 && CurrentDelay > 0)
+                                {
+                                    CurrentDelay -= RotateSpeed;
+                                    break;
+                                }
+                                CurrentAngle += Direction * RotateSpeed;
+                                break;
+
+                            case Mode.Cycle:
+                                if (Direction == 0 && CurrentDelay <= 0)
+                                {
+                                    CurrentDelay = StartDelay;
+                                }
+                                if (VInput && ButtonNotPressed)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        if (Direction == 0) // Forward
+                                        {
+                                            Direction = 1;
+                                        }
+                                        else
+                                        {
+                                            Direction = 0;
+                                        }
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        if (Direction == 0) // Reverse
+                                        {
+                                            Direction = -1;
+                                        }
+                                        else
+                                        {
+                                            Direction = 0;
+                                        }
+                                    }
+                                }
+                                if (Direction != 0)
+                                {
+                                    if (CurrentDelay > 0)
+                                    {
+                                        CurrentDelay -= RotateSpeed;
+                                    }
+                                    else
+                                    {
+                                        CurrentAngle += Direction * RotateSpeed;
+                                    }
+                                }
+                                else
+                                {
+                                    CurrentAngle += Mathf.Clamp(-(Mathf.Repeat(CurrentAngle + 180, 360) - 180) / RotateSpeed, -1f, 1f) * RotateSpeed;
+                                    if (CurrentAngle == 0)
+                                    {
+                                        CurrentDelay = 0;
+                                    }
+                                }
+                                break;
+
+                            case Mode.Turning:
+
+                                if (Direction == 0 && CurrentAngle == AngleCenter && CurrentDelay <= 0)
+                                {
+                                    CurrentDelay = StartDelay;
+                                }
+                                if (VInput)
+                                {
+                                    if (Input.GetKey(trigger1))
+                                    {
+                                        Direction = +1;
+                                    }
+                                    else if (Input.GetKey(trigger2))
+                                    {
+                                        Direction = -1;
+                                    }
+                                    else
+                                    {
+                                        Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
+                                    }
                                 }
                                 else
                                 {
                                     Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
                                 }
-                            }
-                            else
-                            {
-                                Direction = -(Mathf.Repeat(CurrentAngle - AngleCenter + 180, 360) - 180) / RotateSpeed;
-                            }
-                            Direction = Mathf.Clamp(Direction, -1f, 1f);
+                                Direction = Mathf.Clamp(Direction, -1f, 1f);
 
-                            if (Direction != 0 && CurrentDelay > 0)
-                            {
-                                CurrentDelay -= RotateSpeed;
+                                if (Direction != 0 && CurrentDelay > 0)
+                                {
+                                    CurrentDelay -= RotateSpeed;
+                                    break;
+                                }
+                                CurrentAngle += Direction * RotateSpeed;
                                 break;
-                            }
-                            CurrentAngle += Direction * RotateSpeed;
-                            break;
+                        }
+                        diff = oldAngle - CurrentAngle;
+                        if (LastSentVelocity != oldAngle - CurrentAngle)
+                        {
+                            Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgSwivelID, new BlockMoverSwivelMessage(block, CurrentAngle, diff), true);
+                        }
                     }
+                }
             }
-            if (LockAngle)
+            if (LockAngle && !IsControlledByNet)
             {
                 float Diff = (CurrentAngle - AngleCenter + 900) % 360 - 180;
                 if (Diff < -AngleRange)
                 {
                     CurrentAngle += (AngleCenter - AngleRange) - CurrentAngle;
                     if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
+                    {
                         CurrentDelay = CCWDelay;
-                    if (mode == Mode.Cycle) Direction = -Direction;
-                    else Direction = 0;
+                    }
+
+                    if (mode == Mode.Cycle)
+                    {
+                        Direction = -Direction;
+                    }
+                    else
+                    {
+                        Direction = 0;
+                    }
                 }
                 else if (Diff > AngleRange)
                 {
                     CurrentAngle += (AngleCenter + AngleRange) - CurrentAngle;
                     if (mode == Mode.Cycle || mode == Mode.Directional || mode == Mode.OnOff)
+                    {
                         CurrentDelay = CWDelay;
-                    if (mode == Mode.Cycle) Direction = -Direction;
-                    else Direction = 0;
+                    }
+
+                    if (mode == Mode.Cycle)
+                    {
+                        Direction = -Direction;
+                    }
+                    else
+                    {
+                        Direction = 0;
+                    }
                 }
             }
             parts[parts.Length - 1].localRotation = Quaternion.Euler(0f, CurrentAngle, 0f);
@@ -414,7 +486,9 @@ namespace Control_Block
                 tankcache.RequestPhysicsReset();
             }
             if (mode == Mode.OnOff || mode == Mode.Cycle || mode == Mode.Speed || mode == Mode.Throttle)
+            {
                 ButtonNotPressed = !Input.GetKey(trigger1) && !Input.GetKey(trigger2);
+            }
         }
 
         private MeshRenderer[] _mr;
@@ -587,6 +661,14 @@ namespace Control_Block
                     Dirty = true;
                 }
             }
+        }
+
+        float LastSentVelocity = 0f;
+
+        public void ReceiveFromNet(BlockMoverSwivelMessage data)
+        {
+            CurrentAngle = data.currentAngle;
+            LastSentVelocity = data.currentVelocity;
         }
 
         [Serializable]
