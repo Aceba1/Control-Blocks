@@ -396,6 +396,7 @@ namespace Control_Block
                         diff = oldAngle - CurrentAngle;
                         if (LastSentVelocity != oldAngle - CurrentAngle)
                         {
+                            LastSentVelocity = diff;
                             Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgSwivelID, new BlockMoverSwivelMessage(block, CurrentAngle, diff), true);
                         }
                     }
