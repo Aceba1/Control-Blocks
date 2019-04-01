@@ -708,7 +708,7 @@ namespace Control_Block
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
 
-            
+            ModuleBlockMover.InitiateNetworking();
         }
 
         internal static bool PistonHeart = false;
