@@ -394,10 +394,10 @@ namespace Control_Block
                                 break;
                         }
                         diff = oldAngle - CurrentAngle;
-                        if (LastSentVelocity != oldAngle - CurrentAngle)
+                        if (!LastSentVelocity.Approximately(diff, 0.01f))
                         {
                             LastSentVelocity = diff;
-                            Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgSwivelID, new BlockMoverSwivelMessage(block, CurrentAngle, diff), true);
+                            SendSwivelChange(new BlockMoverSwivelMessage(block, CurrentAngle, diff));
                         }
                     }
                 }

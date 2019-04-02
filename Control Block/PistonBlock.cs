@@ -164,10 +164,7 @@ namespace Control_Block
                 }
                 if (Net && open != AlphaOpen)
                 {
-                    Nuterra.NetHandler.BroadcastMessageToAllExcept(
-                        NetMsgPistonID,
-                        new BlockMoverPistonMessage(block, (byte)Mathf.RoundToInt(open * MaxStr), (byte)Mathf.RoundToInt(AlphaOpen * MaxStr)),
-                        true);
+                    SendPistonChange(new BlockMoverPistonMessage(block, (byte)Mathf.RoundToInt(open * MaxStr), (byte)Mathf.RoundToInt(AlphaOpen * MaxStr)));
                 }
             }
             if (open != AlphaOpen)

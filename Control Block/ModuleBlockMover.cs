@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
+internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 {
     public TechAudio.SFXType SFX;
     public bool UpdateCOM = false;
@@ -37,7 +37,9 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             return this.SFX;
         }
     }
+
     public event Action<TechAudio.AudioTickData, FMODEvent.FMODParams> OnAudioTickUpdate;
+
     public float SFXVolume = 1f;
     public string SFXParam = "Rate";
 
@@ -85,7 +87,9 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 
         parts = new Transform[PartCount];
         for (int I = 0; I < PartCount; I++)
+        {
             parts[I] = block.transform.GetChild(I + 2);
+        }
 
         holder = new GameObject("Holding Agent").transform;
         holder.parent = parts[PartCount - 1].transform;
@@ -144,6 +148,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             pos = Block.cachedLocalPosition;
             ortho = Block.cachedLocalRotation;
         }
+
         public IntVector3 pos;
         public OrthoRotation ortho;
     }
@@ -151,6 +156,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     internal abstract void BeforeBlockAdded(TankBlock block);
 
     private string lastdatetime = "";
+
     private string GetDateTime(string Before, string After)
     {
         string newdatetime = DateTime.Now.ToString("T", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
@@ -162,7 +168,6 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         return "";
     }
 
-
     public void Print(string Message)
     {
         //Console.WriteLine(GetDateTime("CB(", "): ") + Message);
@@ -171,7 +176,10 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     internal void CleanDirty()
     {
         if (!Dirty || !block.IsAttached || block.tank == null)
+        {
             return;
+        }
+
         ResetBlocks();
         //StartExtended = !SetToExpand;
         CanMove = GetBlocks(null, true);
@@ -208,7 +216,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         }
     }
 
-    Vector3 cacheCOM = Vector3.zero;
+    private Vector3 cacheCOM = Vector3.zero;
 
     internal bool GetBlocks(TankBlock Start = null, bool BeginGrab = false, bool IsStarter = false)
     {
@@ -266,7 +274,9 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             {
                 result = GetBlocks(b, false, true);
                 if (!result)
+                {
                     return false;
+                }
             }
             //do the stuff here
 
@@ -315,7 +325,9 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                         //}
                         GrabbedBlocks.Add(cb, new BlockDat(cb));
                         if (!GetBlocks(cb))
+                        {
                             return false;
+                        }
                     }
                 }
                 catch (Exception E)
@@ -333,6 +345,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 
     public const TTMsgType NetMsgPistonID = (TTMsgType)32113, NetMsgSwivelID = (TTMsgType)32114;
     internal static bool IsNetworkingInitiated = false;
+
     public static void InitiateNetworking()
     {
         if (IsNetworkingInitiated)
@@ -340,23 +353,52 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             throw new Exception("Something tried to initiate the networking component of BlockMovers twice!\n" + System.Reflection.Assembly.GetCallingAssembly().FullName);
         }
         IsNetworkingInitiated = true;
-        Nuterra.NetHandler.Subscribe<BlockMoverPistonMessage>(NetMsgPistonID, ReceivePistonChange);//, RequestMoverChange);
-        Nuterra.NetHandler.Subscribe<BlockMoverSwivelMessage>(NetMsgSwivelID, ReceiveSwivelChange);//, RequestMoverChange);
+        Nuterra.NetHandler.Subscribe<BlockMoverPistonMessage>(NetMsgPistonID, ReceivePistonChange, PromptNewPistonChange);
+        Nuterra.NetHandler.Subscribe<BlockMoverSwivelMessage>(NetMsgSwivelID, ReceiveSwivelChange, PromptNewSwivelChange);
     }
 
-    private static void ReceivePistonChange(BlockMoverPistonMessage obj) => obj.block.GetComponent<ModulePiston>().ReceiveFromNet(obj);
-    private static void ReceiveSwivelChange(BlockMoverSwivelMessage obj) => obj.block.GetComponent<ModuleSwivel>().ReceiveFromNet(obj);
+    public static void SendPistonChange(BlockMoverPistonMessage message)
+    {
+        if (ManNetwork.IsHost)
+        {
+            Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgPistonID, message, true);
+            return;
+        }
+        Nuterra.NetHandler.BroadcastMessageToServer(NetMsgPistonID, message);
+    }
 
-    //private static void RequestMoverChange(BlockMoverMessage obj)
-    //{
+    public static void SendSwivelChange(BlockMoverSwivelMessage message)
+    {
+        if (ManNetwork.IsHost)
+        {
+            Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgSwivelID, message, true);
+            return;
+        }
+        Nuterra.NetHandler.BroadcastMessageToServer(NetMsgSwivelID, message);
+    }
 
-    //}
+    private static void PromptNewPistonChange(BlockMoverPistonMessage obj, NetworkMessage netmsg)
+    {
+        Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgPistonID, obj, true, netmsg.conn.connectionId);
+        ReceivePistonChange(obj, netmsg);
+    }
 
-    //public abstract void SendToNet();
+    private static void PromptNewSwivelChange(BlockMoverSwivelMessage obj, NetworkMessage netmsg)
+    {
+        Nuterra.NetHandler.BroadcastMessageToAllExcept(NetMsgSwivelID, obj, true, netmsg.conn.connectionId);
+        ReceiveSwivelChange(obj, netmsg);
+    }
+
+    private static void ReceivePistonChange(BlockMoverPistonMessage obj, NetworkMessage netmsg) => obj.block.GetComponent<ModulePiston>().ReceiveFromNet(obj);
+
+    private static void ReceiveSwivelChange(BlockMoverSwivelMessage obj, NetworkMessage netmsg) => obj.block.GetComponent<ModuleSwivel>().ReceiveFromNet(obj);
 
     public class BlockMoverMessage : UnityEngine.Networking.MessageBase
     {
-        public BlockMoverMessage() { }
+        public BlockMoverMessage()
+        {
+        }
+
         public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
         {
             tank = ClientScene.FindLocalObject(new NetworkInstanceId(reader.ReadUInt32())).GetComponent<Tank>();
@@ -368,13 +410,17 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             writer.Write(tank.netTech.netId.Value);
             writer.Write(block.blockPoolID);
         }
+
         public TankBlock block;
         public Tank tank;
     }
 
     public class BlockMoverPistonMessage : BlockMoverMessage
     {
-        public BlockMoverPistonMessage() { }
+        public BlockMoverPistonMessage()
+        {
+        }
+
         public BlockMoverPistonMessage(TankBlock Block, byte CurrentPosition, byte TargetPosition)
         {
             tank = Block.tank;
@@ -382,6 +428,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             currentPosition = CurrentPosition;
             targetPosition = TargetPosition;
         }
+
         public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
         {
             base.Deserialize(reader);
@@ -395,12 +442,16 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             writer.Write(currentPosition);
             writer.Write(targetPosition);
         }
+
         public byte currentPosition, targetPosition;
     }
 
     public class BlockMoverSwivelMessage : BlockMoverMessage
     {
-        public BlockMoverSwivelMessage() { }
+        public BlockMoverSwivelMessage()
+        {
+        }
+
         public BlockMoverSwivelMessage(TankBlock Block, float CurrentAngle, float CurrentVelocity)
         {
             tank = Block.tank;
@@ -408,6 +459,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             currentAngle = CurrentAngle;
             currentVelocity = CurrentVelocity;
         }
+
         public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
         {
             base.Deserialize(reader);
@@ -421,6 +473,7 @@ abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             writer.Write((short)Mathf.RoundToInt(currentAngle * 4));
             writer.Write(currentVelocity);
         }
+
         public float currentAngle;
         public float currentVelocity;
     }
