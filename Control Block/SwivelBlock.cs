@@ -670,6 +670,7 @@ namespace Control_Block
         {
             CurrentAngle = data.currentAngle;
             LastSentVelocity = data.currentVelocity;
+            Console.WriteLine($"Received new swivel change: {block.cachedLocalPosition} set to {CurrentAngle} with velocity {LastSentVelocity}");
         }
 
         [Serializable]

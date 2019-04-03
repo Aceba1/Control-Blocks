@@ -112,7 +112,7 @@ namespace Control_Block
                 return;
             }
             bool Net = ManGameMode.inst.IsCurrentModeMultiplayer();
-            if (!(Net && tankcache != ManNetwork.inst.MyPlayer.CurTech.tech) && (Dirty || CanMove && open == AlphaOpen))
+            if (!(Net && tankcache != ManNetwork.inst.MyPlayer.CurTech.tech /*On different MP techs*/) && (Dirty || CanMove && open == AlphaOpen))
             {
                 if (IsToggle)
                 {
@@ -374,6 +374,7 @@ namespace Control_Block
         {
             open = data.currentPosition / MaxStr;
             AlphaOpen = data.targetPosition / MaxStr;
+            Console.WriteLine($"Received new piston change: {block.cachedLocalPosition} going from {open} to {AlphaOpen}");
         }
 
         [Serializable]
