@@ -164,7 +164,7 @@ namespace Control_Block
                 }
                 if (Net && open != AlphaOpen)
                 {
-                    SendPistonChange(new BlockMoverPistonMessage(block, (byte)Mathf.RoundToInt(open * MaxStr), (byte)Mathf.RoundToInt(AlphaOpen * MaxStr)));
+                    SendPistonChange(new BlockMoverPistonMessage(block, (short)Mathf.Round(open * StretchModifier), (short)Mathf.Round(AlphaOpen * StretchModifier)));
                 }
             }
             if (open != AlphaOpen)
@@ -372,9 +372,9 @@ namespace Control_Block
 
         public void ReceiveFromNet(BlockMoverPistonMessage data)
         {
-            open = data.currentPosition / MaxStr;
-            AlphaOpen = data.targetPosition / MaxStr;
-            Console.WriteLine($"Received new piston change: {block.cachedLocalPosition} going from {open} to {AlphaOpen}");
+            open = ((float)data.currentPosition) / MaxStr;
+            AlphaOpen = ((float)data.targetPosition) / MaxStr;
+            Console.WriteLine($"Received new piston change: {block.cachedLocalPosition} going from {open} ({data.currentPosition}) to {AlphaOpen} ({data.targetPosition})");
         }
 
         [Serializable]

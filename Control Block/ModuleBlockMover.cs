@@ -421,7 +421,7 @@ internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvide
         {
         }
 
-        public BlockMoverPistonMessage(TankBlock Block, byte CurrentPosition, byte TargetPosition)
+        public BlockMoverPistonMessage(TankBlock Block, short CurrentPosition, short TargetPosition)
         {
             tank = Block.tank;
             block = Block;
@@ -432,8 +432,8 @@ internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvide
         public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
         {
             base.Deserialize(reader);
-            currentPosition = reader.ReadByte();
-            targetPosition = reader.ReadByte();
+            currentPosition = reader.ReadInt16();
+            targetPosition = reader.ReadInt16();
         }
 
         public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
@@ -443,7 +443,7 @@ internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvide
             writer.Write(targetPosition);
         }
 
-        public byte currentPosition, targetPosition;
+        public short currentPosition, targetPosition;
     }
 
     public class BlockMoverSwivelMessage : BlockMoverMessage
