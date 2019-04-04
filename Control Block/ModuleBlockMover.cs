@@ -402,7 +402,7 @@ internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvide
         public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
         {
             tank = ClientScene.FindLocalObject(new NetworkInstanceId(reader.ReadUInt32())).GetComponent<Tank>();
-            block = tank.blockman.GetBlockWithID(reader.ReadPackedUInt32());
+            block = tank.blockman.GetBlockWithID(reader.ReadUInt32());
         }
 
         public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
