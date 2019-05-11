@@ -590,7 +590,7 @@ namespace Control_Block
                     .SetPrice(800)
                     .SetHP(600)
                     .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider),true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_png)))
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetBallMTMag);
@@ -668,18 +668,18 @@ namespace Control_Block
                     .SetPrice(500)
                     .SetHP(600)
                     .SetMass(3f)
-                    .SetSize(new IntVector3(2,1,2), BlockPrefabBuilder.AttachmentPoints.Bottom)
+                    .SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
                     .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_swivel_large), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
 
-                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f,0f,0.5f), mtmag.Prefab.transform);
+                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f, 0f, 0.5f), mtmag.Prefab.transform);
 
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
 
                 trigger.size = new Vector3(1f, 1f, 1f);
-                trigger.center = new Vector3(0.5f,0.5f,0.5f);
+                trigger.center = new Vector3(0.5f, 0.5f, 0.5f);
 
                 mtmag.RegisterLater();
 
@@ -703,8 +703,9 @@ namespace Control_Block
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenuPiston>();
             _holder.AddComponent<OptionMenuSwivel>();
-            _holder.AddComponent<LogGUI>();
             _holder.AddComponent<OptionMenuSteeringRegulator>();
+            _holder.AddComponent<LogGUI>();
+            new GameObject().AddComponent<GUIOverseer>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
 
@@ -1057,9 +1058,36 @@ namespace Control_Block
         }
     }
 
+    class GUIOverseer : MonoBehaviour
+    {
+        public GUIOverseer()
+        {
+            inst = this;
+        }
+        public static GUIOverseer inst;
+        public static void CheckValid()
+        {
+            inst.gameObject.SetActive(OptionMenuPiston.inst.check_OnGUI() || OptionMenuSwivel.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
+        }
+        void OnGUI()
+        {
+            OptionMenuPiston.inst.stack_OnGUI();
+            OptionMenuSwivel.inst.stack_OnGUI();
+            OptionMenuSteeringRegulator.inst.stack_OnGUI();
+            LogGUI.inst.stack_OnGUI();
+        }
+    }
+
     internal class LogGUI : MonoBehaviour
     {
+        public LogGUI()
+        {
+            inst = this;
+        }
+
         private readonly int ID = 45925;
+
+        public static LogGUI inst;
 
         private bool visible = false;
 
@@ -1100,14 +1128,16 @@ namespace Control_Block
                 }
                 visible = module;
             }
+            GUIOverseer.CheckValid();
         }
 
-        private void OnGUI()
+        public bool check_OnGUI()
         {
-            OptionMenuPiston.inst.stack_OnGUI();
-            OptionMenuSwivel.inst.stack_OnGUI();
-            OptionMenuSteeringRegulator.inst.stack_OnGUI();
+            return visible && module;
+        }
 
+        public void stack_OnGUI()
+        {
             if (!visible || !module)
             {
                 return;
@@ -1351,6 +1381,11 @@ namespace Control_Block
             }
         }
 
+        public bool check_OnGUI()
+        {
+            return visible && module;
+        }
+
         public void stack_OnGUI()
         {
             if (!visible || !module)
@@ -1475,6 +1510,11 @@ namespace Control_Block
                 visible = module;
                 IsSettingKeybind = false;
             }
+        }
+
+        public bool check_OnGUI()
+        {
+            return visible && module;
         }
 
         public void stack_OnGUI()
@@ -1648,6 +1688,11 @@ namespace Control_Block
                 }
                 visible = module;
             }
+        }
+
+        public bool check_OnGUI()
+        {
+            return visible && module;
         }
 
         public void stack_OnGUI()
