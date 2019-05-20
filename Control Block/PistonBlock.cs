@@ -297,6 +297,13 @@ namespace Control_Block
             Move();
         }
 
+        internal override void Detatch()
+        {
+            base.Detatch();
+            open = 0f;
+            AlphaOpen = 0f;
+        }
+
         internal override void Attach()
         {
             AlphaOpen = 0;
