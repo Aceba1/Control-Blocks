@@ -85,10 +85,12 @@ internal abstract class ModuleBlockMover : Module, TechAudio.IModuleAudioProvide
         base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
         base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
 
+
         parts = new Transform[PartCount];
+        int offset = block.transform.childCount - PartCount;
         for (int I = 0; I < PartCount; I++)
         {
-            parts[I] = block.transform.GetChild(I + 2);
+            parts[I] = block.transform.GetChild(I + offset);
         }
 
         holder = new GameObject("Holding Agent").transform;
