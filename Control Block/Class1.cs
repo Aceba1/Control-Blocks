@@ -15,69 +15,75 @@ namespace Control_Block
 
             #region Blocks
 
-            #region BF FPV Cab
+            #region BF FPV Cab (DISABLED)
 
-            {
-                var cockpit = new BlockPrefabBuilder("GSOCockpit(111)", false)
-                    .SetBlockID(9003, "aba82861496cfa13")
-                    .SetName("BF Compact FPV Cab")
-                    .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. Forged by AstraTheDragon\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
-                    .SetPrice(2000)
-                    .SetHP(600)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Control)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFCab_png)))
-                    .SetMass(.875f)
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero },
-                        new Vector3[]
-                        {
-                            Vector3.down*.5f,
-                            Vector3.left*0.5f,
-                            Vector3.right*0.5f,
-                            Vector3.back*0.5f
-                        });
+            //try
+            //{ 
+            //    var cockpit = new BlockPrefabBuilder("gsocab111", false)
+            //        .SetBlockID(9003, "aba82861496cfa13")
+            //        .SetName("BF Compact FPV Cab")
+            //        .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. Forged by AstraTheDragon\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
+            //        .SetPrice(2000)
+            //        .SetHP(600)
+            //        .SetFaction(FactionSubTypes.BF)
+            //        .SetCategory(BlockCategories.Control)
+            //        .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFCab_png)))
+            //        .SetMass(.875f)
+            //        .SetSizeManual(new IntVector3[] { IntVector3.zero },
+            //            new Vector3[]
+            //            {
+            //                Vector3.down*.5f,
+            //                Vector3.left*0.5f,
+            //                Vector3.right*0.5f,
+            //                Vector3.back*0.5f
+            //            });
 
-                var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true);
+            //    var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true);
 
-                cockpit.RemoveChildrenWithComponent<BoxCollider>(true);
+            //    cockpit.RemoveChildrenWithComponent<BoxCollider>(true);
 
-                foreach (MeshFilter mf in cockpit.Prefab.GetComponentsInChildren<MeshFilter>())
-                {
-                    if (mf.name == "m_GSO_Cab_111_Base")
-                    {
-                        GameObject.DestroyImmediate(mf);
-                        cockpit.SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BFCab), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
-                    }
-                    else if (mf.name.StartsWith("m_GSO_Cab_111_Tyre_"))
-                    {
-                        mf.mesh = GameObjectJSON.MeshFromData(Properties.Resources.BFCab_wheel);
-                        mf.GetComponent<MeshRenderer>().material = bfmat;
-                    }
-                    else if (mf.name.StartsWith("m_GSO_Cab_111_Gun_") || mf.name.StartsWith("m_GSO_Cab_111_Flap_"))
-                    {
-                        GameObject.DestroyImmediate(mf.GetComponent<MeshRenderer>());
-                        GameObject.DestroyImmediate(mf);
-                    }
-                }
+            //    foreach (MeshFilter mf in cockpit.Prefab.GetComponentsInChildren<MeshFilter>())
+            //    {
+            //        if (mf.name == "m_GSO_Cab_111_Base")
+            //        {
+            //            GameObject.DestroyImmediate(mf);
+            //            cockpit.SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BFCab), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
+            //        }
+            //        else if (mf.name.StartsWith("m_GSO_Cab_111_Tyre_"))
+            //        {
+            //            mf.mesh = GameObjectJSON.MeshFromData(Properties.Resources.BFCab_wheel);
+            //            mf.GetComponent<MeshRenderer>().material = bfmat;
+            //        }
+            //        else if (mf.name.StartsWith("m_GSO_Cab_111_Gun_") || mf.name.StartsWith("m_GSO_Cab_111_Flap_"))
+            //        {
+            //            GameObject.DestroyImmediate(mf.GetComponent<MeshRenderer>());
+            //            GameObject.DestroyImmediate(mf);
+            //        }
+            //    }
 
-                var view = new GameObject("FirstPersonAnchor");
-                view.AddComponent<ModuleFirstPerson>();
-                view.transform.parent = cockpit.TankBlock.transform;
-                view.transform.localPosition = new Vector3(0f, 0.175f, -0.1f);
-                view.transform.localRotation = Quaternion.identity;
+            //    var view = new GameObject("FirstPersonAnchor");
+            //    view.AddComponent<ModuleFirstPerson>();
+            //    view.transform.parent = cockpit.TankBlock.transform;
+            //    view.transform.localPosition = new Vector3(0f, 0.175f, -0.1f);
+            //    view.transform.localRotation = Quaternion.identity;
 
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
-                    {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.OleiteJelly, 25),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
-                    new CustomRecipe.RecipeOutput(9003)
-                    });
+            //    CustomRecipe.RegisterRecipe(
+            //        new CustomRecipe.RecipeInput[]
+            //        {
+            //        new CustomRecipe.RecipeInput((int)ChunkTypes.OleiteJelly, 25),
+            //        },
+            //        new CustomRecipe.RecipeOutput[]
+            //        {
+            //        new CustomRecipe.RecipeOutput(9003)
+            //        });
 
-                cockpit.RegisterLater();
-            }
+            //    cockpit.RegisterLater();
+            //}
+            //catch (Exception E)
+            //{
+            //    Console.WriteLine("Cannot make FPV cab: " + E.ToString());
+            //}
+
 
             #endregion BF FPV Cab
 
