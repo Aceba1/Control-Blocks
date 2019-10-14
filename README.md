@@ -1,7 +1,3 @@
-**Control-Blocks**
-
-Pistons, Swivels, multi-tech magnets, traction pads, etcetera
-
-Any suggestions for more functional blocks? Leave it on the forum!
-
-(Requires the block inject library to load blocks)
+# Control Block Overhaul
+- [TerraTech Forum](https://forum.terratechgame.com/index.php?threads/control-block-overhaul.20099/)
+- [Trello Status](https://trello.com/c/tLRGwaQa/15-control-block-overhaul)
