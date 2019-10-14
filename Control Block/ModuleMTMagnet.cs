@@ -45,6 +45,10 @@ namespace Control_Block
                 var NewBody = other.GetComponentInParent<ModuleMTMagnet>();
                 if (Recalc || !_Binded)
                 {
+                    if ((Singleton.playerTank == block.tank || Singleton.playerTank == NewBody.block.tank) && Input.GetKey(KeyCode.X))
+                    {
+                        return;
+                    }
                     if (((_Binded && NewBody == _BoundBody) // Same body as before, OR
                         || (!_Binded && NewBody != null && !NewBody._Binded && !NewBody._BindedTo && NewBody.Identity == Identity)) // Bond is possible, THEN
                         && NewBody.block.IsAttached && (!NewBody.block.tank.IsAnchored || !block.tank.IsAnchored)) // If other block is indeed attached and at least one of the two techs is unanchored
@@ -113,9 +117,6 @@ namespace Control_Block
                     {
                         block.tank.transform.position += offset * (Am / (Am + Bm));
                         block.tank.rbody.AddForceAtPosition((offset + tension) * VelocityCorrection, block.transform.position + GetEffector);
-                        debugLR.enabled = true;
-                        debugLR.SetPosition(0, GetEffector);
-                        debugLR.SetPosition(1, transform.InverseTransformVector((offset + tension) * 30f));
                     }
                     if (!_BoundBody.block.tank.IsAnchored && !_BoundBody.block.tank.beam.IsActive)
                     {
@@ -139,7 +140,7 @@ namespace Control_Block
         void FixedUpdate()
         {
             Recalc = true;
-            if (!block.IsAttached)
+            if (!block.IsAttached || block.tank == null || (Singleton.playerTank == block.tank && Input.GetKey(KeyCode.X)))
             {
                 if (joint != null)
                 {
@@ -250,20 +251,10 @@ namespace Control_Block
             g.transform.parent = transform;
             g.transform.localPosition = Vector3.zero;
             g.transform.localRotation = Quaternion.identity;
-            debugLR = g.AddComponent<LineRenderer>();
-            debugLR.positionCount = 2;
-            debugLR.startWidth = 1f;
-            debugLR.endWidth = 0.5f;
-            debugLR.useWorldSpace = true;
-            debugLR.material = Nuterra.BlockInjector.GameObjectJSON.MaterialFromShader();
-            debugLR.enabled = false;
         }
-
-        LineRenderer debugLR;
 
         private void OnDetach()
         {
-            debugLR.enabled = false;
             _ExpectBond = false;
             if (_Binded)
             {
@@ -277,7 +268,6 @@ namespace Control_Block
 
         private void OnAttach()
         {
-            debugLR.enabled = true;
             if (_Binded)
             {
                 Destroy(joint); // Destroy bond

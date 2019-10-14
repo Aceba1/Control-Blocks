@@ -8,6 +8,8 @@ namespace Control_Block
 {
     public class Class1
     {
+        const string MoverText = "\n Right click to configure this block's programming.\n\n" +
+            "This is a BlockMover. Blocks attached to the head of this will have their own physics separate from the body they are on, yet still restrained to the same tech. Like a multi-tech, but a single tech. ClusterTech.";
         public static void CreateBlocks()
         {
             var harmony = HarmonyInstance.Create("aceba1.controlblocks");
@@ -22,8 +24,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("GSO Piston")
-                    .SetDescription("A configurable piston that can push and pull blocks on a tech.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(1293838, "f53931ef3e14ba8e")
+                    .SetDescription("A configurable piston that can push and pull blocks on a tech." + MoverText)
+                    .SetBlockID(1293838)//, "f53931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -46,7 +48,7 @@ namespace Control_Block
                     Vector3.right * 0.5f,
                     Vector3.forward * 0.5f,
                     Vector3.back * 0.5f })
-                    .AddComponent<ModulePiston>(SetGSOPiston)
+                    .AddComponent<ModuleBlockMover>(SetGSOPiston)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -69,8 +71,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("GeoCorp Large Piston")
-                    .SetDescription("This piston can push much, MUCH more than the GSO one... and is smoother.\nForged in the valleys of Uberkartoffel potatoes\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(129380, "f5b931ef3e14ba8e")
+                    .SetDescription("This is a bulky piston. Slower, and moves smoother.\nForged in the valleys of Uberkartoffel potatoes" + MoverText)
+                    .SetBlockID(129380)//, "f5b931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -105,7 +107,7 @@ namespace Control_Block
                     new Vector3(1f,1.5f,0f),
                     new Vector3(0f,1.5f,1f),
                     new Vector3(1f,1.5f,1f)
-                }).AddComponent<ModulePiston>(SetGeoCorpPiston)
+                }).AddComponent<ModuleBlockMover>(SetGeoCorpPiston)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -129,8 +131,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
                     .SetName("Hawkeye Telescopic Piston")
-                    .SetDescription("A strange set of enforced kinetic plates to make a piston that can stretch to 4 times its compressed state. Size can be changed for whatever needs there are.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(129381, "e5bc31ef3e14ba8e")
+                    .SetDescription("A set of enforced interlocked plates composing a piston that can extend to 4 blocks from its compressed state." + MoverText)
+                    .SetBlockID(129381)//, "e5bc31ef3e14ba8e")
                     .SetFaction(FactionSubTypes.HE)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -156,7 +158,7 @@ namespace Control_Block
                     new Vector3(0f,0f,-.5f),
                     new Vector3(0f,.5f, 0f),
                     new Vector3(0f, 0f,.5f),
-                }).AddComponent<ModulePiston>(SetHawkeyePiston)
+                }).AddComponent<ModuleBlockMover>(SetHawkeyePiston)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -180,8 +182,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Better Piston")
-                    .SetDescription("This piston was designed to solve many problems risen from other pistons, however the prototype mover engine showed signs of tearing the fabric of the universe. So that was thrown out. However, this is the most slick & efficient piston there is on market. Sharp movement, and unjustifiable burden strength!\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(1293834, "f63931ef3e14ba8e")
+                    .SetDescription("This piston started the revolution for all pistons and swivels. Replacing the technology of ghost-phasing and uniting swivels and pistons as one in a series of events that this piston was not aware was happening." + MoverText)
+                    .SetBlockID(1293834)//, "f63931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(0)
@@ -199,7 +201,7 @@ namespace Control_Block
                 ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.up * 0.5f,
                     Vector3.down * 0.5f })
-                    .AddComponent<ModulePiston>(SetBFPiston)
+                    .AddComponent<ModuleBlockMover>(SetBFPiston)
                     .RegisterLater();
 
                 //CustomRecipe.RegisterRecipe(
@@ -217,6 +219,111 @@ namespace Control_Block
 
             #endregion BetterFuture Piston
 
+            #region BetterFuture Piston
+
+            {
+                var ControlBlock = new BlockPrefabBuilder("VENBlock(111)")
+                    .SetName("Venture Twist Piston")
+                    .SetDescription("This piston started the revolution for all pistons and swivels. Replacing the technology of ghost-phasing and uniting swivels and pistons as one in a series of events that this piston was not aware was happening." + MoverText)
+                    .SetBlockID(1293837)
+                    .SetFaction(FactionSubTypes.VEN)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(0)
+                    .SetPrice(5000)
+                    .SetHP(1250)
+                    .SetMass(1f)
+                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.ven_twist_piston_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.down * 0.5f, par, Properties.Resources.ven_twist_piston_base);
+                AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_1);
+                AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_2);
+                AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.up * 0.5f, par, Properties.Resources.ven_twist_piston_head);
+
+                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                    Vector3.up * 0.5f,
+                    Vector3.down * 0.5f })
+                    .AddComponent<ModuleBlockMover>(SetVENPiston)
+                    .RegisterLater();
+
+                //CustomRecipe.RegisterRecipe(
+                //    new CustomRecipe.RecipeInput[]
+                //    {
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                //    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                //    },
+                //    new CustomRecipe.RecipeOutput[]
+                //    {
+                //    new CustomRecipe.RecipeOutput(1293838)
+                //    });
+            }
+
+            #endregion BetterFuture Piston
+
+            #region Special Pistons
+
+            #region BetterFuture Rail Piston
+
+            {
+                var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("Better Future Rail Piston")
+                    .SetDescription("An extendable rail, with a small cart that can move blocks attached to it. Add rail segment blocks to the end to make it longer!" + MoverText)
+                    .SetBlockID(1293835)//, "f63931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(0)
+                    .SetPrice(10000)
+                    .SetHP(1000)
+                    .SetDetachFragility(0.5f)
+                    .SetMass(1.5f);
+                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_base);
+                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.bf_rail_piston_head);
+
+                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                    .AddComponent<ModuleBlockMoverRail>(SetBFRailPiston)
+                    .RegisterLater();
+            }
+
+            {
+                var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
+                    .SetName("Better Future Rail Segment")
+                    .SetDescription("A segment for the Better Future Rail Piston, add it to the end of the line to make it go farther")
+                    .SetBlockID(1293836)//, "f63931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.BF)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(0)
+                    .SetPrice(2000)
+                    .SetHP(1000)
+                    .SetDetachFragility(0.5f)
+                    .SetMass(1.5f);
+                //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_extension);
+
+                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                    Vector3.up * 0.5f,
+                    Vector3.down * 0.5f,
+                    Vector3.left * 0.5f,
+                    Vector3.right * 0.5f,
+                    Vector3.back * 0.5f })
+                    .AddComponent<ModuleBlockMoverRailSegment>()
+                    .RegisterLater();
+            }
+            #endregion BetterFuture Rail Piston
+
+            #endregion Special Pistons
+
             #endregion Pistons
 
             #region Swivels
@@ -226,8 +333,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Medium Embedded Swivel")
-                    .SetDescription("A configurable swivel that can rotate blocks on a tech.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393838, "f64931ef3e14ba8e")
+                    .SetDescription("A configurable swivel that can rotate blocks on a tech." + MoverText)
+                    .SetBlockID(1393838)//, "f64931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -240,12 +347,12 @@ namespace Control_Block
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(1.9f, .95f, 1.9f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_base);
-                var gimbal = AddMeshToBlockMover(mat, new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_head).AddComponent<GimbalAimer>();
-                gimbal.aimClampMaxPercent = 360;
-                gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+                AddMeshToBlockMover(mat, new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_head);//.AddComponent<GimbalAimer>();
+                //gimbal.aimClampMaxPercent = 360;
+                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
                 ControlBlock.SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleSwivel>(SetMediumSwivel)
+                    .AddComponent<ModuleBlockMover>(SetMediumSwivel)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -267,8 +374,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("VENBlock(111)")
                     .SetName("Inline Embedded Swivel")
-                    .SetDescription("An inline swivel, which's center disk rotates blocks. Just ignore the shell's corners, they're, uhh... squishy\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393837, "f74931ef3e14ba8e")
+                    .SetDescription("An inline swivel, which's center disk rotates blocks. Just ignore the shell's corners, they're, uhh... squishy" + MoverText)
+                    .SetBlockID(1393837)//, "f74931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.VEN)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -281,12 +388,12 @@ namespace Control_Block
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_ven_base);
-                var gimbal = AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_ven_head).AddComponent<GimbalAimer>();
-                gimbal.aimClampMaxPercent = 360;
-                gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_ven_head);//.AddComponent<GimbalAimer>();
+                //gimbal.aimClampMaxPercent = 360;
+                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
                 ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleSwivel>(SetInlineSwivel)
+                    .AddComponent<ModuleBlockMover>(SetInlineSwivel)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -302,14 +409,14 @@ namespace Control_Block
                     });
             }
 
-            #endregion GSO Medium Swivel
+            #endregion VEN Inline Swivel
 
             #region GSO Small Swivel
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Small Embedded Swivel")
-                    .SetDescription("A smaller swivel, quite rushed, but operational hopefully.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393836, "f84931ef3e14ba8e")
+                    .SetDescription("A smaller swivel, operational hopefully." + MoverText)
+                    .SetBlockID(1393836)//, "f84931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -322,13 +429,54 @@ namespace Control_Block
                 var par = ControlBlock.Prefab.transform;
 
                 AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_small_base);
-                var gimbal = AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_small_head).AddComponent<GimbalAimer>();
-                gimbal.aimClampMaxPercent = 360;
-                gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_small_head);//.AddComponent<GimbalAimer>();
+                //gimbal.aimClampMaxPercent = 360;
+                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
                 ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero },
                     new Vector3[] { Vector3.down * .5f, Vector3.up * .5f })
-                    .AddComponent<ModuleSwivel>(SetSmallSwivel)
+                    .AddComponent<ModuleBlockMover>(SetSmallSwivel)
+                    .RegisterLater();
+
+                CustomRecipe.RegisterRecipe(
+                    new CustomRecipe.RecipeInput[]
+                    {
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
+                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
+                    },
+                    new CustomRecipe.RecipeOutput[]
+                    {
+                    new CustomRecipe.RecipeOutput(1293838)
+                    });
+            }
+
+            #endregion GSO Small Swivel
+
+            #region HE Double Swivel
+            {
+                var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
+                    .SetName("Dual Rotor Swivel")
+                    .SetDescription("A swivel with two heads at the top and bottom. Designed by Rafs!" + MoverText)
+                    .SetBlockID(1393835)//, "f74931ef3e14ba8e")
+                    .SetFaction(FactionSubTypes.HE)
+                    .SetCategory(BlockCategories.Base)
+                    .SetGrade(2)
+                    .SetPrice(4470)
+                    .SetHP(2000)
+                    .SetMass(2f);
+                //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)));
+
+                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                var par = ControlBlock.Prefab.transform;
+
+                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.swivel_double_base);
+                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_double_head);//.AddComponent<GimbalAimer>();
+                //gimbal.aimClampMaxPercent = 360;
+                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                    .AddComponent<ModuleBlockMover>(SetDoubleSwivel)
                     .RegisterLater();
 
                 CustomRecipe.RegisterRecipe(
@@ -352,11 +500,12 @@ namespace Control_Block
 
             {
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
-                    .SetName("Stabilizer PiD S.Regulator Dongle")
-                    .SetDescription("Right click to configure.\nThis is an extension to the Better Future Stabilizer Computer, adding a form of PiD to fight against idle movement on top through the BFSC's access to hovers, hover jets, and turbines\n\nAfter the release of the Better Future Stabilizer, the Steering Regulator had to be pulled from stock due to fatal conflicts within its presence. However, with high hopes for this new BFSC prototype, this has been repurposed for providing one of its core modules to this block.\n...However they've adapted their own methods, so this is of little use anymore")
-                    .SetBlockID(1293839, "12ef3f7f30d4ba8e")
+                    .SetName("Stabilizer PiD S.Regulator Accessory")
+                    .SetDescription("The PiD technology has been discontinued, Please refer to the BF stabilization computer guidelines")
+                    .SetBlockID(1293839)//, "12ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Accessories)
+                    //.AddComponent<ModuleSteeringRegulator>()
                     .SetGrade(0)
                     .SetPrice(3467)
                     .SetHP(200)
@@ -369,7 +518,6 @@ namespace Control_Block
                     Vector3.right * 0.5f,
                     Vector3.forward * 0.5f,
                     Vector3.back * 0.5f })
-                    .AddComponent<ModuleSteeringRegulator>()
                     .RegisterLater();
                 CustomRecipe.RegisterRecipe(
                     new CustomRecipe.RecipeInput[]
@@ -394,7 +542,7 @@ namespace Control_Block
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Small Friction Pad")
                     .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
-                    .SetBlockID(1293831, "02ef3f7f30d4ba8e")
+                    .SetBlockID(1293831)//, "02ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
@@ -433,7 +581,7 @@ namespace Control_Block
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Non Slip-A-Tron 3000")
                     .SetDescription("'Name by Rasseru")
-                    .SetBlockID(1293830, "03ef3f7f30d4ba8e")
+                    .SetBlockID(1293830)//, "03ef3f7f30d4ba8e")
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
@@ -635,16 +783,27 @@ namespace Control_Block
             #endregion Blocks
 
             GameObject _holder = new GameObject();
-            _holder.AddComponent<OptionMenuPiston>();
-            _holder.AddComponent<OptionMenuSwivel>();
+            //_holder.AddComponent<OptionMenuPiston>();
+            //_holder.AddComponent<OptionMenuSwivel>();
             _holder.AddComponent<OptionMenuSteeringRegulator>();
+            _holder.AddComponent<OptionMenuMover>();
             _holder.AddComponent<LogGUI>();
+            _holder.AddComponent<AdjustAttachPosition>();
             new GameObject().AddComponent<GUIOverseer>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
 
+            BlockLoader.DelayAfterSingleton(SetClusterBodyParticleObject);
+
             ModuleBlockMover.InitiateNetworking();
         }
+
+        static void SetClusterBodyParticleObject()
+        {
+            ClusterBody.m_AttachParticlesGo = typeof(ManTechBuilder).GetField("m_AttachParticlesGo", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ManTechBuilder.inst) as GameObject;
+        }
+
+
 
         internal static bool PistonHeart = false;
 
@@ -799,18 +958,27 @@ namespace Control_Block
 
         #region Pistons
 
-        internal static void SetGSOPiston(ModulePiston piston)
+        internal static void SetGSOPiston(ModuleBlockMover piston)
         {
-            piston.MaximumBlockPush = 108;
-            piston.curves = new AnimationCurve[]
+            //piston.MaximumBlockPush = 108;
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
             {
+                new AnimationCurve(),
                 new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .375f, 0f, 0f)), //shaft
+                new AnimationCurve(),
 
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f)) //block top
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f)), //block top
+                new AnimationCurve()
             };
             piston.PartCount = 2;
-            piston.StretchSpeed = 0.08f;
-            piston.CanModifyStretch = false;
+            piston.MaxVELOCITY = 0.08f;
+            //piston.StretchSpeed = 0.08f;
+            //piston.CanModifyStretch = false;
+            piston.TrueLimitVALUE = 1f;
+            piston.MINVALUELIMIT = 0f;
+            piston.MAXVALUELIMIT = 1f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
@@ -818,20 +986,31 @@ namespace Control_Block
             piston.SFX = TechAudio.SFXType.GSODrillLarge;
             piston.SFXVolume = 17f;
         }
-        internal static void SetGeoCorpPiston(ModulePiston piston)
+        internal static void SetGeoCorpPiston(ModuleBlockMover piston)
         {
-            piston.MaximumBlockPush = 384;
-            piston.curves = new AnimationCurve[]
+            //piston.MaximumBlockPush = 384;
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, .5f, 0f, 0f)),
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1.1f, 0f, 0f)),
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(2f, .5f, 0f, 0f)),
+                new AnimationCurve(),
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(2f, 1.1f, 0f, 0f)),
+                new AnimationCurve(),
 
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 2f, 0f, 0f))
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(2f, 2f, 0f, 0f)),
+                new AnimationCurve()
             };
             piston.PartCount = 3;
-            piston.StretchSpeed = 0.03f;
-            piston.CanModifyStretch = false;
-            piston.StretchModifier = 2; piston.MaxStr = 2;
+            //piston.StretchSpeed = 0.03f;
+            piston.MaxVELOCITY = 0.06f;
+            //piston.CanModifyStretch = false;
+            piston.MINVALUELIMIT = 0;
+            piston.TrueLimitVALUE = 2;
+            piston.MAXVALUELIMIT = 2;
+            //piston.StretchModifier = 2; piston.MaxStr = 2;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,2,0),
@@ -842,22 +1021,37 @@ namespace Control_Block
             piston.SFX = TechAudio.SFXType.GCPlasmaCutter;
             piston.SFXVolume = 20f;
         }
-        internal static void SetHawkeyePiston(ModulePiston piston)
+        internal static void SetHawkeyePiston(ModuleBlockMover piston)
         {
-            piston.MaximumBlockPush = 120;
-            piston.curves = new AnimationCurve[]
+            //piston.MaximumBlockPush = 120;
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f,  0f), new Keyframe(.66667f,  .5f,  0f,  0f), new Keyframe(1f,  .5f, 0f, 0f)), //shaft bottom
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f, .5f), new Keyframe(.66667f,   1f, .5f,  0f), new Keyframe(1f,   1f, 0f, 0f)), //shaft mid bottom
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f, .5f), new Keyframe(.66667f,   1f, .5f,  1f), new Keyframe(1f,   2f, 1f, 0f)), //shaft mid top
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(.33333f, .5f, .5f,  1f), new Keyframe(.66667f, 1.5f,  1f,  1f), new Keyframe(1f, 2.5f, 1f, 0f)), //shaft top
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(1f, .5f, .5f,  0f), new Keyframe(2f,  .5f,  0f,  0f), new Keyframe(3f,  .5f, 0f, 0f)), //shaft bottom
+                new AnimationCurve(),
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(1f, .5f, .5f, .5f), new Keyframe(2f,   1f, .5f,  0f), new Keyframe(3f,   1f, 0f, 0f)), //shaft mid bottom
+                new AnimationCurve(),
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(1f, .5f, .5f, .5f), new Keyframe(2f,   1f, .5f,  1f), new Keyframe(3f,   2f, 1f, 0f)), //shaft mid top
+                new AnimationCurve(),
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, .5f), new Keyframe(1f, .5f, .5f,  1f), new Keyframe(2f, 1.5f,  1f,  1f), new Keyframe(3f, 2.5f, 1f, 0f)), //shaft top
+                new AnimationCurve(),
 
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(.33333f, 1f, 1f, 1f), new Keyframe(.66667f, 2f, 1f, 1f), new Keyframe(1f, 3f, 1f, 0f)), //block top
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(1f, 1f, 1f, 1f), new Keyframe(2f, 2f, 1f, 1f), new Keyframe(3f, 3f, 1f, 0f)), //block top
+                new AnimationCurve()
             };
             piston.PartCount = 5;
-            piston.StretchSpeed = 0.025f;
-            piston.CanModifyStretch = true;
-            piston.StretchModifier = 3; piston.MaxStr = 3;
+            piston.MaxVELOCITY = 0.075f;
+            //piston.StretchSpeed = 0.025f;
+            //piston.CanModifyStretch = true;
+            piston.MINVALUELIMIT = 0;
+            piston.TrueLimitVALUE = 3;
+            piston.MAXVALUELIMIT = 3;
+            //piston.StretchModifier = 3; piston.MaxStr = 3;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
@@ -866,16 +1060,23 @@ namespace Control_Block
             piston.SFX = TechAudio.SFXType.GCTripleBore;
             piston.SFXVolume = 16f;
         }
-        internal static void SetBFPiston(ModulePiston piston)
+        internal static void SetBFPiston(ModuleBlockMover piston)
         {
-            piston.MaximumBlockPush = 65535;
-            piston.curves = new AnimationCurve[]
+            //piston.MaximumBlockPush = 65535;
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(1f, 1f, 1f, 0f)) //block top
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(1f, 1f, 1f, 0f)), //block top
+                new AnimationCurve()
             };
             piston.PartCount = 1;
-            piston.StretchSpeed = 0.12f;
-            piston.CanModifyStretch = false;
+            piston.MaxVELOCITY = 0.12f;
+            //piston.StretchSpeed = 0.12f;
+            //piston.CanModifyStretch = false;
+            piston.TrueLimitVALUE = 1f;
+            piston.MINVALUELIMIT = 0f;
+            piston.MAXVALUELIMIT = 1f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
@@ -884,22 +1085,107 @@ namespace Control_Block
             piston.SFXVolume = 5f;
         }
 
+        internal static void SetVENPiston(ModuleBlockMover piston)
+        {
+            /*[0] = (0 0 0) (0 22.5 0) , (0 0.3 0) (0 10 0) , (0 0.6 0) (0 -17.5 0) 
+             *[1] = (0 0 0) (0 0 0)    , (0 0.6 0) (0 0 0)  , (0 1.5 0) (0 0 0)  
+             *[2] = (0 0 0) (0 0 0)    , (0 1 0)   (0 0 0)  , (0 2 0)   (0 0 0)     */
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 0.3f), new Keyframe(2f, 0.6f, 0, 0)), //shaft_1
+                new AnimationCurve(),
+
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 0.6f), new Keyframe(2f, 1.5f, 0, 0)), //shaft_2
+                new AnimationCurve(),
+
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 1f), new Keyframe(2f, 2f, 0, 0)), //head
+                new AnimationCurve(),
+            };
+            piston.useRotCurves = true;
+            piston.rotCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 22.5f, 0, 0), new Keyframe(1f, 10f), new Keyframe(2f, -17.5f, 0, 0)), //shaft_1
+                new AnimationCurve(),
+
+                new AnimationCurve(),
+                new AnimationCurve(), //shaft_2
+                new AnimationCurve(),
+
+                new AnimationCurve(),
+                new AnimationCurve(), //head
+                new AnimationCurve(),
+            };
+            piston.PartCount = 3;
+            piston.MaxVELOCITY = 0.1f;
+            //piston.StretchSpeed = 0.12f;
+            //piston.CanModifyStretch = false;
+            piston.TrueLimitVALUE = 2f;
+            piston.MINVALUELIMIT = 0f;
+            piston.MAXVALUELIMIT = 2f;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0)
+            };
+            piston.SFX = TechAudio.SFXType.VENFlameThrower;
+            piston.SFXVolume = 5f;
+        }
+
+        internal static void SetBFRailPiston(ModuleBlockMoverRail piston)
+        {
+            //piston.MaximumBlockPush = 65535;
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(64f, 64f, 1f, 0f)), //block top
+                new AnimationCurve()
+            };
+            piston.PartCount = 1;
+            piston.MaxVELOCITY = 0.15f;
+            //piston.StretchSpeed = 0.12f;
+            //piston.CanModifyStretch = false;
+            piston.TrueLimitVALUE = 64f;
+            piston.MINVALUELIMIT = 0f;
+            piston.MAXVALUELIMIT = 0.1f;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,0,1)
+            };
+            piston.SFX = TechAudio.SFXType.FlameThrowerPlasma;
+            piston.SFXVolume = 5f;
+
+            piston.railblockpos = new IntVector3(0, 1, 0);
+        }
+
         #endregion
 
         #region Swivels
 
-        internal static void SetMediumSwivel(ModuleSwivel swivel)
+        internal static void SetMediumSwivel(ModuleBlockMover swivel)
         {
-            swivel.MaximumBlockPush = 196;
+            //swivel.MaximumBlockPush = 196;
+            swivel.IsPlanarVALUE = true;
+            swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f)),
+                new AnimationCurve()
             };
             swivel.PartCount = 1;
-            swivel.CanModifySpeed = true;
-            swivel.RotateSpeed = 5;
-            swivel.MaxSpeed = 12f;
-            swivel.LockAngle = false;
+            //swivel.CanModifySpeed = true;
+            //swivel.RotateSpeed = 5;
+            swivel.MaxVELOCITY = 12;
+            //swivel.MaxSpeed = 12f;
+            //swivel.MINVALUELIMIT = 0;
+            //swivel.MAXVALUELIMIT = 360;
+            swivel.TrueLimitVALUE = 360;
+            //swivel.LockAngle = false;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
@@ -910,19 +1196,27 @@ namespace Control_Block
             swivel.SFX = TechAudio.SFXType.GCTripleBore;
             swivel.SFXVolume = 0.05f;
         }
-        internal static void SetInlineSwivel(ModuleSwivel swivel)
+        internal static void SetInlineSwivel(ModuleBlockMover swivel)
         {
-            swivel.BreakOnCab = true;
-            swivel.MaximumBlockPush = 92;
+            //swivel.BreakOnCab = true;
+            //swivel.MaximumBlockPush = 92;
+            swivel.IsPlanarVALUE = true;
+            swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f)),
+                new AnimationCurve()
             };
             swivel.PartCount = 1;
-            swivel.CanModifySpeed = true;
-            swivel.RotateSpeed = 7.5f;
-            swivel.MaxSpeed = 15;
-            swivel.LockAngle = false;
+            //swivel.CanModifySpeed = true;
+            //swivel.RotateSpeed = 7.5f;
+            swivel.MaxVELOCITY = 15;
+            //swivel.MaxSpeed = 15;
+            //swivel.LockAngle = false;
+            //swivel.MINVALUELIMIT = 0;
+            //swivel.MAXVALUELIMIT = 360;
+            swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,0,-1),
@@ -933,25 +1227,62 @@ namespace Control_Block
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
             swivel.SFXVolume = 0.1f;
         }
-        internal static void SetSmallSwivel(ModuleSwivel swivel)
+        internal static void SetSmallSwivel(ModuleBlockMover swivel)
         {
             //swivel.BreakOnCab = true;
-            swivel.MaximumBlockPush = 128;
+            //swivel.MaximumBlockPush = 128;
+            swivel.IsPlanarVALUE = true;
+            swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
             {
-                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f))
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f)),
+                new AnimationCurve()
             };
             swivel.PartCount = 1;
-            swivel.CanModifySpeed = true;
-            swivel.RotateSpeed = 5f;
-            swivel.MaxSpeed = 8;
-            swivel.LockAngle = false;
+            //swivel.CanModifySpeed = true;
+            //swivel.RotateSpeed = 5f;
+            swivel.MaxVELOCITY = 8;
+            //swivel.MaxSpeed = 8;
+            //swivel.LockAngle = false;
+            //swivel.MINVALUELIMIT = 0;
+            //swivel.MAXVALUELIMIT = 360;
+            swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
             swivel.SFXVolume = 0.13f;
+        }
+        internal static void SetDoubleSwivel(ModuleBlockMover swivel)
+        {
+            //swivel.BreakOnCab = true;
+            //swivel.MaximumBlockPush = 92;
+            swivel.IsPlanarVALUE = true;
+            swivel.useRotCurves = true;
+            swivel.rotCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f)),
+                new AnimationCurve()
+            };
+            swivel.PartCount = 1;
+            //swivel.CanModifySpeed = true;
+            //swivel.RotateSpeed = 7.5f;
+            swivel.MaxVELOCITY = 12;
+            //swivel.MaxSpeed = 15;
+            //swivel.LockAngle = false;
+            //swivel.MINVALUELIMIT = 0;
+            //swivel.MAXVALUELIMIT = 360;
+            swivel.TrueLimitVALUE = 360;
+            swivel.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0),
+                new IntVector3(0,-1,0)
+            };
+            swivel.SFX = TechAudio.SFXType.GSODrillLarge;
+            swivel.SFXVolume = 0.1f;
         }
 
         #endregion
@@ -974,212 +1305,181 @@ namespace Control_Block
 
         #endregion SetBlockData
 
-        public static string LogAllComponents(Transform SearchIn, string Indenting = "")
+        public static string LogAllComponents(Transform SearchIn, bool Reflection = false, string Indenting = "")
         {
             string result = "";
             Component[] c = SearchIn.GetComponents<Component>();
             foreach (Component comp in c)
             {
                 result += "\n" + Indenting + comp.name + " : " + comp.GetType().Name;
-                if (comp is MeshRenderer) result += " : Material (" + ((MeshRenderer)comp).material.name + ")";
+                if (Reflection)
+                {
+                    var t = comp.GetType();
+                    var f = t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    var p = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    foreach (var field in f)
+                    {
+                        result += $"\n{Indenting} (F).{field.Name} ({field.FieldType.ToString()}) = {field.GetValue(comp)}";
+                    }
+                    foreach (var field in p)
+                    {
+                        result += $"\n{Indenting} (P).{field.Name} ({field.PropertyType.ToString()})";
+                        try
+                        {
+                            result += $" = {field.GetValue(comp, null)}";
+                        }
+                        catch { }
+                    }
+                }
+                else
+                {
+                    if (comp is MeshRenderer) result += " : Material (" + ((MeshRenderer)comp).material.name + ")";
+                }
             }
             for (int i = SearchIn.transform.childCount - 1; i >= 0; i--)
             {
                 Transform child = SearchIn.transform.GetChild(i);
-                result += LogAllComponents(child, Indenting + "  ");
+                result += LogAllComponents(child, Reflection, Indenting + "  ");
             }
             return result;
         }
     }
-
-    class GUIOverseer : MonoBehaviour
+    internal class AdjustAttachPosition : MonoBehaviour
     {
-        public GUIOverseer()
+        public static Vector3 oLocalPos;
+        public static bool Modified;
+        public static Vector3 PointerPos;
+        static readonly int PointerLayerMask = Globals.inst.layerTank.mask | Globals.inst.layerTankIgnoreTerrain.mask | Globals.inst.layerScenery.mask | Globals.inst.layerPickup.mask | Globals.inst.layerTerrain.mask;
+        const float PointerDistance = 512f;
+        static Transform particles => ClusterBody.m_AttachParticlesGo.transform;
+        void LateUpdate()
         {
-            inst = this;
-        }
-        public static GUIOverseer inst;
-        public static void CheckValid()
-        {
-            inst.gameObject.SetActive(OptionMenuPiston.inst.check_OnGUI() || OptionMenuSwivel.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
-        }
-        void OnGUI()
-        {
-            OptionMenuPiston.inst.stack_OnGUI();
-            OptionMenuSwivel.inst.stack_OnGUI();
-            OptionMenuSteeringRegulator.inst.stack_OnGUI();
-            LogGUI.inst.stack_OnGUI();
-        }
-    }
-
-    internal class LogGUI : MonoBehaviour
-    {
-        public LogGUI()
-        {
-            inst = this;
-        }
-
-        private readonly int ID = 45925;
-
-        public static LogGUI inst;
-
-        private bool visible = false;
-
-        private TankBlock module;
-
-        private string Log = "";
-
-        private Rect win;
-
-        private void Update()
-        {
-            if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.PageDown))
+            if (Modified)
             {
-                var m_ParamDatabase = typeof(FMODEventInstance).GetField("m_ParamDatabase", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, int>>;
-                foreach (var item in m_ParamDatabase)
+                particles.localPosition = oLocalPos;
+                Modified = false;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                Console.WriteLine(Class1.LogAllComponents(ClusterBody.m_AttachParticlesGo.transform));
+            }
+            var ray = Singleton.camera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, PointerDistance, PointerLayerMask, QueryTriggerInteraction.Ignore))
+            {
+                PointerPos = hitInfo.point;
+            }
+            else
+            {
+                PointerPos = ray.GetPoint(PointerDistance);
+            }
+            if (ManPointer.inst.DraggingItem != null && ManPointer.inst.DraggingFocusTech != null)
+            {
+                float num = float.MaxValue;
+                var tank = ManPointer.inst.DraggingFocusTech;
+                ClusterBody tankbody = null;
+                var cast = PhysicsUtils.RaycastAllNonAlloc(Singleton.camera.ScreenPointToRay(Input.mousePosition), ManPointer.inst.PickupRange, Globals.inst.layerTank.mask, QueryTriggerInteraction.Ignore);
+                foreach (var hit in cast)
                 {
-                    Console.WriteLine(item.Key);
-                    foreach (var subitem in item.Value)
+                    float distance = hit.distance;
+                    if (distance < num && hit.rigidbody != null)
                     {
-                        Console.WriteLine($" {subitem.Key} : {subitem.Value}");
+                        ClusterBody component = hit.rigidbody.GetComponent<ClusterBody>();
+                        if (component && component.coreTank == tank)
+                        {
+                            tankbody = component;
+                            num = distance;
+                        }
                     }
                 }
-            }
-
-            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
-            {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 600f, 300f);
-                try
+                if (tankbody)
                 {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block;
-                    Log = Class1.LogAllComponents(module.transform);
+                    if (Input.GetKeyDown(KeyCode.Alpha8))
+                        Console.WriteLine(tankbody.GetComponentInParent<ModuleBlockMover>().transform.localPosition.ToString());
+                    Modified = true;
+                    oLocalPos = particles.localPosition;
+                    particles.localPosition = tank.trans.InverseTransformPoint(tankbody.transform.localPosition);
                 }
-                catch
-                {
-                    //Console.WriteLine(e);
-                    module = null;
-                    Log = "";
-                }
-                visible = module;
             }
-            GUIOverseer.CheckValid();
-        }
-
-        public bool check_OnGUI()
-        {
-            return visible && module;
-        }
-
-        public void stack_OnGUI()
-        {
-            if (!visible || !module)
-            {
-                return;
-            }
-
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Dump");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private Vector2 scroll = Vector2.zero;
-
-        private void DoWindow(int id)
-        {
-            if (module == null)
-            {
-                visible = false;
-                return;
-            }
-            scroll = GUILayout.BeginScrollView(scroll);
-            GUILayout.Label(Log);
-            GUILayout.EndScrollView();
-            GUI.DragWindow();
         }
     }
 
     internal class Patches
     {
-        private static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
-            F_mTSR, F_mASS, F_mE, F_mPB,
-            B_mE, B_mASS, B_mFSC, B_mPB;
+        //private static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
+        //    F_mTSR, F_mASS, F_mE, F_mPB,
+        //    B_mE, B_mASS, B_mFSC, B_mPB;
 
-        static Patches()
-        {
-            try
-            {
-                BindingFlags b = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
-                {
-                    Type T = typeof(HoverJet);
-                    H_mASS = T.GetField("m_AutoStabiliseStrength", b);
-                    H_mTCU = T.GetField("m_ThrustContributionUp", b);
-                    H_mTCR = T.GetField("m_ThrustContributionRight", b);
-                    H_pB = T.GetField("parentBlock", b);
-                }
-                {
-                    Type T = typeof(FanJet);
-                    F_mPB = T.GetField("m_ParentBlock", b);
-                    F_mASS = T.GetField("m_AutoStabiliseStrength", b);
-                    F_mTSR = T.GetField("m_TargetSpinRate", b);
-                    F_mE = T.GetField("m_Effector", b);
-                }
-                {
-                    Type T = typeof(BoosterJet);
-                    B_mE = T.GetField("m_Effector", b);
-                    B_mASS = T.GetField("m_AutoStabiliseStrength", b);
-                    B_mFSC = T.GetField("m_FireStrengthCurrent", b);
-                    B_mPB = T.GetField("m_ParentBlock", b);
-                }
-                {
-                    m_AwaitingPhysicsReset = typeof(Tank).GetField("m_AwaitingPhysicsReset", b);
-                }
-            }
-            catch
-            {
-            }
-        }
+        //static Patches()
+        //{
+        //    try
+        //    {
+        //        BindingFlags b = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+        //        {
+        //            Type T = typeof(HoverJet);
+        //            H_mASS = T.GetField("m_AutoStabiliseStrength", b);
+        //            H_mTCU = T.GetField("m_ThrustContributionUp", b);
+        //            H_mTCR = T.GetField("m_ThrustContributionRight", b);
+        //            H_pB = T.GetField("parentBlock", b);
+        //        }
+        //        {
+        //            Type T = typeof(FanJet);
+        //            F_mPB = T.GetField("m_ParentBlock", b);
+        //            F_mASS = T.GetField("m_AutoStabiliseStrength", b);
+        //            F_mTSR = T.GetField("m_TargetSpinRate", b);
+        //            F_mE = T.GetField("m_Effector", b);
+        //        }
+        //        {
+        //            Type T = typeof(BoosterJet);
+        //            B_mE = T.GetField("m_Effector", b);
+        //            B_mASS = T.GetField("m_AutoStabiliseStrength", b);
+        //            B_mFSC = T.GetField("m_FireStrengthCurrent", b);
+        //            B_mPB = T.GetField("m_ParentBlock", b);
+        //        }
+        //        {
+        //            m_AwaitingPhysicsReset = typeof(Tank).GetField("m_AwaitingPhysicsReset", b);
+        //        }
+        //    }
+        //    catch
+        //    {
+        //    }
+        //}
 
-        [HarmonyPatch(typeof(BlockManager), "AddBlockToTech")]
-        private static class BlockManagerFix
-        {
-            private static void Prefix(ref BlockManager __instance, ref TankBlock block, IntVector3 localPos)
-            {
-                foreach (TankBlock _b in __instance.IterateBlocks())
-                {
-                    var module = _b.GetComponent<ModuleBlockMover>();
-                    if (module)
-                    {
-                        module.BeforeBlockAdded(block);
-                    }
-                }
-            }
-        }
+        //[HarmonyPatch(typeof(BlockManager), "AddBlockToTech")]
+        //private static class BlockManagerFix
+        //{
+        //    private static void Prefix(ref BlockManager __instance, ref TankBlock block, IntVector3 localPos)
+        //    {
+        //        foreach (TankBlock _b in __instance.IterateBlocks())
+        //        {
+        //            var module = _b.GetComponent<ModuleBlockMover>();
+        //            if (module)
+        //            {
+        //                module.BeforeBlockAdded(block);
+        //            }
+        //        }
+        //    }
+        //}
 
         //SR
 
-        [HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
-        private static class HoverJetStabilizePatch
-        {
-            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput)
-            {
-                ModuleSteeringRegulator sr = ((TankBlock)H_pB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
-                {
-                    float ___m_AutoStabiliseStrength = (float)H_mASS.GetValue(__instance);
-                    Vector3 lhs = Quaternion.Inverse(sr.rbody.rotation) * sr.lhs * sr.HoverMod;
-                    float num = 1f;
-                    driveInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCU.GetValue(__instance));
-                    driveInput = Mathf.Clamp(driveInput, -num, num);
-                    turnInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCR.GetValue(__instance));
-                    turnInput = Mathf.Clamp(turnInput, -num, num);
-                }
-            }
-        }
+        //[HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
+        //private static class HoverJetStabilizePatch
+        //{
+        //    private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput)
+        //    {
+        //        ModuleSteeringRegulator sr = ((TankBlock)H_pB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+        //        if (sr != null && sr.CanWork)
+        //        {
+        //            float ___m_AutoStabiliseStrength = (float)H_mASS.GetValue(__instance);
+        //            Vector3 lhs = Quaternion.Inverse(sr.rbody.rotation) * sr.lhs * sr.HoverMod;
+        //            float num = 1f;
+        //            driveInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCU.GetValue(__instance));
+        //            driveInput = Mathf.Clamp(driveInput, -num, num);
+        //            turnInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCR.GetValue(__instance));
+        //            turnInput = Mathf.Clamp(turnInput, -num, num);
+        //        }
+        //    }
+        //}
 
         //public static bool AwaitingOverride;
 
@@ -1201,472 +1501,141 @@ namespace Control_Block
         //    }
         //}
 
+        static Vector3 oP;
+        static Quaternion oQ;
+        static Transform ft;
+        static bool oF;
 
-        private static FieldInfo m_AwaitingPhysicsReset;
-        private static Vector3 oldCOM;
-        private static bool CenterToOld = false;
-        [HarmonyPatch(typeof(Tank), "ResetPhysics")]
-        private static class CenterCOM
-        {
-            private static void Prefix(Tank __instance)
-            {
-                if (__instance.IsAnchored || !(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
-                CenterToOld = true;
-                oldCOM = __instance.rbody.worldCenterOfMass;
-            }
-            private static void Postfix(Tank __instance)
-            {
-                if (!CenterToOld) return;
-                CenterToOld = false;
-                __instance.transform.position = (__instance.rbody.position + oldCOM - __instance.rbody.worldCenterOfMass);
-            }
-        }
+        //[HarmonyPatch(typeof(ManTechBuilder), "OnDragItem")]
+        //static class OnDragItem_Offset
+        //{
+        //    static void Prefix()
+        //    {
+        //        _Offset();
+        //    }
+        //    static void Postfix()
+        //    {
+        //        _undoOffset();
+        //    }
+        //}
 
-        [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
-        private static class FanJetStabilizePatch
+        //[HarmonyPatch(typeof(ManTechBuilder), "UpdateAttachParticles")]
+        //static class UpdateAttachParticles_Offset
+        //{
+        //    static void Prefix()
+        //    {
+        //        _Offset();
+        //    }
+        //    static void Postfix()
+        //    {
+        //        _undoOffset();
+        //    }
+        //}
+
+        static void _Offset()
         {
-            private static void Postfix(ref FanJet __instance)
+            var dft = ManPointer.inst.DraggingFocusTech;
+            if (dft != null)
             {
-                ModuleSteeringRegulator sr = ((TankBlock)F_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
+                if (Physics.Raycast(Singleton.camera.ScreenPointToRay(Singleton.Manager<ManPointer>.inst.DragPositionOnScreen), out RaycastHit raycastHit, 300f, Globals.inst.layerTank, QueryTriggerInteraction.Ignore))
                 {
-                    float ___m_AutoStabiliseStrength = (float)F_mASS.GetValue(__instance);
-                    if (___m_AutoStabiliseStrength > 0f)
+                    var CB = raycastHit.transform.GetComponentInParent<ClusterBody>();
+                    if (CB != null)
                     {
-                        Rigidbody rbody = sr.rbody;
-                        Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
-                        Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
-                        //if (Mathf.Abs(num) < 0.0125f)
-                        //{
-                        //    num = 0f;
-                        //}
-                        //else
-                        //{
-                        //    num -= Mathf.Sign(num) * 0.0125f;
-                        //}
-                        __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
+                        ft = dft.trans;
+                        oP = ft.position;
+                        oQ = ft.rotation;
+                        ft.position = CB.transform.position;
+                        ft.rotation = CB.transform.rotation;
+                        oF = true;
                     }
                 }
             }
         }
 
-        [HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
-        private static class BoosterJetStabilizePatch
+        static void _undoOffset()
         {
-            private static void Postfix(ref BoosterJet __instance)
+            if (oF)
             {
-                ModuleSteeringRegulator sr = ((TankBlock)B_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
-                {
-                    var ___m_AutoStabiliseStrength = (float)B_mASS.GetValue(__instance);
-                    if (___m_AutoStabiliseStrength > 0f)
-                    {
-                        Rigidbody rbody = sr.rbody;
-                        Vector3 forward = ((Transform)B_mE.GetValue(__instance)).forward;
-                        Vector3 pointVelocity = sr.lhs * sr.JetMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward) - .075f;
-                        if (num < 0f)
-                        {
-                            num = 0f;
-                        }
-                        var cs = (float)B_mFSC.GetValue(__instance);
-                        B_mFSC.SetValue(__instance, Mathf.Clamp(cs + num, cs, 1f));
-                    }
-                }
-            }
-        }
-    }
-
-    internal class OptionMenuPiston : MonoBehaviour
-    {
-        public OptionMenuPiston()
-        {
-            inst = this;
-        }
-        public static OptionMenuPiston inst;
-
-        private readonly int ID = 7787;
-
-        private bool visible = false;
-
-        private ModulePiston module;
-
-        private Rect win;
-        private readonly string[] toggleOptions = new string[] { "Normal", "DelayedInput", "PreferOpen", "PreferClosed" };
-        private readonly string[] notToggleOptions = new string[] { "Normal", "InvertInput" };
-
-        private void Update()
-        {
-            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
-            {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 250f, 350f);
-                try
-                {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModulePiston>();
-                }
-                catch
-                {
-                    //Console.WriteLine(e);
-                    module = null;
-                }
-                visible = module;
-                IsSettingKeybind = false;
+                oF = false;
+                ft.position = oP;
+                ft.rotation = oQ;
             }
         }
 
-        public bool check_OnGUI()
-        {
-            return visible && module;
-        }
+        //private static FieldInfo m_AwaitingPhysicsReset;
+        //private static Vector3 oldCOM;
+        //private static bool CenterToOld = false;
+        //[HarmonyPatch(typeof(Tank), "ResetPhysics")]
+        //private static class CenterCOM
+        //{
+        //    private static void Prefix(Tank __instance)
+        //    {
+        //        if (__instance.IsAnchored || !(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
+        //        CenterToOld = true;
+        //        oldCOM = __instance.rbody.worldCenterOfMass;
+        //    }
+        //    private static void Postfix(Tank __instance)
+        //    {
+        //        if (!CenterToOld) return;
+        //        CenterToOld = false;
+        //        __instance.transform.position = (__instance.rbody.position + oldCOM - __instance.rbody.worldCenterOfMass);
+        //    }
+        //}
 
-        public void stack_OnGUI()
-        {
-            if (!visible || !module)
-            {
-                return;
-            }
+        //[HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
+        //private static class FanJetStabilizePatch
+        //{
+        //    private static void Postfix(ref FanJet __instance)
+        //    {
+        //        ModuleSteeringRegulator sr = ((TankBlock)F_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+        //        if (sr != null && sr.CanWork)
+        //        {
+        //            float ___m_AutoStabiliseStrength = (float)F_mASS.GetValue(__instance);
+        //            if (___m_AutoStabiliseStrength > 0f)
+        //            {
+        //                Rigidbody rbody = sr.rbody;
+        //                Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
+        //                Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
+        //                float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
+        //                //if (Mathf.Abs(num) < 0.0125f)
+        //                //{
+        //                //    num = 0f;
+        //                //}
+        //                //else
+        //                //{
+        //                //    num -= Mathf.Sign(num) * 0.0125f;
+        //                //}
+        //                __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
+        //            }
+        //        }
+        //    }
+        //}
 
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private bool IsSettingKeybind;
-
-        private Vector2 Scroll = Vector2.zero;
-
-        private void DoWindow(int id)
-        {
-            Scroll = GUILayout.BeginScrollView(Scroll);
-            if (module == null)
-            {
-                visible = false;
-                return;
-            }
-            if (IsSettingKeybind)
-            {
-                var e = Event.current;
-                if (e.isKey)
-                {
-                    module.trigger = e.keyCode;
-                    IsSettingKeybind = false;
-                }
-            }
-
-            //GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
-            //module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
-
-            GUILayout.Label("Keybind input");
-            IsSettingKeybind = GUILayout.Button(IsSettingKeybind ? "Press a key for use" : module.trigger.ToString()) != IsSettingKeybind;
-
-            if (module.CanModifyStretch)
-            {
-                GUILayout.Label("Maximum Stretch (change while closed) : " + module.StretchModifier.ToString());
-                int temp = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.StretchModifier, 1, module.MaxStr));
-                if (module.open == 0)
-                {
-                    module.StretchModifier = temp;
-                }
-            }
-
-            module.IsToggle = GUILayout.Toggle(module.IsToggle, "Is toggle");
-
-            module.InverseTrigger = (byte)GUILayout.SelectionGrid(module.InverseTrigger, (module.IsToggle ? toggleOptions : notToggleOptions), 2);
-
-            module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
-
-            GUILayout.Label("Piston : " + module.block.cachedLocalPosition.ToString());
-
-            if (module.CurrentCellPush > module.MaximumBlockPush)
-            {
-                GUILayout.Label(" The piston is overburdened! (>" + module.MaximumBlockPush.ToString() + ")");
-            }
-            else if (module.CurrentCellPush == -1)
-            {
-                GUILayout.Label(" The piston is structurally locked!");
-            }
-            else if (module.CurrentCellPush == -2)
-            {
-                GUILayout.Label(" This piston cannot move any cabs!");
-            }
-            else
-            {
-                GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
-            }
-
-            if (GUILayout.Button("Close"))
-            {
-                visible = false;
-                IsSettingKeybind = false;
-                module = null;
-            }
-            GUI.DragWindow();
-            GUILayout.EndScrollView();
-        }
-    }
-
-    internal class OptionMenuSwivel : MonoBehaviour
-    {
-        public OptionMenuSwivel()
-        {
-            inst = this;
-        }
-        public static OptionMenuSwivel inst;
-        private readonly int ID = 7782;
-
-        private bool visible = false;
-
-        private ModuleSwivel module;
-
-        private Rect win;
-        private readonly string[] modeOptions = new string[] { "Positional", "Directional", "Speed", "On/Off", "Target Aim", "Steering", "Player Aim", "Velocity Aim", "Cycle", "Throttle" };
-
-        private void Update()
-        {
-            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
-            {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 175f, 450f, 600f);
-                try
-                {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSwivel>();
-                }
-                catch
-                {
-                    //Console.WriteLine(e);
-                    module = null;
-                }
-                visible = module;
-                IsSettingKeybind = false;
-            }
-        }
-
-        public bool check_OnGUI()
-        {
-            return visible && module;
-        }
-
-        public void stack_OnGUI()
-        {
-            if (!visible || !module)
-            {
-                return;
-            }
-
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private bool IsSettingKeybind;
-
-        private int SetButton = -1;
-
-        private Vector2 Scroll = Vector2.zero;
-
-        private void DoWindow(int id)
-        {
-            Scroll = GUILayout.BeginScrollView(Scroll);
-            if (module == null)
-            {
-                visible = false;
-                return;
-            }
-            if (IsSettingKeybind)
-            {
-                var e = Event.current;
-                if (e.isKey)
-                {
-                    switch (SetButton)
-                    {
-                        case 0: module.trigger1 = e.keyCode; break;
-                        case 1: module.trigger2 = e.keyCode; break;
-                    }
-                    IsSettingKeybind = false;
-                    SetButton = -1;
-                }
-            }
-
-            //GUILayout.Label($"Noise Multiplier : {module.SFXVolume}, Current Noise : {module.LastCurveDiff * module.SFXVolume}");
-            //module.SFXVolume = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.SFXVolume * 20, 1, 2000)) * .05f;
-
-            GUILayout.Label("Clockwise Key");
-            IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 0 ? "Press a key for use" : module.trigger1.ToString()) != IsSettingKeybind;
-            if (IsSettingKeybind && SetButton == -1)
-            {
-                SetButton = 0;
-            }
-
-            GUILayout.Label("CounterClockwise Key");
-            IsSettingKeybind = GUILayout.Button(IsSettingKeybind && SetButton == 1 ? "Press a key for use" : module.trigger2.ToString()) != IsSettingKeybind;
-            if (IsSettingKeybind && SetButton == -1)
-            {
-                SetButton = 1;
-            }
-
-            if (!IsSettingKeybind && SetButton != -1)
-            {
-                SetButton = -1;
-            }
-
-            module.LockAngle = GUILayout.Toggle(module.LockAngle, "Restrict Angle");
-            float Angle = (Mathf.Repeat(module.AngleCenter + 180, 360) - 180);
-            GUILayout.Label("Center of Limit: " + Angle.ToString());
-            module.AngleCenter = Mathf.RoundToInt((GUILayout.HorizontalSlider(Angle, -180, 179) + 360) % 360);
-            GUILayout.Label("Range of Limit: " + module.AngleRange.ToString());
-            module.AngleRange = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.AngleRange, 0, 179 - module.RotateSpeed) % 360);
-
-            module.mode = (ModuleSwivel.Mode)GUILayout.SelectionGrid((int)module.mode, modeOptions, 2);
-
-            if (module.CanModifySpeed)
-            {
-                GUILayout.Label("Rotation Speed : " + module.RotateSpeed.ToString());
-                module.RotateSpeed = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.RotateSpeed * 2, 1, module.MaxSpeed * 2)) * .5f;
-            }
-            Angle = (Mathf.Repeat(module.CurrentAngle + 180, 360) - 180);
-
-            GUILayout.Label("Angle : " + ((int)Angle).ToString());
-            var newAngle = GUILayout.HorizontalSlider(Angle, -180, 179);
-            if (newAngle != Angle)
-            {
-                module.CurrentAngle = Mathf.Clamp(newAngle, Angle - module.MaxSpeed, Angle + module.MaxSpeed) - 360;
-            }
-
-            module.LocalControl = GUILayout.Toggle(module.LocalControl, "Local to tech");
-
-            if (module.mode != ModuleSwivel.Mode.AimAtPlayer && module.mode != ModuleSwivel.Mode.AimAtVelocity)
-            {
-                if (module.mode != ModuleSwivel.Mode.Directional)
-                {
-                    GUILayout.Label("Start Pause: " + module.StartDelay.ToString());
-                    module.StartDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.StartDelay, 0, 360));
-                }
-                if (module.mode == ModuleSwivel.Mode.Cycle || module.mode == ModuleSwivel.Mode.Directional || module.mode == ModuleSwivel.Mode.OnOff)
-                {
-                    GUILayout.Label("CW Limiter Pause: " + module.CWDelay.ToString());
-                    module.CWDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.CWDelay, 0, 360));
-                    GUILayout.Label("CCW Limiter Pause: " + module.CCWDelay.ToString());
-                    module.CCWDelay = Mathf.RoundToInt(GUILayout.HorizontalSlider(module.CCWDelay, 0, 360));
-                }
-            }
-
-            GUILayout.Label("Swivel : " + module.block.cachedLocalPosition.ToString());
-
-            if (module.CurrentCellPush > module.MaximumBlockPush)
-            {
-                GUILayout.Label(" The swivel is overburdened! (>" + module.MaximumBlockPush.ToString() + ")");
-            }
-            else if (module.CurrentCellPush == -1)
-            {
-                GUILayout.Label(" The swivel is structurally locked!");
-            }
-            else if (module.CurrentCellPush == -2)
-            {
-                GUILayout.Label(" This swivel cannot move any cabs!");
-            }
-            else
-            {
-                GUILayout.Label(" Burden : " + module.CurrentCellPush.ToString());
-            }
-
-            if (GUILayout.Button("Close"))
-            {
-                visible = false;
-                IsSettingKeybind = false;
-                module = null;
-            }
-            GUI.DragWindow();
-            GUILayout.EndScrollView();
-        }
-    }
-
-    internal class OptionMenuSteeringRegulator : MonoBehaviour
-    {
-        public OptionMenuSteeringRegulator()
-        {
-            inst = this;
-        }
-        public static OptionMenuSteeringRegulator inst;
-
-        private readonly int ID = 7788;
-
-        private bool visible = false;
-
-        private ModuleSteeringRegulator module;
-
-        private Rect win;
-
-        private void Update()
-        {
-            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
-            {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 200f);
-                try
-                {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSteeringRegulator>();
-                }
-                catch
-                {
-                    //Console.WriteLine(e);
-                    module = null;
-                }
-                visible = module;
-            }
-        }
-
-        public bool check_OnGUI()
-        {
-            return visible && module;
-        }
-
-        public void stack_OnGUI()
-        {
-            if (!visible || !module)
-            {
-                return;
-            }
-
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Stabiliser PiD");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private void DoWindow(int id)
-        {
-            if (module == null)
-            {
-                visible = false;
-                return;
-            }
-            GUILayout.Label("Sensitivity RADIUS : " + module.MaxDist.ToString());
-            module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
-            GUILayout.Label("Hover PiD Effect");
-            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 15f)) * .5f;
-            GUILayout.Label("Steering Jet PiD Effect");
-            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
-            GUILayout.Label("Turbine PiD Effect");
-            module.TurbineMod = Mathf.Round(GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f)) * .5f;
-            if (GUILayout.Button("Close"))
-            {
-                visible = false;
-                module = null;
-            }
-            GUI.DragWindow();
-        }
+        //[HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
+        //private static class BoosterJetStabilizePatch
+        //{
+        //    private static void Postfix(ref BoosterJet __instance)
+        //    {
+        //        ModuleSteeringRegulator sr = ((TankBlock)B_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
+        //        if (sr != null && sr.CanWork)
+        //        {
+        //            var ___m_AutoStabiliseStrength = (float)B_mASS.GetValue(__instance);
+        //            if (___m_AutoStabiliseStrength > 0f)
+        //            {
+        //                Rigidbody rbody = sr.rbody;
+        //                Vector3 forward = ((Transform)B_mE.GetValue(__instance)).forward;
+        //                Vector3 pointVelocity = sr.lhs * sr.JetMod;
+        //                float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward) - .075f;
+        //                if (num < 0f)
+        //                {
+        //                    num = 0f;
+        //                }
+        //                var cs = (float)B_mFSC.GetValue(__instance);
+        //                B_mFSC.SetValue(__instance, Mathf.Clamp(cs + num, cs, 1f));
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

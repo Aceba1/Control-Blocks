@@ -244,4 +244,34 @@
   <data name="mtmag_ball_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Blocks\MTMags\mtmag_ball_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="swivel_double_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\swivel\double\swivel_double_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="swivel_double_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\swivel\double\swivel_double_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf_rail_piston_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_extension" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf_rail_piston_extension.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf_rail_piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ven_twist_piston_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven twist piston base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ven_twist_piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven twist piston head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ven_twist_piston_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven_twist_piston_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ven_twist_piston_shaft_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven twist piston shaft 1.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ven_twist_piston_shaft_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven twist piston shaft 2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

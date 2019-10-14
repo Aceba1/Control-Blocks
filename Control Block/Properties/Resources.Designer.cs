@@ -19,7 +19,7 @@ namespace Control_Block.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,62 +61,77 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;BFCab.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;untitled.blend&apos;
         ///# www.blender.org
-        ///mtllib BFCab.mtl
-        ///o m_BF_Streamline_111.000
-        ///v 0.474894 0.468360 -0.475100
-        ///v -0.475107 0.468360 -0.474880
-        ///v 0.474946 -0.337101 -0.475050
-        ///v -0.475055 -0.337101 -0.474940
-        ///v 0.474998 -0.337101 0.482365
-        ///v -0.475002 -0.337101 0.482365
-        ///v 0.474946 -0.097373 -0.475050
-        ///v -0.000002 -0.337101 0.482365
-        ///v 0.474972 -0.337101 -0.008842
-        ///v -0.000028 -0.337101 0.091185
-        ///v -0.475029 -0.337101 -0.008787
-        ///v 0.118702 -0.337101 -0.475022
-        ///v -0.118798 -0.337101 -0.474967 [rest of string was truncated]&quot;;.
+        ///mtllib bf rail piston base.mtl
+        ///o Cube.000_Cube.006
+        ///v 0.125000 0.500000 0.400000
+        ///v 0.125000 0.500000 0.500000
+        ///v 0.500000 -0.500000 0.400000
+        ///v 0.500000 -0.500000 0.500000
+        ///v 0.500000 0.500000 0.400000
+        ///v 0.500000 0.500000 0.500000
+        ///v -0.500000 -0.500000 0.400000
+        ///v -0.500000 -0.500000 0.500000
+        ///v -0.500000 0.500000 0.400000
+        ///v -0.500000 0.500000 0.500000
+        ///v -0.125000 0.500000 0.400000
+        ///v -0.125000 0.500000 0.500000
+        ///v 0.250000 -0.437 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BFCab {
+        internal static string bf_rail_piston_base {
             get {
-                return ResourceManager.GetString("BFCab", resourceCulture);
+                return ResourceManager.GetString("bf_rail_piston_base", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;untitled.blend&apos;
+        ///# www.blender.org
+        ///mtllib bf rail piston extension.mtl
+        ///o Cube.001_Cube.003
+        ///v 0.125000 -0.500000 0.400000
+        ///v 0.125000 -0.500000 0.500000
+        ///v 0.125000 0.500000 0.400000
+        ///v 0.125000 0.500000 0.500000
+        ///v 0.500000 -0.500000 0.400000
+        ///v 0.500000 -0.500000 0.500000
+        ///v 0.500000 0.500000 0.400000
+        ///v 0.500000 0.500000 0.500000
+        ///v -0.500000 -0.500000 0.400000
+        ///v -0.500000 -0.500000 0.500000
+        ///v -0.500000 0.500000 0.400000
+        ///v -0.500000 0.500000 0.500000
+        ///v -0.125000  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static byte[] BFCab_png {
+        internal static string bf_rail_piston_extension {
             get {
-                object obj = ResourceManager.GetObject("BFCab_png", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("bf_rail_piston_extension", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;BFCab.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;untitled.blend&apos;
         ///# www.blender.org
-        ///mtllib BFCab_wheel.mtl
-        ///o m_GSO_Cab_111_Tyre_4.004_m_GSO_Cab_111_Tyre_4.001
-        ///v -0.093644 0.000000 -0.157456
-        ///v -0.093644 0.111339 -0.111338
-        ///v 0.093644 0.111339 -0.111338
-        ///v 0.093644 0.000000 -0.157456
-        ///v 0.093644 0.157457 0.000000
-        ///v -0.093644 0.157457 0.000000
-        ///v -0.093644 -0.111338 -0.111338
-        ///v 0.093644 -0.111338 -0.111338
-        ///v -0.093644 -0.157456 -0.000000
-        ///v 0.093644 -0.157456 -0.000000
-        ///v -0.093644 -0.111338 0.111339
-        ///v 0.093644 -0.111338 0.111339
-        ///v - [rest of string was truncated]&quot;;.
+        ///mtllib bf rail piston head.mtl
+        ///o Plane.001_Plane.006
+        ///v -0.302500 0.125000 0.150000
+        ///v -0.302500 -0.125000 0.150000
+        ///v 0.302500 -0.125000 0.150000
+        ///v 0.302500 0.125000 0.150000
+        ///v -0.302500 0.125000 -0.010000
+        ///v -0.302500 -0.125000 -0.010000
+        ///v 0.302500 -0.125000 -0.010000
+        ///v 0.302500 0.125000 -0.010000
+        ///v 0.200000 0.125000 0.200000
+        ///v -0.200000 0.125000 0.200000
+        ///v -0.200000 -0.125000 0.200000
+        ///v 0.200000 -0.125000 0.200000
+        ///v -0.2000 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BFCab_wheel {
+        internal static string bf_rail_piston_head {
             get {
-                return ResourceManager.GetString("BFCab_wheel", resourceCulture);
+                return ResourceManager.GetString("bf_rail_piston_head", resourceCulture);
             }
         }
         
@@ -136,7 +151,7 @@ namespace Control_Block.Properties {
         ///v 0.366017 -0.428834 -0.366017
         ///v -0.500000 -0.428834 -0.107355
         ///v -0.500000 -0.314892 -0.146953
-        ///v -0.500000 -0.428834 0.1073 [rest of string was truncated]&quot;;.
+        ///v -0.500000 - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blockbottom {
             get {
@@ -160,8 +175,7 @@ namespace Control_Block.Properties {
         ///v -0.126918 0.500000 0.428833
         ///v 0.126918 0.500000 0.428833
         ///v -0.366017 0.428834 0.366017
-        ///v -0.500000 0.428834 0.146953
-        ///v 0.1469 [rest of string was truncated]&quot;;.
+        ///v -0.500000 0.428834 0. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blocktop {
             get {
@@ -216,7 +230,7 @@ namespace Control_Block.Properties {
         ///v 0.900000 0.100000 0.100000
         ///v 0.900000 0.100000 0.900000
         ///v 0.100000 0.100000 0.100000
-        ///v 0.100000 0.100 [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GCfrictionpadbig {
             get {
@@ -241,8 +255,7 @@ namespace Control_Block.Properties {
         ///v 0.500000 0.412500 0.000000
         ///v 0.500000 0.500000 0.000000
         ///v 0.461940 0.412500 0.191342
-        ///v 0.461940 0.500000 0.191342
-        ///v 0.353553 0.41 [rest of string was truncated]&quot;;.
+        ///v 0.461940 0.500000 0.191342 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GCfrictionpadsmall {
             get {
@@ -267,8 +280,7 @@ namespace Control_Block.Properties {
         ///v -0.258274 0.344012 0.340149
         ///v 0.030684 0.344012 0.659851
         ///v 0.030684 0.557951 0.659851
-        ///v 0.030684 0.557951 0.340149
-        ///v 0.030 [rest of string was truncated]&quot;;.
+        ///v 0.030684 0.557951  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_blockbottom {
             get {
@@ -293,8 +305,7 @@ namespace Control_Block.Properties {
         ///v 1.045250 0.552534 -0.500000
         ///v 0.896773 0.369114 -0.500000
         ///v 0.103227 0.369114 -0.500000
-        ///v -0.045250 0.552534 -0.500000
-        ///v 1.500000  [rest of string was truncated]&quot;;.
+        ///v -0.045250 0.552534 -0.50 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_blocktop {
             get {
@@ -329,7 +340,7 @@ namespace Control_Block.Properties {
         ///v -0.185176 1.131227 0.104413
         ///v -0.291174 -0.160939 0.500000
         ///v -0.291174 1.131227 0.500000
-        ///v -0.185176 -0.160939 0.89558 [rest of string was truncated]&quot;;.
+        ///v -0.185176 - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_shaftbottom {
             get {
@@ -354,8 +365,7 @@ namespace Control_Block.Properties {
         ///v -0.064939 1.486831 0.173832
         ///v -0.152335 0.513169 0.500000
         ///v -0.152335 1.486831 0.500000
-        ///v -0.064939 0.513169 0.826168
-        ///v -0.064939 [rest of string was truncated]&quot;;.
+        ///v -0.064939 0.513169 0.82 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_shafttop {
             get {
@@ -380,7 +390,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 0.374719 -0.468760
         ///v -0.312240 0.374719 -0.312560
         ///v 0.312559 -0.375040 -0.468760
-        ///v -0.312240 -0.375040 -0.4 [rest of string was truncated]&quot;;.
+        ///v -0.31224 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_blockbottom {
             get {
@@ -405,8 +415,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 -0.374719 0.468760
         ///v -0.312240 -0.374719 0.312560
         ///v 0.312559 0.375040 0.468760
-        ///v -0.312240 0.375040 0.468760
-        ///v -0. [rest of string was truncated]&quot;;.
+        ///v -0.312240 0.37504 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_blocktop {
             get {
@@ -441,7 +450,7 @@ namespace Control_Block.Properties {
         ///v -0.437200 -0.000321 -0.328180
         ///v -0.437200 -0.000321 -0.000160
         ///v -0.327860 -0.000321 -0.000160
-        ///v -0.437200 -0.500 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftbottom {
             get {
@@ -465,8 +474,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 -0.437841 -0.000160
         ///v 0.312559 0.499359 -0.000160
         ///v 0.312559 -0.437840 -0.000160
-        ///v -0.312240 0.499359 -0.000160
-        ///v -0.312240 - [rest of string was truncated]&quot;;.
+        ///v -0.312240 0.499359 -0.00016 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftmidb {
             get {
@@ -491,7 +499,7 @@ namespace Control_Block.Properties {
         ///v 0.211029 0.436559 -0.281320
         ///v -0.210710 -0.500641 -0.281320
         ///v -0.210711 0.436559 -0.281320
-        ///v -0.281000 -0.500641 -0.21103 [rest of string was truncated]&quot;;.
+        ///v -0.281000 -0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftmidt {
             get {
@@ -516,8 +524,7 @@ namespace Control_Block.Properties {
         ///v -0.437200 0.000321 0.328180
         ///v -0.437200 0.000321 0.000160
         ///v -0.327860 0.000321 0.000160
-        ///v -0.437200 0.500160 0.328180
-        ///v -0.43 [rest of string was truncated]&quot;;.
+        ///v -0.437200 0.500160  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shafttop {
             get {
@@ -542,7 +549,7 @@ namespace Control_Block.Properties {
         ///v 0.499999 -0.500000 -0.500001
         ///v -0.500001 -0.500000 -0.500000
         ///v -0.500000 -0.500000 0.500000
-        ///v 0.500000 -0.500000 0.4 [rest of string was truncated]&quot;;.
+        ///v 0.5000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball {
             get {
@@ -568,7 +575,7 @@ namespace Control_Block.Properties {
         ///v -0.353553 -0.500000 0.353553
         ///v -0.176777 -0.200000 0.176777
         ///v -0.500000 -0.500000 -0.000000
-        ///v -0.250000 -0.2000 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_collider {
             get {
@@ -581,20 +588,19 @@ namespace Control_Block.Properties {
         ///# www.blender.org
         ///mtllib mtmag ball collider large.mtl
         ///o Cone
-        ///v 0.500000 -0.500000 -0.207106
+        ///v -0.207106 -0.500000 -0.207106
         ///v 0.500000 0.100000 -0.000000
         ///v 0.853554 0.100000 0.146446
         ///v 1.207106 -0.500000 -0.207106
         ///v 1.000000 0.100000 0.500000
-        ///v 1.207106 -0.500000 0.500000
         ///v 0.853554 0.100000 0.853554
         ///v 1.207106 -0.500000 1.207106
         ///v 0.500000 0.100000 1.000000
-        ///v 0.500000 -0.500000 1.207106
         ///v 0.146446 0.100000 0.853554
         ///v -0.207106 -0.500000 1.207106
         ///v 0.000000 0.100000 0.500000
-        ///v -0.207106 -0. [rest of string was truncated]&quot;;.
+        ///v 0.146446 0.100000 0.146446
+        ///v 1.207106 -0.148527 0.500000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_collider_large {
             get {
@@ -605,7 +611,7 @@ namespace Control_Block.Properties {
         /// <summary>
         ///   Looks up a localized string similar to # Blender v2.80 (sub 47) OBJ File: &apos;Ball.blend&apos;
         ///# www.blender.org
-        ///mtllib mtmag ball large.mtl
+        ///mtllib mtmag ball collider large.mtl
         ///o m_BF_Block_Faired_111_Instance.001
         ///v 0.786182 -0.247577 1.190903
         ///v 0.213819 -0.247577 -0.190903
@@ -618,8 +624,7 @@ namespace Control_Block.Properties {
         ///v 0.189096 -0.497458 -0.145108
         ///v -0.146268 -0.497472 -0.145367
         ///v -0.145340 -0.497579 0.190105
-        ///v -0.145930 -0.500000 0.500000
-        ///v -0.145716  [rest of string was truncated]&quot;;.
+        ///v -0.145930 -0.5000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_large {
             get {
@@ -663,7 +668,7 @@ namespace Control_Block.Properties {
         ///v -0.125000 -0.000000 -0.450000
         ///v -0.450000 -0.000000 0.405000
         ///v 0.450000 -0.000000 -0.125000
-        ///v -0.450000 -0.000000 [rest of string was truncated]&quot;;.
+        ///v -0.4 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_fixed {
             get {
@@ -689,7 +694,7 @@ namespace Control_Block.Properties {
         ///v 0.853553 0.399993 1.418785
         ///v 0.853553 -0.500000 1.500000
         ///v 0.853553 -0.500000 1.401005
-        ///v 0.146447 -0.500000 1.40100 [rest of string was truncated]&quot;;.
+        ///v 0.146447  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_swivel_large {
             get {
@@ -698,7 +703,7 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;piston.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;piston.blend&apos;
         ///# www.blender.org
         ///mtllib piston_base.mtl
         ///o Cylinder
@@ -715,7 +720,7 @@ namespace Control_Block.Properties {
         ///v 0.461940 -0.490000 0.191342
         ///v 0.461940 0.250000 0.191342
         ///v 0.353553 -0.490000 0.353553
-        ///v 0.353553 0.250000 [rest of string was truncated]&quot;;.
+        ///v [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_base {
             get {
@@ -724,24 +729,24 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;piston.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;piston.blend&apos;
         ///# www.blender.org
         ///mtllib piston_head.mtl
         ///o Cylinder.005
-        ///v 0.000000 0.141421 -0.500000
-        ///v 0.191342 0.250000 -0.461940
-        ///v 0.353553 0.250000 -0.353553
-        ///v 0.461940 0.250000 -0.191342
-        ///v 0.500000 0.141421 0.000000
-        ///v 0.461940 0.250000 0.191342
-        ///v 0.353553 0.250000 0.353553
-        ///v 0.191342 0.250000 0.461940
-        ///v 0.000000 0.141421 0.500000
-        ///v -0.191342 0.250000 0.461940
-        ///v -0.353553 0.250000 0.353554
-        ///v -0.461940 0.250000 0.191342
-        ///v -0.500000 0.141421 -0.000000
-        ///v -0.461940 0.250000  [rest of string was truncated]&quot;;.
+        ///v 0.000000 0.145007 -0.500000
+        ///v 0.191342 0.252500 -0.461940
+        ///v 0.353553 0.252500 -0.353553
+        ///v 0.461940 0.252500 -0.191342
+        ///v 0.500000 0.145007 0.000000
+        ///v 0.461940 0.252500 0.191342
+        ///v 0.353553 0.252500 0.353553
+        ///v 0.191342 0.252500 0.461940
+        ///v 0.000000 0.145007 0.500000
+        ///v -0.191342 0.252500 0.461940
+        ///v -0.353553 0.252500 0.353554
+        ///v -0.461940 0.252500 0.191342
+        ///v -0.500000 0.145007 -0.000000
+        ///v - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_head {
             get {
@@ -760,38 +765,23 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #
-        ///#
-        ///#
-        ///
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;piston.blend&apos;
+        ///# www.blender.org
         ///mtllib piston_shaft.mtl
-        ///
-        ///
-        ///#
-        ///#  Mesh
-        ///#
-        ///g  Mesh
-        ///
-        ///
-        ///#
-        ///#  Mesh_None
-        ///#
-        ///usemtl  Mesh_None
-        ///
-        ///v 0.000000 0.337500 -0.440000
+        ///o Cylinder.006_Cylinder.011
+        ///v 0.000000 -0.375000 -0.440000
         ///v 0.000000 0.375000 -0.440000
+        ///v 0.220000 -0.375000 -0.381051
         ///v 0.220000 0.375000 -0.381051
-        ///v 0.220000 0.337500 -0.381051
+        ///v 0.381051 -0.375000 -0.220000
         ///v 0.381051 0.375000 -0.220000
-        ///v 0.381051 0.337500 -0.220000
+        ///v 0.440000 -0.375000 0.000000
         ///v 0.440000 0.375000 0.000000
-        ///v 0.440000 0.337500 0.000000
+        ///v 0.381051 -0.375000 0.220000
         ///v 0.381051 0.375000 0.220000
-        ///v 0.381051 0.337500 0.220000
+        ///v 0.220000 -0.375000 0.381051
         ///v 0.220000 0.375000 0.381051
-        ///v 0.220000 0.337500 0.381051
-        ///v 0.000000 0.375000 0.440000
-        ///v 0.000 [rest of string was truncated]&quot;;.
+        ///v 0.000000 -0.37 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_shaft {
             get {
@@ -818,9 +808,7 @@ namespace Control_Block.Properties {
         ///vn 0.6038 -0.7971 0.0000
         ///vn 0.0000 -0.7971 -0.6038
         ///vn 0.0000 -0.7971 0.6038
-        ///usemtl Material.001
-        ///s off
-        ///f 1/ [rest of string was truncated]&quot;;.
+        ///usemtl Mater [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sr {
             get {
@@ -839,24 +827,24 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;swivel.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;swivel.blend&apos;
         ///# www.blender.org
         ///mtllib swivel_base.mtl
         ///o Cube_Cube.001
-        ///v -0.375000 -0.437500 1.375000
-        ///v -0.375000 0.437500 1.375000
-        ///v -0.375000 -0.437500 -0.375000
-        ///v -0.375000 0.437500 -0.375000
-        ///v 1.375000 -0.437500 1.375000
-        ///v 1.375000 0.437500 1.375000
-        ///v 1.375000 -0.437500 -0.375000
-        ///v 1.375000 0.437500 -0.375000
-        ///v 0.500000 0.500000 1.500000
-        ///v -0.500000 0.500000 0.500000
-        ///v 0.500000 0.500000 -0.500000
-        ///v 1.500000 0.500000 0.499994
-        ///v -0.383339 0.500000 0.974128
-        ///v -0.469217 0. [rest of string was truncated]&quot;;.
+        ///v -0.437500 0.437500 1.437500
+        ///v -0.437500 0.437500 -0.437500
+        ///v 1.437500 0.437500 1.437500
+        ///v 1.437500 0.437500 -0.437500
+        ///v 0.500000 0.500000 1.475000
+        ///v -0.475000 0.500000 0.500000
+        ///v 0.500000 0.500000 -0.475000
+        ///v 1.475000 0.500000 0.499994
+        ///v -0.361255 0.500000 0.962274
+        ///v -0.444986 0.500000 0.763464
+        ///v -0.471618 0.500000 0.615766
+        ///v -0.471618 0.500000 0.384235
+        ///v -0.444986 0.500000 0.236535
+        ///v -0.361255 0.500 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_base {
             get {
@@ -865,16 +853,63 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;swivel.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;HE_Double_Rotor_Swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_double_base.mtl
+        ///o HE_Double_Rotor_Swivel
+        ///v 0.190577 0.313094 0.440601
+        ///v 0.440577 0.313094 0.190601
+        ///v 0.440577 0.313094 -0.440598
+        ///v -0.440622 0.313095 -0.440598
+        ///v 0.440577 0.253694 -0.499999
+        ///v -0.440622 0.253694 -0.499999
+        ///v 0.499977 0.253694 -0.440598
+        ///v 0.499977 -0.253739 -0.440598
+        ///v 0.440577 -0.253739 -0.499999
+        ///v 0.499977 -0.132046 -0.132022
+        ///v 0.499977 -0.132046 0.132024
+        ///v 0.599977 -0.000023 0.00 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_double_base {
+            get {
+                return ResourceManager.GetString("swivel_double_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_double_head.mtl
+        ///o HE_Double_Rotor_Swivel.001
+        ///v -0.277151 0.499976 -0.159998
+        ///v -0.363753 0.406535 -0.209998
+        ///v -0.405712 0.406535 -0.108702
+        ///v -0.309119 0.499976 -0.082821
+        ///v -0.226297 0.499976 -0.226273
+        ///v -0.297008 0.406535 -0.296983
+        ///v -0.160023 0.499976 -0.277127
+        ///v -0.210023 0.406535 -0.363729
+        ///v -0.082845 0.499976 -0.309095
+        ///v -0.108727 0.406535 -0.405687
+        ///v -0.000023 0.499976 -0.319998
+        ///v -0.000023 0.406535 -0.41999 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_double_head {
+            get {
+                return ResourceManager.GetString("swivel_double_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;swivel.blend&apos;
         ///# www.blender.org
         ///mtllib swivel_head.mtl
         ///o Cube.001_Cube.002
         ///v -0.662912 0.500000 0.662913
         ///v -0.444495 0.500000 0.828130
         ///v -0.253331 0.500000 0.908641
-        ///v -0.111313 0.500000 0.969217
-        ///v -0.000000 0.500000 1.000000
-        ///v 0.111313 0.500000 0.969217
+        ///v -0.111313 0.510000 0.969217
+        ///v 0.111313 0.510000 0.969217
         ///v 0.253331 0.500000 0.908641
         ///v 0.444495 0.500000 0.828130
         ///v 0.662913 0.500000 0.662913
@@ -882,7 +917,8 @@ namespace Control_Block.Properties {
         ///v 0.908641 0.500000 0.253331
         ///v 0.934248 0.500000 0.111313
         ///v 0.937500 0.500000 -0.000006
-        ///v 0.934249 0.500000 [rest of string was truncated]&quot;;.
+        ///v 0.934249 0.500000 -0.111313
+        ///v 0.908641 0.50000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_head {
             get {
@@ -917,8 +953,7 @@ namespace Control_Block.Properties {
         ///v 0.307439 -0.250000 -0.177500
         ///v 0.307439 0.250000 -0.177500
         ///v 0.355000 -0.250000 0.000000
-        ///v 0.355000 0.250000 0.000000
-        ///v 0 [rest of string was truncated]&quot;;.
+        ///v 0.355000 0.250 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_small_base {
             get {
@@ -943,8 +978,7 @@ namespace Control_Block.Properties {
         ///v 0.206250 -0.250000 -0.357235
         ///v 0.206250 0.250000 -0.357235
         ///v 0.412500 -0.250000 0.000000
-        ///v 0.412500 0.250000 0.000000
-        ///v [rest of string was truncated]&quot;;.
+        ///v 0.412500 0.2 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_small_head {
             get {
@@ -980,7 +1014,7 @@ namespace Control_Block.Properties {
         ///v 0.500000 0.187500 0.000000
         ///v -0.500000 0.187500 0.000000
         ///v 0.425000 0.425000 0.212500
-        ///v 0.500000 0.18750 [rest of string was truncated]&quot;;.
+        ///v [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_ven_base {
             get {
@@ -1005,8 +1039,7 @@ namespace Control_Block.Properties {
         ///v 0.207414 -0.159375 -0.500743
         ///v 0.207414 0.159375 -0.500743
         ///v 0.500743 -0.159375 -0.207414
-        ///v 0.500743 0.159375 -0.207414
-        ///v 0.5007 [rest of string was truncated]&quot;;.
+        ///v 0.500743 0.159375 -0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_ven_head {
             get {
@@ -1021,6 +1054,116 @@ namespace Control_Block.Properties {
             get {
                 object obj = ResourceManager.GetObject("swivel_ven_png", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;ven twist piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib ven twist piston base.mtl
+        ///o Cube
+        ///v 0.132023 -0.499998 -0.132023
+        ///v -0.132022 -0.499998 -0.132023
+        ///v 0.132023 -0.499998 0.132023
+        ///v 0.000001 -0.599998 -0.000000
+        ///v -0.132022 -0.499998 0.132023
+        ///v 0.225000 -0.500000 -0.300000
+        ///v 0.300000 -0.500000 -0.225000
+        ///v 0.225000 0.100000 0.225000
+        ///v 0.300000 -0.500000 0.225000
+        ///v 0.225000 -0.500000 0.300000
+        ///v -0.300000 -0.500000 -0.225000
+        ///v -0.225000 -0.500000 -0.300000
+        ///v -0.225000 0.100000 0.2 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ven_twist_piston_base {
+            get {
+                return ResourceManager.GetString("ven_twist_piston_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;ven twist piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib ven twist piston head.mtl
+        ///o Cube_AP.001
+        ///v -0.225000 0.200000 0.225000
+        ///v -0.225000 0.275000 0.300000
+        ///v -0.300000 0.275000 0.225000
+        ///v -0.300000 0.500000 0.225000
+        ///v -0.225000 0.500000 0.300000
+        ///v -0.225000 0.200000 -0.225000
+        ///v -0.300000 0.275000 -0.225000
+        ///v -0.225000 0.275000 -0.300000
+        ///v -0.225000 0.500000 -0.300000
+        ///v -0.300000 0.500000 -0.225000
+        ///v 0.225000 0.200000 0.225000
+        ///v 0.300000 0.275000 0.225000
+        ///v 0.225000 0.275000 0.30 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ven_twist_piston_head {
+            get {
+                return ResourceManager.GetString("ven_twist_piston_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ven_twist_piston_png {
+            get {
+                object obj = ResourceManager.GetObject("ven_twist_piston_png", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;ven twist piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib ven twist piston shaft 1.mtl
+        ///o Cylinder_Cylinder.003
+        ///v -0.081971 -0.500000 -0.197895
+        ///v -0.186303 0.400000 -0.093563
+        ///v 0.081971 -0.500000 -0.197895
+        ///v -0.065577 0.400000 -0.197895
+        ///v 0.197895 -0.500000 -0.081971
+        ///v 0.093563 0.400000 -0.186303
+        ///v 0.197895 -0.500000 0.081971
+        ///v 0.197895 0.400000 -0.065577
+        ///v 0.081971 -0.500000 0.197895
+        ///v 0.186303 0.400000 0.093563
+        ///v -0.081971 -0.500000 0.197895
+        ///v 0.065577 0.400000 0.197895
+        ///v -0.1978 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ven_twist_piston_shaft_1 {
+            get {
+                return ResourceManager.GetString("ven_twist_piston_shaft_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;ven twist piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib ven twist piston shaft 2.mtl
+        ///o Cylinder.001_Cylinder.004
+        ///v 0.066893 -0.500000 -0.161494
+        ///v -0.066893 0.500000 -0.161494
+        ///v 0.161494 -0.500000 -0.066893
+        ///v 0.066893 0.500000 -0.161494
+        ///v 0.161494 -0.500000 0.066893
+        ///v 0.161494 0.500000 -0.066893
+        ///v 0.066893 -0.500000 0.161494
+        ///v 0.161494 0.500000 0.066893
+        ///v -0.066893 -0.500000 0.161494
+        ///v 0.066893 0.500000 0.161494
+        ///v -0.161494 -0.500000 0.066893
+        ///v -0.066893 0.500000 0.161494
+        ///v -0.16 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ven_twist_piston_shaft_2 {
+            get {
+                return ResourceManager.GetString("ven_twist_piston_shaft_2", resourceCulture);
             }
         }
     }
