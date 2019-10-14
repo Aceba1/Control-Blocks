@@ -306,9 +306,6 @@
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_blocktop.obj" />
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_shaftbottom.obj" />
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_shafttop.obj" />
-    <None Include="Blocks\Cab\BFCab.blend" />
-    <Resource Include="Blocks\Cab\BFCab.obj" />
-    <Resource Include="Blocks\Cab\BFCab_wheel.obj" />
     <None Include="Blocks\MTMags\mtmag ball collider large.obj" />
     <None Include="Blocks\MTMags\mtmag ball collider.obj" />
     <None Include="Blocks\MTMags\mtmag ball large.obj" />
