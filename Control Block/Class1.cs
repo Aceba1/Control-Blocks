@@ -12,8 +12,6 @@ namespace Control_Block
             "This is a BlockMover. Blocks attached to the head of this will have their own physics separate from the body they are on, yet still restrained to the same tech. Like a multi-tech, but a single tech. ClusterTech.";
         public static void CreateBlocks()
         {
-            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
-            harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
             #region Blocks
 
@@ -374,7 +372,7 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("VENBlock(111)")
                     .SetName("Inline Embedded Swivel")
-                    .SetDescription("An inline swivel, which's center disk rotates blocks. Just ignore the shell's corners, they're, uhh... squishy" + MoverText)
+                    .SetDescription("An inline swivel, which's center disk rotates blocks. And it's fast, too" + MoverText)
                     .SetBlockID(1393837)//, "f74931ef3e14ba8e")
                     .SetFaction(FactionSubTypes.VEN)
                     .SetCategory(BlockCategories.Base)
@@ -793,16 +791,11 @@ namespace Control_Block
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
 
-            BlockLoader.DelayAfterSingleton(SetClusterBodyParticleObject);
-
             ModuleBlockMover.InitiateNetworking();
-        }
 
-        static void SetClusterBodyParticleObject()
-        {
-            ClusterBody.m_AttachParticlesGo = typeof(ManTechBuilder).GetField("m_AttachParticlesGo", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ManTechBuilder.inst) as GameObject;
+            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
+            harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
         }
-
 
 
         internal static bool PistonHeart = false;
@@ -1087,29 +1080,26 @@ namespace Control_Block
 
         internal static void SetVENPiston(ModuleBlockMover piston)
         {
-            /*[0] = (0 0 0) (0 22.5 0) , (0 0.3 0) (0 10 0) , (0 0.6 0) (0 -17.5 0) 
-             *[1] = (0 0 0) (0 0 0)    , (0 0.6 0) (0 0 0)  , (0 1.5 0) (0 0 0)  
-             *[2] = (0 0 0) (0 0 0)    , (0 1 0)   (0 0 0)  , (0 2 0)   (0 0 0)     */
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
                 new AnimationCurve(),
-                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 0.3f), new Keyframe(2f, 0.6f, 0, 0)), //shaft_1
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 0.3f, 0.3f, 0.3f), new Keyframe(2f, 0.6f, 0f, 0f)), //shaft_1
                 new AnimationCurve(),
 
                 new AnimationCurve(),
-                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 0.6f), new Keyframe(2f, 1.5f, 0, 0)), //shaft_2
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 0.6f, 0.65f, 0.65f), new Keyframe(2f, 1.5f, 0f, 0f)), //shaft_2
                 new AnimationCurve(),
 
                 new AnimationCurve(),
-                new AnimationCurve(new Keyframe(0f, 0f, 0, 0), new Keyframe(1f, 1f), new Keyframe(2f, 2f, 0, 0)), //head
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 1f, 1f), new Keyframe(2f, 2f, 0f, 0f)), //head
                 new AnimationCurve(),
             };
             piston.useRotCurves = true;
             piston.rotCurves = new AnimationCurve[]
             {
                 new AnimationCurve(),
-                new AnimationCurve(new Keyframe(0f, 22.5f, 0, 0), new Keyframe(1f, 10f), new Keyframe(2f, -17.5f, 0, 0)), //shaft_1
+                new AnimationCurve(new Keyframe(0f, 22.5f, 0f, 0f), new Keyframe(1f, 10f, -15f, -15f), new Keyframe(2f, -17.5f, 0f, 0f)), //shaft_1
                 new AnimationCurve(),
 
                 new AnimationCurve(),
@@ -1180,7 +1170,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 5;
-            swivel.MaxVELOCITY = 12;
+            swivel.MaxVELOCITY = 10;
             //swivel.MaxSpeed = 12f;
             //swivel.MINVALUELIMIT = 0;
             //swivel.MAXVALUELIMIT = 360;
@@ -1270,7 +1260,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 7.5f;
-            swivel.MaxVELOCITY = 12;
+            swivel.MaxVELOCITY = 8;
             //swivel.MaxSpeed = 15;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1347,22 +1337,12 @@ namespace Control_Block
     internal class AdjustAttachPosition : MonoBehaviour
     {
         public static Vector3 oLocalPos;
-        public static bool Modified;
         public static Vector3 PointerPos;
         static readonly int PointerLayerMask = Globals.inst.layerTank.mask | Globals.inst.layerTankIgnoreTerrain.mask | Globals.inst.layerScenery.mask | Globals.inst.layerPickup.mask | Globals.inst.layerTerrain.mask;
         const float PointerDistance = 512f;
-        static Transform particles => ClusterBody.m_AttachParticlesGo.transform;
+
         void LateUpdate()
         {
-            if (Modified)
-            {
-                particles.localPosition = oLocalPos;
-                Modified = false;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                Console.WriteLine(Class1.LogAllComponents(ClusterBody.m_AttachParticlesGo.transform));
-            }
             var ray = Singleton.camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, PointerDistance, PointerLayerMask, QueryTriggerInteraction.Ignore))
             {
@@ -1375,7 +1355,7 @@ namespace Control_Block
             if (ManPointer.inst.DraggingItem != null && ManPointer.inst.DraggingFocusTech != null)
             {
                 float num = float.MaxValue;
-                var tank = ManPointer.inst.DraggingFocusTech;
+                Tank tank = ManPointer.inst.DraggingFocusTech;
                 ClusterBody tankbody = null;
                 var cast = PhysicsUtils.RaycastAllNonAlloc(Singleton.camera.ScreenPointToRay(Input.mousePosition), ManPointer.inst.PickupRange, Globals.inst.layerTank.mask, QueryTriggerInteraction.Ignore);
                 foreach (var hit in cast)
@@ -1384,20 +1364,22 @@ namespace Control_Block
                     if (distance < num && hit.rigidbody != null)
                     {
                         ClusterBody component = hit.rigidbody.GetComponent<ClusterBody>();
-                        if (component && component.coreTank == tank)
+                        if (component && (tank == null || component.coreTank == tank))
                         {
                             tankbody = component;
                             num = distance;
                         }
                     }
                 }
-                if (tankbody)
+                if (tankbody != null)
                 {
-                    if (Input.GetKeyDown(KeyCode.Alpha8))
-                        Console.WriteLine(tankbody.GetComponentInParent<ModuleBlockMover>().transform.localPosition.ToString());
-                    Modified = true;
-                    oLocalPos = particles.localPosition;
-                    particles.localPosition = tank.trans.InverseTransformPoint(tankbody.transform.localPosition);
+                    Patches.ClusterBody = tankbody.transform;
+                    Patches.FocusedTech = tankbody.coreTank.trans;
+                    if (tank == null)
+                    {
+                        ManPointer.inst.DraggingFocusTech = tankbody.coreTank;
+                    }
+                    Patches.DoOffsetAttachParticles = 4;
                 }
             }
         }
@@ -1503,8 +1485,9 @@ namespace Control_Block
 
         static Vector3 oP;
         static Quaternion oQ;
-        static Transform ft;
-        static bool oF;
+        public static Transform FocusedTech;
+        public static Transform ClusterBody;
+        public static byte DoOffsetAttachParticles = 0;
 
         //[HarmonyPatch(typeof(ManTechBuilder), "OnDragItem")]
         //static class OnDragItem_Offset
@@ -1519,48 +1502,54 @@ namespace Control_Block
         //    }
         //}
 
-        //[HarmonyPatch(typeof(ManTechBuilder), "UpdateAttachParticles")]
-        //static class UpdateAttachParticles_Offset
-        //{
-        //    static void Prefix()
-        //    {
-        //        _Offset();
-        //    }
-        //    static void Postfix()
-        //    {
-        //        _undoOffset();
-        //    }
-        //}
+        [HarmonyPatch(typeof(ManTechBuilder), "Update")]
+        static class UpdateAttachParticles_Offset
+        {
+            static void Prefix()
+            {
+                if (DoOffsetAttachParticles != 0)
+                _Offset();
+            }
+            static void Postfix()
+            {
+                if (DoOffsetAttachParticles != 0)
+                _undoOffset();
+            }
+        }
+
+        [HarmonyPatch(typeof(ManPointer), "Update")]
+        static class ManPointer_Offset
+        {
+            static void Prefix()
+            {
+                if (DoOffsetAttachParticles != 0)
+                    _Offset();
+            }
+            static void Postfix()
+            {
+                if (DoOffsetAttachParticles != 0)
+                    _undoOffset();
+            }
+        }
 
         static void _Offset()
         {
-            var dft = ManPointer.inst.DraggingFocusTech;
-            if (dft != null)
-            {
-                if (Physics.Raycast(Singleton.camera.ScreenPointToRay(Singleton.Manager<ManPointer>.inst.DragPositionOnScreen), out RaycastHit raycastHit, 300f, Globals.inst.layerTank, QueryTriggerInteraction.Ignore))
+                if (ClusterBody == null || FocusedTech == null)
                 {
-                    var CB = raycastHit.transform.GetComponentInParent<ClusterBody>();
-                    if (CB != null)
-                    {
-                        ft = dft.trans;
-                        oP = ft.position;
-                        oQ = ft.rotation;
-                        ft.position = CB.transform.position;
-                        ft.rotation = CB.transform.rotation;
-                        oF = true;
-                    }
+                    DoOffsetAttachParticles = 0;
+                    return;
                 }
-            }
+                oP = FocusedTech.position;
+                oQ = FocusedTech.rotation;
+                FocusedTech.position = ClusterBody.position;
+                FocusedTech.rotation = ClusterBody.rotation;
         }
 
         static void _undoOffset()
         {
-            if (oF)
-            {
-                oF = false;
-                ft.position = oP;
-                ft.rotation = oQ;
-            }
+                DoOffsetAttachParticles--;
+                FocusedTech.position = oP;
+                FocusedTech.rotation = oQ;
         }
 
         //private static FieldInfo m_AwaitingPhysicsReset;

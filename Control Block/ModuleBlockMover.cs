@@ -281,13 +281,13 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
 
         public bool LASTSTATE;
 
-        private static float PointAtTarget(Transform trans, Vector3 localTarget, bool ProjectOnPlane)
+        private static float PointAtTarget(Transform trans, Vector3 localTarget, bool ProjectOnPlane, float Strength)
         {
             if (ProjectOnPlane)
             {
-                return Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(localTarget, trans.up), trans.up);
+                return Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(localTarget, trans.up) + (trans.forward * (1f - Strength)), trans.up);
             }
-            return trans.InverseTransformDirection(localTarget).y;
+            return trans.InverseTransformDirection(localTarget).y * Strength;
         }
 
         float m_InternalTimer = 0f;
@@ -328,25 +328,25 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                         return true;
 
                     case OperationType.ArrowPoint:
-                        Value += (PointAtTarget(block.trans, block.tank.rbody.GetPointVelocity(block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane) - Value) * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, block.tank.rbody.GetPointVelocity(block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Mathf.Abs(m_Strength)) - Value;
                         return true;
 
                     case OperationType.TargetPoint:
                         Visible target = block.tank.Weapons.GetManualTarget();
                         if (target == null)
                             return false;
-                        Value += (PointAtTarget(block.trans, (target.centrePosition - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane) - Value) * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, (target.centrePosition - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Mathf.Abs(m_Strength)) - Value;
                         return true;
 
                     case OperationType.PlayerPoint:
                         Tank playerTank = Singleton.playerTank;
                         if (playerTank == null)
                             return false;
-                        Value += (PointAtTarget(block.trans, (playerTank.WorldCenterOfMass - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane) - Value) * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, (playerTank.WorldCenterOfMass - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Mathf.Abs(m_Strength)) - Value;
                         return true;
 
                     case OperationType.GravityPoint:
-                        Value += (PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane) - Value) * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane, Mathf.Abs(m_Strength)) - Value;
                         return true;
 
                     case OperationType.DeactivateMotor:
@@ -362,7 +362,7 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                         return met;
 
                     case OperationType.CursorPoint:
-                        Value += (PointAtTarget(block.trans, (AdjustAttachPosition.PointerPos - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane) - Value) * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, (AdjustAttachPosition.PointerPos - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Mathf.Abs(m_Strength)) - Value;
                         return true;
 
                     default:
@@ -649,8 +649,8 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         GrabbedBlocks = new List<TankBlock>();
         StarterBlocks = new List<TankBlock>();
         IgnoredBlocks = new List<TankBlock>();
-        //base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
-        //base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+        base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+        //base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize)); // Uncertain about this bit, need to study code
         ProcessOperations = new List<InputOperator>();
         //HolderDirty = new List<TankBlock>();
 
@@ -660,7 +660,7 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         {
             parts[I] = block.transform.GetChild(I + offset);
         }
-        relativeCenter = parts[0].localPosition;
+        relativeCenter = parts[PartCount - 1].localPosition;
 
         tankAttachBlockAction = new Action<TankBlock, Tank>(this.BlockAdded);
         tankDetachBlockAction = new Action<TankBlock, Tank>(this.BlockRemoved);
@@ -669,36 +669,66 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         block.DetachEvent.Subscribe(Detatch);
     }
 
-    Vector3 cachePos, cachePos1;
-    Quaternion cacheRot, cacheRot1;
+    Vector3 cachePos, cacheLinVel, cacheAngVel;
+    Quaternion cacheRot;
+    bool Holding = false;
     private void CacheHolderTr()
     {
+        Holding = true;
         cachePos = Holder.transform.position;
         cacheRot = Holder.transform.rotation;
-        cachePos1 = HolderPart.localPosition;
-        cacheRot1 = HolderPart.localRotation;
+        cacheLinVel = Holder.rbody.velocity;
+        cacheAngVel = Holder.rbody.angularVelocity;
     }
-    bool restored;
-    private void DefaultHolderTr()
+    private void DefaultHolderTr(bool QueueRestore)
     {
-        restored = false;
-        cachePos = Holder.transform.position;
-        cacheRot = Holder.transform.rotation;
-        Holder.transform.position = block.tank.trans.position;
-        Holder.transform.rotation = block.tank.trans.rotation;
-        cachePos1 = HolderPart.localPosition;
-        cacheRot1 = HolderPart.localRotation;
+        if (Holder != null)
+        {
+            queueRestoreHolderTr = QueueRestore;
+            CacheHolderTr();
+            //Holder.transform.position = transform.parent.position;
+            //Holder.transform.rotation = transform.parent.rotation;
+            Holder.transform.position = block.tank.trans.position;
+            Holder.transform.rotation = block.tank.trans.rotation;
+        }
+    }
+
+    private void DefaultPart()
+    {
+        //cachePos1 = HolderPart.localPosition;
+        //cacheRot1 = HolderPart.localRotation;
         if (usePosCurves) HolderPart.localPosition = GetPosCurve(PartCount - 1, 0);
         if (useRotCurves) HolderPart.localRotation = GetRotCurve(PartCount - 1, 0);
     }
+
+    //private void RestorePart()
+    //{
+    //    HolderPart.localPosition = cachePos1;
+    //    HolderPart.localRotation = cacheRot1;
+    //}
+
     private void RestoreHolderTr()
     {
-        if (restored) return;
-        Holder.transform.position = cachePos;
-        Holder.transform.rotation = cacheRot;
-        HolderPart.localPosition = cachePos1;
-        HolderPart.localRotation = cacheRot1;
-        restored = true;
+        if (Holder != null)
+        {
+            //if (DEACTIVATEMOTOR)
+            //{
+            //    Holder.transform.position = cachePos;
+            //    Holder.transform.rotation = cacheRot;
+            //}
+            //else
+            //{
+            if (IsPlanarVALUE)
+                Holder.transform.rotation = transform.parent.rotation * Quaternion.Euler(transform.localRotation * Vector3.up * PVALUE);
+            // This is not restricted to linear values because it also recenters swivels
+            Holder.transform.position += HolderPart.position - Holder.transform.TransformPoint(block.cachedLocalPosition + block.cachedLocalRotation * relativeCenter);
+            if (Holding)
+            {
+                Holder.rbody.velocity = cacheLinVel;
+                Holder.rbody.angularVelocity = cacheAngVel;
+                Holding = false;
+            }
+        }
     }
 
     private void CreateHolder()
@@ -713,31 +743,45 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             Holder.gameObject.layer = block.tank.gameObject.layer;
             Holder.transform.parent = transform;
         }
-        else
-        {
-            Holder.gameObject.SetActive(true);
-        }
         Holder.transform.position = transform.parent.position;
         Holder.transform.rotation = transform.parent.rotation;
         Holder.coreTank = block.tank;
+        //Holder.rbody.isKinematic = false;
         //ClusterTech.VerifyJoin(block.tank, Holder);
+    }
+
+    private void Update()
+    {
+        if (GrabbedBlocks.Count != 0) GrabbedBlocks.Clear();
     }
 
     private void LateUpdate()
     {
-        if (GrabbedBlocks.Count != 0) GrabbedBlocks.Clear();
-        if (DEACTIVATEMOTOR && Holder != null)
+        if (Dirty)
         {
-            if (IsPlanarVALUE)
+            CleanDirty();
+        }
+        if (Holder != null)
+        {
+            if (queueRestoreHolderTr)
             {
-                PVALUE = Vector3.SignedAngle(transform.parent.forward, Holder.transform.forward, transform.up);
+                queueRestoreHolderTr = false;
+                UpdatePartTransforms();
+                RestoreHolderTr();
             }
-            else
+            if (DEACTIVATEMOTOR)
             {
-                PVALUE = Mathf.Clamp(Vector3.Project(Holder.transform.position - transform.parent.position, transform.up).magnitude, MINVALUELIMIT, MAXVALUELIMIT);
+                if (IsPlanarVALUE)
+                {
+                    PVALUE = Vector3.SignedAngle(transform.parent.forward, Holder.transform.forward, transform.up);
+                }
+                else
+                {
+                    PVALUE = Mathf.Clamp(Vector3.Project(Holder.transform.position - transform.parent.position, transform.up).magnitude, MINVALUELIMIT, MAXVALUELIMIT);
+                }
+                UpdatePartTransforms();
+                //PVALUE = VALUE;
             }
-            UpdatePartTransforms();
-            //PVALUE = VALUE;
         }
     }
 
@@ -748,19 +792,13 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             Heart = Class1.PistonHeart;
             return;
         }
-        int co = 0;
         try
         {
             if (block.tank == null)
             { 
                 return;
             }
-            if (Dirty)
-            {
-                CleanDirty();
-            }
             if (!Valid) return;
-            co++;
 
             bool Net = ManGameMode.inst.IsCurrentModeMultiplayer();
             bool IsControlledByNet = Net && block.tank != ManNetwork.inst.MyPlayer.CurTech.tech;
@@ -807,14 +845,12 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                 VALUE += LastSentVELOCITY;
                 PVALUE = VALUE;
             }
-            co++;
 
             if (IsPlanarVALUE)
             {
                 //VALUE = Mathf.Repeat(VALUE, 360);
                 PVALUE = Mathf.Repeat(PVALUE, 360);
             }
-            co++;
 
             if (!DEACTIVATEMOTOR)
                 UpdatePartTransforms();
@@ -839,10 +875,10 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                         }
                         UpdateSpringForce();
                     }
-                    if (usePosCurves)
-                        HolderJoint.targetPosition = GetPosCurve(PartCount - 1, VALUE);
-                    if (useRotCurves)
+                    if (IsPlanarVALUE)
                         HolderJoint.targetRotation = GetRotCurve(PartCount - 1, VALUE);
+                    else
+                        HolderJoint.targetPosition = GetPosCurve(PartCount - 1, VALUE);
                 }
                 else
                 {
@@ -852,21 +888,16 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
                         HolderJoint.angularXMotion = ConfigurableJointMotion.Locked;
                         //VALUE = PVALUE;
                     }
-                    if (usePosCurves)
-                    {
-                        HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
-                    }
-                    if (useRotCurves)
-                    {
+                    if (IsPlanarVALUE)
                         UpdateRotateAnchor();
-                    }
+                    else
+                        HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
                 }
             }
         }
         catch (Exception E)
         {
             Console.WriteLine(E);
-            Console.WriteLine(co);
             if (Holder == null)
                 Console.WriteLine("Holder is NULL!");
             foreach (var descriptor in typeof(ModuleBlockMover).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic))
@@ -893,8 +924,11 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     void UpdateRotateAnchor()
     {
         var rot = Holder.transform.rotation;
-        Holder.transform.localRotation = HolderPart.localRotation;
-        HolderJoint.axis = HolderJoint.axis;
+
+        Holder.transform.rotation = transform.parent.rotation * Quaternion.Euler(transform.localRotation * Vector3.up * PVALUE);
+
+        HolderJoint.axis = transform.localRotation * Vector3.up;
+        HolderJoint.secondaryAxis = transform.localRotation * Vector3.forward;
         Holder.transform.rotation = rot;
         //var pos = ((rotCurves[PartCount * 3 - 2].Evaluate(PVALUE) + 180) % 360) - 180;
         //var ll = HolderJoint.lowAngularXLimit;
@@ -905,62 +939,59 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         //HolderJoint.highAngularXLimit = hl;
     }
 
-    //internal void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
-    //{
-    //    if (saving)
-    //    {
-    //        if (CurrentAngle != 0f)
-    //        {
-    //            ResetRenderState();
-    //        }
+    bool queueRestoreHolderTr;
 
-    //        SerialData serialData = new SerialData()
-    //        {
-    //            Angle = CurrentAngle,
-    //            Input2 = trigger2,
-    //            Input1 = trigger1,
-    //            Local = LocalControl,
-    //            Speed = RotateSpeed,
-    //            Direction = Direction,
-    //            minRestrict = AngleCenter,
-    //            mode = mode,
-    //            rangeRestrict = AngleRange,
-    //            Restrict = LockAngle,
-    //            StartDelay = StartDelay,
-    //            CWDelay = CWDelay,
-    //            CCWDelay = CCWDelay,
-    //            CurrentDelay = CurrentDelay
-    //        };
-    //        serialData.Store(blockSpec.saveState);
-    //    }
-    //    else
-    //    {
-    //        SerialData sd = SerialData<ModuleSwivel.SerialData>.Retrieve(blockSpec.saveState);
-    //        if (sd != null)
-    //        {
-    //            CurrentAngle = sd.Angle;
-    //            if (CurrentAngle != 0f)
-    //            {
-    //                ForceMove = true;
-    //            }
-    //            trigger1 = sd.Input1;
-    //            trigger2 = sd.Input2;
-    //            LocalControl = sd.Local;
-    //            RotateSpeed = Mathf.Clamp(sd.Speed, 0.5f, MaxSpeed);
-    //            Direction = sd.Direction;
-    //            LockAngle = sd.Restrict;
-    //            AngleCenter = sd.minRestrict;
-    //            AngleRange = sd.rangeRestrict;
-    //            StartDelay = sd.StartDelay;
-    //            CurrentDelay = sd.CurrentDelay;
-    //            CWDelay = sd.CWDelay;
-    //            CCWDelay = sd.CCWDelay;
-    //            oldEvaluatedBlockCurve = BlockRotCurve.Evaluate(CurrentAngle);
-    //            mode = sd.mode;
-    //            Dirty = true;
-    //        }
-    //    }
-    //}
+    internal void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
+    {
+       if (saving)
+       {
+            if (PVALUE != 0f)
+            {
+                DefaultHolderTr(true);
+                Print("Serializing");
+            }
+
+            SerialData serialData = new SerialData()
+            {
+                minValueLimit = MINVALUELIMIT,
+                maxValueLimit = MAXVALUELIMIT,
+                currentValue = PVALUE,
+                targetValue = VALUE,
+                velocity = VELOCITY,
+                jointStrength = SPRSTR,
+                jointDampen = SPRDAM,
+                freeJoint = DEACTIVATEMOTOR,
+                processList = string.Join("\n", ProcessOperationsToStringArray())
+           };
+           serialData.Store(blockSpec.saveState);
+       }
+       else
+       {
+           SerialData sd = SerialData<ModuleBlockMover.SerialData>.Retrieve(blockSpec.saveState);
+           if (sd != null)
+           {
+                SetDirty();
+                MINVALUELIMIT = sd.minValueLimit;
+                MAXVALUELIMIT = sd.maxValueLimit;
+                PVALUE = sd.currentValue;
+                VALUE = sd.targetValue;
+                VELOCITY = sd.velocity;
+                SPRSTR = sd.jointStrength;
+                SPRDAM = sd.jointDampen;
+                DEACTIVATEMOTOR = sd.freeJoint;
+                StringArrayToProcessOperations(sd.processList);
+           }
+       }
+    }
+
+
+    [Serializable]
+        public class SerialData : Module.SerialData<ModuleBlockMover.SerialData>
+        {
+            public float minValueLimit, maxValueLimit, currentValue, targetValue, velocity, jointStrength, jointDampen;
+            public bool freeJoint;
+            public string processList;
+        }
 
     private void OnSpawn() //Pull from Object Pool
     {
@@ -995,10 +1026,16 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         }
         MINVALUELIMIT = 0;
         MAXVALUELIMIT = TrueLimitVALUE;
+        DEACTIVATEMOTOR = false;
+        oldDEACTIVATE = false;
+        SPRSTR = 0;
+        SPRDAM = 0;
         VALUE = 0;
+        PVALUE = 0;
         VELOCITY = 0;
         Heart = Control_Block.Class1.PistonHeart;
         Dirty = true;
+        //restored = true;
     }
 
     private void OnRecycle() //Put back to Object Pool
@@ -1018,6 +1055,8 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             Holder.coreTank = block.tank;
             Holder = Holder.Destroy();
         }
+        PVALUE = 0f;
+        UpdatePartTransforms();
         Valid = false;
     }
 
@@ -1030,17 +1069,26 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         SetDirty();
     }
 
-    internal void BlockAdded(TankBlock block, Tank tank)
+    internal void BlockAdded(TankBlock mkblock, Tank tank)
     {
-        SetDirty();
+        // This may actually have no effect...
+        //if (Valid && Holder != null)
+        //{
+        //    DefaultHolderTr(true); //Default position so no AP problems occur
+        //}
+        if (!Dirty)
+            Print("Block added, set dirty " + block.cachedLocalPosition.ToString());
+        SetDirty(); //ResetPhysics may already be called
     }
 
-    internal void BlockRemoved(TankBlock block, Tank tank)
+    internal void BlockRemoved(TankBlock rmblock, Tank tank)
     {
         if (block.tank != null && block.tank.blockman != null) Valid &= CanStartGetBlocks(block.tank.blockman);
-        if (!Valid || (Holder != null && Holder.TryRemoveBlock(block)))
+        if (!Valid || (Holder != null && Holder.TryRemoveBlock(rmblock)))
         {
-            SetDirty();
+            if (!Dirty)
+                Print("Block removed from blockmover, set dirty " + block.cachedLocalPosition.ToString());
+            SetDirty(); //ResetPhysics may already be called
         }
     }
 
@@ -1049,24 +1097,44 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         if (Holder != null)
         {
             Holder.coreTank = block.tank;
-            DefaultHolderTr();
-            Holder = Holder.Destroy();
-            SetDirty();
+            Holder.Dirty = true;
+            DefaultHolderTr(false);
+            Print("ResetPhysics called, cleaning " + block.cachedLocalPosition.ToString());
+            //SetDirty();
+            DefaultPart();
+            Holder.ResetPhysics(this);
+
+            UpdatePartTransforms();
+            RestoreHolderTr();
+            queueRestoreHolderTr = false;
+
+            UpdateSpringForce();
+            oldDEACTIVATE = false;
+            if (!DEACTIVATEMOTOR)
+            {
+                if (IsPlanarVALUE)
+                {
+                    UpdateRotateAnchor();
+                }
+                else
+                {
+                    HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
+                }
+            }
+            //else
+            //{
+            //    if (IsPlanarVALUE)
+            //    {
+            //        SetMinValueLimit(MINVALUELIMIT);
+            //        SetMaxValueLimit(MAXVALUELIMIT);
+            //    }
+            //    else
+            //    {
+            //        SetLinearLimit();
+            //    }
+            //}
         }
     }
-
-    //internal struct BlockDat
-    //{
-    //    public BlockDat(TankBlock Block)
-    //    {
-    //        pos = Block.cachedLocalPosition;
-    //        ortho = Block.cachedLocalRotation;
-    //    }
-
-    //    public IntVector3 pos;
-    //    public OrthoRotation ortho;
-    //}
-
     private string lastdatetime = "";
 
     private string GetDateTime(string Before, string After)
@@ -1089,8 +1157,11 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     {
         if (!Dirty || !block.IsAttached || block.tank == null)
         {
+            Dirty = false;
             return;
         }
+        Dirty = false;
+        Print("Reached CleanDirty " + block.cachedLocalPosition.ToString());
 
         if (GrabbedBlocks.Count == 0)
         {
@@ -1098,21 +1169,49 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
         }
         if (!Valid)
         {
+            Print("Invalid");
             Invalidate();
+            //queueRestoreHolderTr = false;
         }
-        else if (GrabbedBlocks.Count != 0)
+        else
         {
-            CreateHolder();
-            for (int i = 0; i < GrabbedBlocks.Count; i++)
+            if (GrabbedBlocks.Count == 0)
             {
-                var b = GrabbedBlocks[i];
-                Holder.AddBlock(b, b.cachedLocalPosition, b.cachedLocalRotation);
+                if (Holder != null)
+                {
+                    Holder = Holder.Destroy();
+                    Print("Purged holder, there were no blocks");
+                }
             }
-            Holder.ResetPhysics(this);
-            Holder.RemoveCOMFromTank();
-            RestoreHolderTr();
+            else
+            {
+                bool MakeNew = Holder == null, Refill = !MakeNew && (Holder.Dirty || GrabbedBlocks.Count != Holder.blocks.Count);
+                if (Refill)
+                {
+                    Print("Clearing holder's blocks: " + (Holder.Dirty ? "mover was marked changed" : $"grabbed {GrabbedBlocks.Count} blocks, but holder had {Holder.blocks.Count}"));
+                    Holder.Clear();
+                    //Holder = Holder.Destroy();
+                }
+                DefaultPart();
+                CreateHolder();
+                if (MakeNew || Refill)
+                {
+                    for (int i = 0; i < GrabbedBlocks.Count; i++)
+                    {
+                        var b = GrabbedBlocks[i];
+                        Holder.AddBlock(b, b.cachedLocalPosition, b.cachedLocalRotation);
+                    }
+                    Print($"Put {Holder.blocks.Count} blocks on holder");
+                }
+                else
+                    Print($"Kept current {Holder.blocks.Count} blocks on holder");
+                //Holder.ResetPhysics(this);
+
+                UpdatePartTransforms();
+                RestoreHolderTr();
+                queueRestoreHolderTr = false;
+            }
         }
-        Dirty = false;
     }
 
     internal void Invalidate()
@@ -1158,6 +1257,8 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
             Print("Unique pre-blockgrab check failed!");
             return false;
         }
+
+        GrabbedBlocks.Clear();
 
         foreach (IntVector3 sbp in startblockpos)
         {
@@ -1284,6 +1385,7 @@ internal class ModuleBlockMover : Module, TechAudio.IModuleAudioProvider
     public const TTMsgType NetMsgMoverID = (TTMsgType)32115;
     internal static bool IsNetworkingInitiated = false;
 
+#warning Disable "free-joint" when networked?
     public static void InitiateNetworking()
     {
         if (IsNetworkingInitiated)

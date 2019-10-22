@@ -10,7 +10,6 @@ namespace Control_Block
     {
         public const float MaxSpringForce = 2000f;
 
-        public static GameObject m_AttachParticlesGo;
         public Rigidbody rbody;
         public ConfigurableJoint Joint;
         /// <summary>
@@ -21,39 +20,61 @@ namespace Control_Block
         //! Can possibly be used for AP render manipulation
         public Tank coreTank;
         public Rigidbody parentBody;
-        public bool Dirty { get; private set; }
+        public bool Dirty;
 
         public ClusterBody Destroy()
         {
-            if (Joint != null)
-            {
-                DestroyImmediate(Joint);
-            }
             Clear();
             Destroy(this.gameObject);
             return null;
         }
 
+        private List<ConfigurableJoint> masks = new List<ConfigurableJoint>();
+
+        private bool CreateMaskJoint(Rigidbody bodyToMask)
+        {
+            if (masks.Count != 0)
+            {
+                for (int i = masks.Count - 1; i >= 0; i--)
+                {
+                    if (masks == null) masks.RemoveAt(i);
+                    else if (masks[i].connectedBody == bodyToMask) return false;
+                }
+            }
+            var joint = gameObject.AddComponent<ConfigurableJoint>();
+            masks.Add(joint);
+            joint.angularXMotion = ConfigurableJointMotion.Free;
+            joint.angularYMotion = ConfigurableJointMotion.Free;
+            joint.angularZMotion = ConfigurableJointMotion.Free;
+            joint.xMotion = ConfigurableJointMotion.Free;
+            joint.yMotion = ConfigurableJointMotion.Free;
+            joint.zMotion = ConfigurableJointMotion.Free;
+            joint.connectedBody = bodyToMask;
+            joint.enableCollision = false;
+            joint.enablePreprocessing = false;
+            return true;
+        }
+
         private void CreateCustomJoint(ModuleBlockMover moduleBlockMover)
         {
-            parentBody = moduleBlockMover.GetComponentInParent<Rigidbody>();
+            parentBody = moduleBlockMover.transform.parent.GetComponent<Rigidbody>();
             if (Joint != null)
             {
                 if (Joint.gameObject == parentBody.gameObject && Joint.connectedBody == rbody) return;
                 DestroyImmediate(Joint);
             }
-            Quaternion blockRot = moduleBlockMover.block.cachedLocalRotation;
-            var oldRot = transform.rotation;
+            Quaternion blockRot = moduleBlockMover.transform.localRotation;
+            Vector3 anchor1 = parentBody.transform.InverseTransformPoint(moduleBlockMover.HolderPart.position);
             transform.rotation = parentBody.transform.rotation;
             Joint = parentBody.gameObject.AddComponent<ConfigurableJoint>();
             Joint.configuredInWorldSpace = false;
             Joint.autoConfigureConnectedAnchor = false;
-            Joint.anchor = parentBody.transform.InverseTransformPoint(moduleBlockMover.HolderPart.position);
             Joint.axis = blockRot * Vector3.up;
             Joint.secondaryAxis = blockRot * Vector3.forward;
             Joint.enableCollision = false;
             Joint.connectedBody = rbody;
-            Joint.connectedAnchor = transform.InverseTransformPoint(moduleBlockMover.HolderPart.position);
+            Joint.anchor = anchor1;
+            Joint.connectedAnchor = anchor1;
             Joint.xMotion = ConfigurableJointMotion.Locked;
             Joint.yMotion = ConfigurableJointMotion.Locked;
             Joint.zMotion = ConfigurableJointMotion.Locked;
@@ -71,17 +92,16 @@ namespace Control_Block
             Joint.xDrive = new JointDrive { positionDamper = moduleBlockMover.SPRDAM, positionSpring = moduleBlockMover.SPRSTR, maximumForce = MaxSpringForce };
             Joint.lowAngularXLimit = new SoftJointLimit { bounciness = 0, contactDistance = 0, limit = moduleBlockMover.MINVALUELIMIT };
             Joint.highAngularXLimit = new SoftJointLimit { bounciness = 0, contactDistance = 0, limit = moduleBlockMover.MAXVALUELIMIT };
-            transform.rotation = oldRot;
         }
-
+        Vector3 CoG;
         public void ResetPhysics(ModuleBlockMover moduleBlockMover)
         {
             if (Dirty)
             {
                 Dirty = false;
                 float mass = 0f;
-                float m_TotalWeightScale = 0f;
                 Vector3 CoM = Vector3.zero;
+                CoG = Vector3.zero;
                 Vector3 a = Vector3.zero;
                 bool Null = false;
                 foreach (TankBlock tankBlock in blocks)
@@ -92,13 +112,14 @@ namespace Control_Block
                         continue;
                     }
                     Vector3 currentInertiaTensor = tankBlock.CurrentInertiaTensor;
-                    Vector3 centreOfMass = tankBlock.CentreOfMass;
-                    Vector3 localCoM = tankBlock.trans.localPosition + tankBlock.trans.localRotation * centreOfMass;
+                    Vector3 localCoM = tankBlock.cachedLocalPosition + tankBlock.cachedLocalRotation * tankBlock.CentreOfMass;
                     mass += tankBlock.CurrentMass;
                     CoM += tankBlock.CurrentMass * localCoM;
                     float num2 = tankBlock.CurrentMass * coreTank.massScaleFactor * tankBlock.AverageGravityScaleFactor;
-                    m_TotalWeightScale += num2;
                     a += currentInertiaTensor + tankBlock.CurrentMass * new Vector3(localCoM.y * localCoM.y + localCoM.z * localCoM.z, localCoM.z * localCoM.z + localCoM.x * localCoM.x, localCoM.x * localCoM.x + localCoM.y * localCoM.y);
+                    
+                    Vector3 a2 = tankBlock.cachedLocalPosition + tankBlock.cachedLocalRotation * tankBlock.CentreOfGravity;
+                    CoG += num2 * a2;
                 }
                 if (Null)
                 {
@@ -120,10 +141,30 @@ namespace Control_Block
                 rbody.inertiaTensorRotation = Quaternion.identity;
             }
             CreateCustomJoint(moduleBlockMover);
+            var TWR = coreTank.GetGravityScale();
+            moduleBlockMover.Print($"cluster mass: {rbody.mass} {rbody.centerOfMass} , tank mass: {coreTank.rbody.mass} {coreTank.rbody.centerOfMass}");
+            RemoveCOMFromTank();
+            if (coreTank.EnableGravity)
+            {
+                m_TotalWeightScale.SetValue(coreTank, TWR * coreTank.rbody.mass);
+            }
+            //if (moduleBlockMover.transform.parent != coreTank.trans)
+            //{
+            //    var mask = moduleBlockMover.transform.parent.parent.GetComponentInParent<Rigidbody>();
+            //    if (mask != null) // which it shouldn't
+            //        CreateMaskJoint(mask);
+            //    else // and a pretty strong else
+            //        Console.WriteLine("SubCluster " + moduleBlockMover.block.cachedLocalPosition.ToString() + ": No rigidbody found to mask!");
+            //}
+            moduleBlockMover.Print($"New tank mass: {coreTank.rbody.mass} {coreTank.rbody.centerOfMass}");
         }
+
+        static System.Reflection.FieldInfo m_TotalWeightScale = typeof(Tank).GetField("m_TotalWeightScale", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        //static System.Reflection.FieldInfo m_CogPos = typeof(Tank).GetField("m_CogPos", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
         // COM = (com1 * m1 + com2 * m2) / (m1 + m2)
         // com1 = ((COM * m1) + (COM * m2) - (com2 * m2)) / m1
+
         //public void ReturnCOMToTank()
         //{
         //    Console.WriteLine("RETURNED COM TO TANK AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -134,17 +175,17 @@ namespace Control_Block
         //    coreTank.rbody.mass = m1 + m2;
         //}
 
-        public void RemoveCOMFromTank()
+        private void RemoveCOMFromTank()
         {
             Vector3 COM = coreTank.rbody.centerOfMass, com2 = rbody.centerOfMass;
-            float m2 = rbody.mass, M = coreTank.rbody.mass, 
-                m1 = M - m2;
+            float m2 = rbody.mass, m1 = coreTank.rbody.mass - rbody.mass;
 
-            coreTank.rbody.centerOfMass = ((COM * m1) + (COM * m2) - (com2 * m2)) / m1;
             coreTank.rbody.mass = m1;
-            coreTank.rbody.inertiaTensor = coreTank.rbody.inertiaTensor - rbody.inertiaTensor;
-                //+ M * Vector3.Scale(COM, COM) 
-                //- m2 * Vector3.Scale(com2, com2);
+            coreTank.rbody.centerOfMass = ((COM * m1) + (COM * m2) - (com2 * m2)) / m1;
+
+            //coreTank.rbody.inertiaTensor = coreTank.rbody.inertiaTensor - rbody.inertiaTensor;
+            //+ M * Vector3.Scale(COM, COM) 
+            //- m2 * Vector3.Scale(com2, com2);
             //coreTank.rbody.inertiaTensor -= rbody.inertiaTensor;
         }
 
@@ -177,18 +218,35 @@ namespace Control_Block
 
         public bool TryRemoveBlock(TankBlock block)
         {
-            bool removed = blocks.Remove(block);
-            Dirty |= removed;
-            return removed;
+            if (blocks.Contains(block))
+            {
+                blocks.Remove(block);
+                Dirty = true;
+                return true;
+            }
+            return false;
         }
 
         internal void Clear()
         {
+            if (Joint != null)
+            {
+                DestroyImmediate(Joint);
+            }
+            //if (masks.Count != 0)
+            //{
+            //    for (int i = 0; i < masks.Count; i++)
+            //    {
+            //        if (masks[i] != null)
+            //            Component.DestroyImmediate(masks[i]);
+            //    }
+            //    masks.Clear();
+            //}
             if (coreTank == null)
             {
                 foreach (var block in blocks)
                 {
-                    if (block == null) continue;
+                    if (block == null || block.trans.parent != transform) continue;
                     block.trans.parent = null;
                 }
             }
@@ -196,12 +254,13 @@ namespace Control_Block
             {
                 foreach (var block in blocks)
                 {
-                    if (block == null) continue;
+                    if (block == null || block.trans.parent != transform) continue;
                     block.trans.parent = coreTank.trans;
                     //block.trans.localPosition = block.cachedLocalPosition;
                     //block.trans.localRotation = block.cachedLocalRotation;
                 }
             }
+            Dirty = true;
             blocks.Clear();
         }
     }

@@ -39,7 +39,7 @@ namespace Control_Block
                                     if (endCheck.block.cachedLocalRotation * Vector3.forward == block.cachedLocalRotation * Vector3.forward && // Planar
                                         Vector3.Dot(endCheck.block.cachedLocalRotation * Vector3.up, block.cachedLocalRotation * Vector3.up) < -0.9) // Facing opposite direction
                                     {
-                                        extent = rails * 0.5f; // Share half of rails, end
+                                        extent = rails * 0.5f - 0.5f; // Share half of rails, end
                                         break;
                                     }
                                 }
@@ -57,7 +57,7 @@ namespace Control_Block
                     break;
                 }
             }
-            if (extent == 0) extent = 0.25f;
+            if (extent <= 0) extent = 0.25f;
             //var keyframe = posCurves[PartCount * 3 - 2].keys[PartCount - 1];
             //keyframe.time = extent;
             //keyframe.value = extent; // * extentScale
