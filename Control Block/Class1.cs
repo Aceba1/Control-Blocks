@@ -40,7 +40,7 @@ namespace Control_Block
                 AddMeshToBlockMover(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
 
                 ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                    Vector3.up*0.5f,
+                    Vector3.up * 0.5f,
                     Vector3.down * 0.5f,
                     Vector3.left * 0.5f,
                     Vector3.right * 0.5f,
@@ -805,6 +805,8 @@ namespace Control_Block
             PistonHeart = !PistonHeart;
         }
 
+        #region PrefabBaker
+
         internal static GameObject AddCollider(Vector3 colliderSize, Vector3 colliderOffset, Transform par)
         {
             GameObject sub = new GameObject("Frictionless Collider") { layer = Globals.inst.layerTank };
@@ -847,6 +849,8 @@ namespace Control_Block
             sub.transform.localRotation = Quaternion.identity;
             return sub;
         }
+
+        #endregion PrefabBaker
 
         #region SetBlockData
 
@@ -1170,7 +1174,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 5;
-            swivel.MaxVELOCITY = 10;
+            swivel.MaxVELOCITY = 9;
             //swivel.MaxSpeed = 12f;
             //swivel.MINVALUELIMIT = 0;
             //swivel.MAXVALUELIMIT = 360;
@@ -1201,7 +1205,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 7.5f;
-            swivel.MaxVELOCITY = 15;
+            swivel.MaxVELOCITY = 12;
             //swivel.MaxSpeed = 15;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1232,7 +1236,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 5f;
-            swivel.MaxVELOCITY = 8;
+            swivel.MaxVELOCITY = 6;
             //swivel.MaxSpeed = 8;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1260,7 +1264,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 7.5f;
-            swivel.MaxVELOCITY = 8;
+            swivel.MaxVELOCITY = 6;
             //swivel.MaxSpeed = 15;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1302,28 +1306,11 @@ namespace Control_Block
             foreach (Component comp in c)
             {
                 result += "\n" + Indenting + comp.name + " : " + comp.GetType().Name;
-                if (Reflection)
+                if (comp is MeshRenderer) result += " : Material (" + ((MeshRenderer)comp).material.name + ")";
+                if (comp is Animation anim)
                 {
-                    var t = comp.GetType();
-                    var f = t.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                    var p = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                    foreach (var field in f)
-                    {
-                        result += $"\n{Indenting} (F).{field.Name} ({field.FieldType.ToString()}) = {field.GetValue(comp)}";
-                    }
-                    foreach (var field in p)
-                    {
-                        result += $"\n{Indenting} (P).{field.Name} ({field.PropertyType.ToString()})";
-                        try
-                        {
-                            result += $" = {field.GetValue(comp, null)}";
-                        }
-                        catch { }
-                    }
-                }
-                else
-                {
-                    if (comp is MeshRenderer) result += " : Material (" + ((MeshRenderer)comp).material.name + ")";
+                    var clipc = anim.GetClipCount();
+                    result += $" : Animation ({clipc} clips)";
                 }
             }
             for (int i = SearchIn.transform.childCount - 1; i >= 0; i--)
@@ -1555,22 +1542,54 @@ namespace Control_Block
         //private static FieldInfo m_AwaitingPhysicsReset;
         //private static Vector3 oldCOM;
         //private static bool CenterToOld = false;
-        //[HarmonyPatch(typeof(Tank), "ResetPhysics")]
-        //private static class CenterCOM
-        //{
-        //    private static void Prefix(Tank __instance)
-        //    {
-        //        if (__instance.IsAnchored || !(bool)m_AwaitingPhysicsReset.GetValue(__instance)) return;
-        //        CenterToOld = true;
-        //        oldCOM = __instance.rbody.worldCenterOfMass;
-        //    }
-        //    private static void Postfix(Tank __instance)
-        //    {
-        //        if (!CenterToOld) return;
-        //        CenterToOld = false;
-        //        __instance.transform.position = (__instance.rbody.position + oldCOM - __instance.rbody.worldCenterOfMass);
-        //    }
-        //}
+        [HarmonyPatch(typeof(Tank), "ResetPhysics")]
+        private static class ResetPhysicsHook
+        {
+            private static void Prefix(Tank __instance)
+            {
+                foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
+                {
+                    blockmover.PreResetPhysics();
+                    //if (blockmover.Holder != null)
+                    //{
+                    //    _RecursivePre(blockmover.Holder);
+                    //}
+                }
+            }
+            //static void _RecursivePre(ClusterBody body)
+            //{
+            //    foreach (var blockmover in body.moduleBlockMover.GrabbedBlockMovers)
+            //    {
+            //        blockmover.PreResetPhysics();
+            //        if (blockmover.Holder != null)
+            //        {
+            //            _RecursivePre(blockmover.Holder);
+            //        }
+            //    }
+            //}
+            //static void _RecursivePost(ClusterBody body)
+            //{
+            //    foreach (var blockmover in body.moduleBlockMover.GrabbedBlockMovers)
+            //    {
+            //        blockmover.PostResetPhysics();
+            //        //if (blockmover.Holder != null)
+            //        //{
+            //        //    _RecursivePost(blockmover.Holder);
+            //        //}
+            //    }
+            //}
+            private static void Postfix(Tank __instance)
+            {
+                foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
+                {
+                    blockmover.PostResetPhysics();
+                    //if (blockmover.Holder != null)
+                    //{
+                    //    _RecursivePost(blockmover.Holder);
+                    //}
+                }
+            }
+        }
 
         //[HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         //private static class FanJetStabilizePatch

@@ -830,21 +830,19 @@ namespace Control_Block.Properties {
         ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;swivel.blend&apos;
         ///# www.blender.org
         ///mtllib swivel_base.mtl
-        ///o Cube_Cube.001
-        ///v -0.437500 0.437500 1.437500
-        ///v -0.437500 0.437500 -0.437500
-        ///v 1.437500 0.437500 1.437500
-        ///v 1.437500 0.437500 -0.437500
-        ///v 0.500000 0.500000 1.475000
-        ///v -0.475000 0.500000 0.500000
-        ///v 0.500000 0.500000 -0.475000
-        ///v 1.475000 0.500000 0.499994
-        ///v -0.361255 0.500000 0.962274
-        ///v -0.444986 0.500000 0.763464
-        ///v -0.471618 0.500000 0.615766
-        ///v -0.471618 0.500000 0.384235
-        ///v -0.444986 0.500000 0.236535
-        ///v -0.361255 0.500 [rest of string was truncated]&quot;;.
+        ///o m_GSO_Block_111_Instance.001_m_GSO_Block_111_Instance.002
+        ///v -0.366667 0.300000 -0.466666
+        ///v -0.366667 -0.300000 -0.466667
+        ///v -0.200000 -0.300000 -0.500000
+        ///v -0.466667 0.300000 -0.366666
+        ///v -0.500000 0.300000 -0.200000
+        ///v -0.500000 0.300000 1.200000
+        ///v -0.466667 0.300000 1.366667
+        ///v -0.366667 -0.300000 1.466666
+        ///v -0.466667 -0.300000 1.366667
+        ///v -0.348148 -0.411111 -0.437037
+        ///v -0.437037 -0.411111 -0.348148
+        ///v -0.466667 -0.300 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_base {
             get {
@@ -1143,7 +1141,7 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.80 (sub 75) OBJ File: &apos;ven twist piston.blend&apos;
+        ///   Looks up a localized string similar to # Blender v2.80 (sub 74) OBJ File: &apos;ven twist piston.blend&apos;
         ///# www.blender.org
         ///mtllib ven twist piston shaft 2.mtl
         ///o Cylinder.001_Cylinder.004

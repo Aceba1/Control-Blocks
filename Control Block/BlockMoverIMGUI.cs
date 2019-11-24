@@ -273,16 +273,17 @@ namespace Control_Block
 
                             if (pvOn == null)
                             {
-                                pvOn = new GUIStyle(GUI.skin.label);
-                                pvOn.alignment = TextAnchor.MiddleLeft;
-
+                                pvOn = new GUIStyle(GUI.skin.label)
+                                {
+                                    alignment = TextAnchor.MiddleLeft
+                                };
                                 pvOn.onActive.textColor = Color.white;
                                 pvOn.active.textColor = Color.white;
 
                                 var normalColor = new Color(0.85f, 0.85f, 0.85f);
 
-                                pvOn.onFocused.textColor = normalColor;
-                                pvOn.focused.textColor = normalColor;
+                                pvOn.onFocused.textColor = Color.white;
+                                pvOn.focused.textColor = Color.white;
 
                                 pvOn.onNormal.textColor = normalColor;
                                 pvOn.normal.textColor = normalColor;
@@ -293,8 +294,10 @@ namespace Control_Block
                                 pvOn.padding = new RectOffset(8, 8, 2, 2);
                                 pvOn.clipping = TextClipping.Overflow;
                                 pvOn.wordWrap = false;
-                                pvOff = new GUIStyle(pvOn);
-                                pvOff.fontStyle = FontStyle.Normal;
+                                pvOff = new GUIStyle(pvOn)
+                                {
+                                    fontStyle = FontStyle.Normal
+                                };
                             }
 
                             GUI.changed = false;
@@ -550,23 +553,30 @@ namespace Control_Block
 
                             GUILayout.Space(16);
 
-                            GUILayout.BeginVertical("Values", GUI.skin.window);
+                            GUILayout.BeginVertical("Properties", GUI.skin.window);
                             {
                                 //GUILayout.Space(8);
                                 GUILayout.Label($"Current Value: {module.PVALUE}");
                                 //GUILayout.Label($"Target Value: {module.VALUE}");
 
-                                GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref module.VALUE, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, 0.25f);
-                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.MaxVELOCITY, module.MaxVELOCITY, true);
+                                float round = module.IsPlanarVALUE ? 2.5f : 0.25f;
+
+                                GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref module.VALUE, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round);
+                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.MaxVELOCITY, module.MaxVELOCITY, true, round);
 
                                 GUILayout.Space(4);
 
-                                if (GUIOverseer.TextSliderPair("Min Value Limit: ", ref minCache, ref module.MINVALUELIMIT, 0, module.TrueLimitVALUE, true, 0.25f))
+                                if (GUIOverseer.TextSliderPair("Min Value Limit: ", ref minCache, ref module.MINVALUELIMIT, module.IsPlanarVALUE ? -module.TrueLimitVALUE : 0, module.TrueLimitVALUE, true, round))
                                 {
                                     module.SetMinValueLimit(module.MINVALUELIMIT);
+                                    if (module.MAXVALUELIMIT < module.MINVALUELIMIT)
+                                    {
+                                        module.SetMaxValueLimit(module.MINVALUELIMIT);
+                                        maxCache = module.MINVALUELIMIT.ToString();
+                                    }
                                     queueResetTextCache = true;
                                 }
-                                if (GUIOverseer.TextSliderPair("Max Value Limit: ", ref maxCache, ref module.MAXVALUELIMIT, module.MINVALUELIMIT, module.TrueLimitVALUE, true, 0.25f))
+                                if (GUIOverseer.TextSliderPair("Max Value Limit: ", ref maxCache, ref module.MAXVALUELIMIT, module.MINVALUELIMIT, module.TrueLimitVALUE, true, round))
                                 {
                                     module.SetMaxValueLimit(module.MAXVALUELIMIT);
                                     queueResetTextCache = true;
@@ -574,12 +584,16 @@ namespace Control_Block
 
                                 GUILayout.Space(4);
 
-                                GUILayout.Label("Free-joint properties");
-                                if (GUIOverseer.TextSliderPair("Spring Strength: ", ref springCache, ref module.SPRSTR, 0, 1000, false, 0.25f))
+                                GUILayout.Label("Joint dynamics");
+                                module.FREEJOINT = GUILayout.Toggle(module.FREEJOINT, "Free-Joint (Suspension state");
+                                GUILayout.Label("Suspension state frees the physics joints to allow manipulation from influences");
+                                if (GUIOverseer.TextSliderPair("Spring Strength: ", ref springCache, ref module.SPRSTR, 0, 2000, false, 5f))
                                     module.UpdateSpringForce();
-                                if (GUIOverseer.TextSliderPair("Spring Dampen: ", ref dampCache, ref module.SPRDAM, 0, 100, false, 0.25f))
+                                if (GUIOverseer.TextSliderPair("Spring Dampen: ", ref dampCache, ref module.SPRDAM, 0, 1000, false, 2.5f))
                                     module.UpdateSpringForce();
-                                module.DEACTIVATEMOTOR = GUILayout.Toggle(module.DEACTIVATEMOTOR, "Deactivate Motor");
+                                GUILayout.Space(4);
+                                module.LOCKJOINT = GUILayout.Toggle(module.LOCKJOINT, "Lock-Joint (Static state");
+                                GUILayout.Label("Static state fixes the position and removes physics from the clusterbody entirely.");
 
                                 GUILayout.Space(4);
                             }
@@ -588,8 +602,8 @@ namespace Control_Block
 
                             if (module.Holder != null)
                             {
-                                GUILayout.Label($"Rigidbody mass: {module.Holder.rbody.mass}");
-                                GUILayout.Label($"Rigidbody CoM: {module.Holder.rbody.centerOfMass}");
+                                GUILayout.Label($"Rigidbody mass: {module.Holder.rbody_mass}");
+                                GUILayout.Label($"Rigidbody CoM: {module.Holder.rbody_centerOfMass}");
                                 GUILayout.Label($"Blocks on body: {module.Holder.blocks.Count}");
                             }
                             GUILayout.Label($"Tank mass: {module.block.tank.rbody.mass}");
