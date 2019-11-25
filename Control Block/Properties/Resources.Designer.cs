@@ -19,7 +19,7 @@ namespace Control_Block.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -77,7 +77,7 @@ namespace Control_Block.Properties {
         ///v -0.000028 -0.337101 0.091185
         ///v -0.475029 -0.337101 -0.008787
         ///v 0.118702 -0.337101 -0.475022
-        ///v -0.118798 -0.337101 -0.474967 [rest of string was truncated]&quot;;.
+        ///v -0.118798 -0. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFCab {
             get {
@@ -111,8 +111,7 @@ namespace Control_Block.Properties {
         ///v -0.093644 -0.157456 -0.000000
         ///v 0.093644 -0.157456 -0.000000
         ///v -0.093644 -0.111338 0.111339
-        ///v 0.093644 -0.111338 0.111339
-        ///v - [rest of string was truncated]&quot;;.
+        ///v 0.093644 -0.1113 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFCab_wheel {
             get {
@@ -136,7 +135,7 @@ namespace Control_Block.Properties {
         ///v 0.366017 -0.428834 -0.366017
         ///v -0.500000 -0.428834 -0.107355
         ///v -0.500000 -0.314892 -0.146953
-        ///v -0.500000 -0.428834 0.1073 [rest of string was truncated]&quot;;.
+        ///v -0.500000 - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blockbottom {
             get {
@@ -160,8 +159,7 @@ namespace Control_Block.Properties {
         ///v -0.126918 0.500000 0.428833
         ///v 0.126918 0.500000 0.428833
         ///v -0.366017 0.428834 0.366017
-        ///v -0.500000 0.428834 0.146953
-        ///v 0.1469 [rest of string was truncated]&quot;;.
+        ///v -0.500000 0.428834 0. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BFp_blocktop {
             get {
@@ -216,7 +214,7 @@ namespace Control_Block.Properties {
         ///v 0.900000 0.100000 0.100000
         ///v 0.900000 0.100000 0.900000
         ///v 0.100000 0.100000 0.100000
-        ///v 0.100000 0.100 [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GCfrictionpadbig {
             get {
@@ -241,8 +239,7 @@ namespace Control_Block.Properties {
         ///v 0.500000 0.412500 0.000000
         ///v 0.500000 0.500000 0.000000
         ///v 0.461940 0.412500 0.191342
-        ///v 0.461940 0.500000 0.191342
-        ///v 0.353553 0.41 [rest of string was truncated]&quot;;.
+        ///v 0.461940 0.500000 0.191342 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GCfrictionpadsmall {
             get {
@@ -267,8 +264,7 @@ namespace Control_Block.Properties {
         ///v -0.258274 0.344012 0.340149
         ///v 0.030684 0.344012 0.659851
         ///v 0.030684 0.557951 0.659851
-        ///v 0.030684 0.557951 0.340149
-        ///v 0.030 [rest of string was truncated]&quot;;.
+        ///v 0.030684 0.557951  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_blockbottom {
             get {
@@ -293,8 +289,7 @@ namespace Control_Block.Properties {
         ///v 1.045250 0.552534 -0.500000
         ///v 0.896773 0.369114 -0.500000
         ///v 0.103227 0.369114 -0.500000
-        ///v -0.045250 0.552534 -0.500000
-        ///v 1.500000  [rest of string was truncated]&quot;;.
+        ///v -0.045250 0.552534 -0.50 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_blocktop {
             get {
@@ -329,7 +324,7 @@ namespace Control_Block.Properties {
         ///v -0.185176 1.131227 0.104413
         ///v -0.291174 -0.160939 0.500000
         ///v -0.291174 1.131227 0.500000
-        ///v -0.185176 -0.160939 0.89558 [rest of string was truncated]&quot;;.
+        ///v -0.185176 - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_shaftbottom {
             get {
@@ -354,8 +349,7 @@ namespace Control_Block.Properties {
         ///v -0.064939 1.486831 0.173832
         ///v -0.152335 0.513169 0.500000
         ///v -0.152335 1.486831 0.500000
-        ///v -0.064939 0.513169 0.826168
-        ///v -0.064939 [rest of string was truncated]&quot;;.
+        ///v -0.064939 0.513169 0.82 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GEOp_shafttop {
             get {
@@ -380,7 +374,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 0.374719 -0.468760
         ///v -0.312240 0.374719 -0.312560
         ///v 0.312559 -0.375040 -0.468760
-        ///v -0.312240 -0.375040 -0.4 [rest of string was truncated]&quot;;.
+        ///v -0.31224 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_blockbottom {
             get {
@@ -405,8 +399,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 -0.374719 0.468760
         ///v -0.312240 -0.374719 0.312560
         ///v 0.312559 0.375040 0.468760
-        ///v -0.312240 0.375040 0.468760
-        ///v -0. [rest of string was truncated]&quot;;.
+        ///v -0.312240 0.37504 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_blocktop {
             get {
@@ -441,7 +434,7 @@ namespace Control_Block.Properties {
         ///v -0.437200 -0.000321 -0.328180
         ///v -0.437200 -0.000321 -0.000160
         ///v -0.327860 -0.000321 -0.000160
-        ///v -0.437200 -0.500 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftbottom {
             get {
@@ -465,8 +458,7 @@ namespace Control_Block.Properties {
         ///v -0.312240 -0.437841 -0.000160
         ///v 0.312559 0.499359 -0.000160
         ///v 0.312559 -0.437840 -0.000160
-        ///v -0.312240 0.499359 -0.000160
-        ///v -0.312240 - [rest of string was truncated]&quot;;.
+        ///v -0.312240 0.499359 -0.00016 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftmidb {
             get {
@@ -491,7 +483,7 @@ namespace Control_Block.Properties {
         ///v 0.211029 0.436559 -0.281320
         ///v -0.210710 -0.500641 -0.281320
         ///v -0.210711 0.436559 -0.281320
-        ///v -0.281000 -0.500641 -0.21103 [rest of string was truncated]&quot;;.
+        ///v -0.281000 -0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shaftmidt {
             get {
@@ -516,8 +508,7 @@ namespace Control_Block.Properties {
         ///v -0.437200 0.000321 0.328180
         ///v -0.437200 0.000321 0.000160
         ///v -0.327860 0.000321 0.000160
-        ///v -0.437200 0.500160 0.328180
-        ///v -0.43 [rest of string was truncated]&quot;;.
+        ///v -0.437200 0.500160  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEp_shafttop {
             get {
@@ -542,7 +533,7 @@ namespace Control_Block.Properties {
         ///v 0.499999 -0.500000 -0.500001
         ///v -0.500001 -0.500000 -0.500000
         ///v -0.500000 -0.500000 0.500000
-        ///v 0.500000 -0.500000 0.4 [rest of string was truncated]&quot;;.
+        ///v 0.5000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball {
             get {
@@ -568,7 +559,7 @@ namespace Control_Block.Properties {
         ///v -0.353553 -0.500000 0.353553
         ///v -0.176777 -0.200000 0.176777
         ///v -0.500000 -0.500000 -0.000000
-        ///v -0.250000 -0.2000 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_collider {
             get {
@@ -581,20 +572,19 @@ namespace Control_Block.Properties {
         ///# www.blender.org
         ///mtllib mtmag ball collider large.mtl
         ///o Cone
-        ///v 0.500000 -0.500000 -0.207106
+        ///v -0.207106 -0.500000 -0.207106
         ///v 0.500000 0.100000 -0.000000
         ///v 0.853554 0.100000 0.146446
         ///v 1.207106 -0.500000 -0.207106
         ///v 1.000000 0.100000 0.500000
-        ///v 1.207106 -0.500000 0.500000
         ///v 0.853554 0.100000 0.853554
         ///v 1.207106 -0.500000 1.207106
         ///v 0.500000 0.100000 1.000000
-        ///v 0.500000 -0.500000 1.207106
         ///v 0.146446 0.100000 0.853554
         ///v -0.207106 -0.500000 1.207106
         ///v 0.000000 0.100000 0.500000
-        ///v -0.207106 -0. [rest of string was truncated]&quot;;.
+        ///v 0.146446 0.100000 0.146446
+        ///v 1.207106 -0.148527 0.500000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_collider_large {
             get {
@@ -605,7 +595,7 @@ namespace Control_Block.Properties {
         /// <summary>
         ///   Looks up a localized string similar to # Blender v2.80 (sub 47) OBJ File: &apos;Ball.blend&apos;
         ///# www.blender.org
-        ///mtllib mtmag ball large.mtl
+        ///mtllib mtmag ball collider large.mtl
         ///o m_BF_Block_Faired_111_Instance.001
         ///v 0.786182 -0.247577 1.190903
         ///v 0.213819 -0.247577 -0.190903
@@ -618,8 +608,7 @@ namespace Control_Block.Properties {
         ///v 0.189096 -0.497458 -0.145108
         ///v -0.146268 -0.497472 -0.145367
         ///v -0.145340 -0.497579 0.190105
-        ///v -0.145930 -0.500000 0.500000
-        ///v -0.145716  [rest of string was truncated]&quot;;.
+        ///v -0.145930 -0.5000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_ball_large {
             get {
@@ -663,7 +652,7 @@ namespace Control_Block.Properties {
         ///v -0.125000 -0.000000 -0.450000
         ///v -0.450000 -0.000000 0.405000
         ///v 0.450000 -0.000000 -0.125000
-        ///v -0.450000 -0.000000 [rest of string was truncated]&quot;;.
+        ///v -0.4 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_fixed {
             get {
@@ -689,7 +678,7 @@ namespace Control_Block.Properties {
         ///v 0.853553 0.399993 1.418785
         ///v 0.853553 -0.500000 1.500000
         ///v 0.853553 -0.500000 1.401005
-        ///v 0.146447 -0.500000 1.40100 [rest of string was truncated]&quot;;.
+        ///v 0.146447  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mtmag_swivel_large {
             get {
@@ -715,7 +704,7 @@ namespace Control_Block.Properties {
         ///v 0.461940 -0.490000 0.191342
         ///v 0.461940 0.250000 0.191342
         ///v 0.353553 -0.490000 0.353553
-        ///v 0.353553 0.250000 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_base {
             get {
@@ -741,7 +730,7 @@ namespace Control_Block.Properties {
         ///v -0.353553 0.250000 0.353554
         ///v -0.461940 0.250000 0.191342
         ///v -0.500000 0.141421 -0.000000
-        ///v -0.461940 0.250000  [rest of string was truncated]&quot;;.
+        ///v -0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string piston_head {
             get {
@@ -818,9 +807,7 @@ namespace Control_Block.Properties {
         ///vn 0.6038 -0.7971 0.0000
         ///vn 0.0000 -0.7971 -0.6038
         ///vn 0.0000 -0.7971 0.6038
-        ///usemtl Material.001
-        ///s off
-        ///f 1/ [rest of string was truncated]&quot;;.
+        ///usemtl Mater [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sr {
             get {
@@ -855,8 +842,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 0.500000 0.500000
         ///v 0.500000 0.500000 -0.500000
         ///v 1.500000 0.500000 0.499994
-        ///v -0.383339 0.500000 0.974128
-        ///v -0.469217 0. [rest of string was truncated]&quot;;.
+        ///v -0.383339 0.500000 0.97412 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_base {
             get {
@@ -882,7 +868,7 @@ namespace Control_Block.Properties {
         ///v 0.908641 0.500000 0.253331
         ///v 0.934248 0.500000 0.111313
         ///v 0.937500 0.500000 -0.000006
-        ///v 0.934249 0.500000 [rest of string was truncated]&quot;;.
+        ///v  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_head {
             get {
@@ -917,8 +903,7 @@ namespace Control_Block.Properties {
         ///v 0.307439 -0.250000 -0.177500
         ///v 0.307439 0.250000 -0.177500
         ///v 0.355000 -0.250000 0.000000
-        ///v 0.355000 0.250000 0.000000
-        ///v 0 [rest of string was truncated]&quot;;.
+        ///v 0.355000 0.250 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_small_base {
             get {
@@ -943,8 +928,7 @@ namespace Control_Block.Properties {
         ///v 0.206250 -0.250000 -0.357235
         ///v 0.206250 0.250000 -0.357235
         ///v 0.412500 -0.250000 0.000000
-        ///v 0.412500 0.250000 0.000000
-        ///v [rest of string was truncated]&quot;;.
+        ///v 0.412500 0.2 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_small_head {
             get {
@@ -980,7 +964,7 @@ namespace Control_Block.Properties {
         ///v 0.500000 0.187500 0.000000
         ///v -0.500000 0.187500 0.000000
         ///v 0.425000 0.425000 0.212500
-        ///v 0.500000 0.18750 [rest of string was truncated]&quot;;.
+        ///v [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_ven_base {
             get {
@@ -1005,8 +989,7 @@ namespace Control_Block.Properties {
         ///v 0.207414 -0.159375 -0.500743
         ///v 0.207414 0.159375 -0.500743
         ///v 0.500743 -0.159375 -0.207414
-        ///v 0.500743 0.159375 -0.207414
-        ///v 0.5007 [rest of string was truncated]&quot;;.
+        ///v 0.500743 0.159375 -0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_ven_head {
             get {

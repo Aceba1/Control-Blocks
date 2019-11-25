@@ -15,74 +15,6 @@ namespace Control_Block
 
             #region Blocks
 
-            #region BF FPV Cab (BROKEN)
-            try
-            {
-                var cockpit = new BlockPrefabBuilder("GSO_Cab_WM_111", false)
-                    .SetBlockID(9003, "aba82861496cfa13")
-                    .SetName("BF Compact FPV Cab")
-                    .SetDescription("A nice small BF cab, featuring a built in camera that you can look through. Forged by AstraTheDragon\n\nRight click and drag to look and Cycle views with R (and backwards with Shift held down)")
-                    .SetPrice(2000)
-                    .SetHP(600)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Control)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFCab_png)))
-                    .SetMass(.875f)
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero },
-                        new Vector3[]
-                        {
-                            Vector3.down*.5f,
-                            Vector3.left*0.5f,
-                            Vector3.right*0.5f,
-                            Vector3.back*0.5f
-                        });
-
-                var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true);
-
-                cockpit.RemoveChildrenWithComponent<BoxCollider>(true);
-
-                foreach (MeshFilter mf in cockpit.Prefab.GetComponentsInChildren<MeshFilter>())
-                {
-                    if (mf.name == "m_GSO_Cab_111_Base")
-                    {
-                        GameObject.DestroyImmediate(mf);
-                        cockpit.SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BFCab), GameObjectJSON.GetObjectFromGameResources<GameObject>("BF_Streamline(111)").GetComponentInChildren<MeshCollider>().sharedMesh, true, bfmat);
-                    }
-                    else if (mf.name.StartsWith("m_GSO_Cab_111_Tyre_"))
-                    {
-                        mf.mesh = GameObjectJSON.MeshFromData(Properties.Resources.BFCab_wheel);
-                        mf.GetComponent<MeshRenderer>().material = bfmat;
-                    }
-                    else if (mf.name.StartsWith("m_GSO_Cab_111_Gun_") || mf.name.StartsWith("m_GSO_Cab_111_Flap_"))
-                    {
-                        GameObject.DestroyImmediate(mf.GetComponent<MeshRenderer>());
-                        GameObject.DestroyImmediate(mf);
-                    }
-                }
-
-                var view = new GameObject("FirstPersonAnchor");
-                view.AddComponent<ModuleFirstPerson>();
-                view.transform.parent = cockpit.TankBlock.transform;
-                view.transform.localPosition = new Vector3(0f, 0.175f, -0.1f);
-                view.transform.localRotation = Quaternion.identity;
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
-                    {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.OleiteJelly, 25),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
-                    new CustomRecipe.RecipeOutput(9003)
-                    });
-
-                cockpit.RegisterLater();
-            }
-            catch { /* fail silently */ }
-
-
-            #endregion BF FPV Cab
-
             #region Pistons
 
             #region GSO Piston
@@ -91,7 +23,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("GSO Piston")
                     .SetDescription("A configurable piston that can push and pull blocks on a tech.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(1293838, "f53931ef3e14ba8e")
+                    .SetBlockID(1293838)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -138,7 +70,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("GeoCorp Large Piston")
                     .SetDescription("This piston can push much, MUCH more than the GSO one... and is smoother.\nForged in the valleys of Uberkartoffel potatoes\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(129380, "f5b931ef3e14ba8e")
+                    .SetBlockID(129380)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -198,7 +130,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
                     .SetName("Hawkeye Telescopic Piston")
                     .SetDescription("A strange set of enforced kinetic plates to make a piston that can stretch to 4 times its compressed state. Size can be changed for whatever needs there are.\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(129381, "e5bc31ef3e14ba8e")
+                    .SetBlockID(129381)
                     .SetFaction(FactionSubTypes.HE)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -249,7 +181,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Better Piston")
                     .SetDescription("This piston was designed to solve many problems risen from other pistons, however the prototype mover engine showed signs of tearing the fabric of the universe. So that was thrown out. However, this is the most slick & efficient piston there is on market. Sharp movement, and unjustifiable burden strength!\n Right click to configure.\n\nThese pistons use ghost-phasing technology to move blocks. Side effects include shifting of realities, nausea, and phasing")
-                    .SetBlockID(1293834, "f63931ef3e14ba8e")
+                    .SetBlockID(1293834)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(0)
@@ -295,7 +227,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Medium Embedded Swivel")
                     .SetDescription("A configurable swivel that can rotate blocks on a tech.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393838, "f64931ef3e14ba8e")
+                    .SetBlockID(1393838)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -336,7 +268,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("VENBlock(111)")
                     .SetName("Inline Embedded Swivel")
                     .SetDescription("An inline swivel, which's center disk rotates blocks. Just ignore the shell's corners, they're, uhh... squishy\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393837, "f74931ef3e14ba8e")
+                    .SetBlockID(1393837)
                     .SetFaction(FactionSubTypes.VEN)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -377,7 +309,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Small Embedded Swivel")
                     .SetDescription("A smaller swivel, quite rushed, but operational hopefully.\n Right click to configure.\n\nThese swivels share the same technology as their siblings, however apply it differently. These swivels can also cause identical symptoms under use. Including but not limited to quantum law fracturing, dizziness, and phasing")
-                    .SetBlockID(1393836, "f84931ef3e14ba8e")
+                    .SetBlockID(1393836)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -422,7 +354,7 @@ namespace Control_Block
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Stabilizer PiD S.Regulator Dongle")
                     .SetDescription("Right click to configure.\nThis is an extension to the Better Future Stabilizer Computer, adding a form of PiD to fight against idle movement on top through the BFSC's access to hovers, hover jets, and turbines\n\nAfter the release of the Better Future Stabilizer, the Steering Regulator had to be pulled from stock due to fatal conflicts within its presence. However, with high hopes for this new BFSC prototype, this has been repurposed for providing one of its core modules to this block.\n...However they've adapted their own methods, so this is of little use anymore")
-                    .SetBlockID(1293839, "12ef3f7f30d4ba8e")
+                    .SetBlockID(1293839)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Accessories)
                     .SetGrade(0)
@@ -462,7 +394,9 @@ namespace Control_Block
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Small Friction Pad")
                     .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
-                    .SetBlockID(1293831, "02ef3f7f30d4ba8e")
+                    .SetBlockID(1293831)
+                    .SetDetachFragility(0f)
+                    .SetDamageableType(ManDamage.DamageableType.Rubber)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
@@ -501,7 +435,9 @@ namespace Control_Block
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Non Slip-A-Tron 3000")
                     .SetDescription("'Name by Rasseru")
-                    .SetBlockID(1293830, "03ef3f7f30d4ba8e")
+                    .SetBlockID(1293830)
+                    .SetDetachFragility(0f)
+                    .SetDamageableType(ManDamage.DamageableType.Rubber)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
@@ -705,7 +641,7 @@ namespace Control_Block
             GameObject _holder = new GameObject();
             _holder.AddComponent<OptionMenuPiston>();
             _holder.AddComponent<OptionMenuSwivel>();
-            _holder.AddComponent<OptionMenuSteeringRegulator>();
+            //_holder.AddComponent<OptionMenuSteeringRegulator>();
             _holder.AddComponent<LogGUI>();
             new GameObject().AddComponent<GUIOverseer>();
             ManWorldTreadmill.inst.OnBeforeWorldOriginMove.Subscribe(WorldShift);
@@ -1069,13 +1005,16 @@ namespace Control_Block
         public static GUIOverseer inst;
         public static void CheckValid()
         {
-            inst.gameObject.SetActive(OptionMenuPiston.inst.check_OnGUI() || OptionMenuSwivel.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
+            inst.gameObject.SetActive(OptionMenuPiston.inst.check_OnGUI() 
+                || OptionMenuSwivel.inst.check_OnGUI() 
+                //|| OptionMenuSteeringRegulator.inst.check_OnGUI() 
+                || LogGUI.inst.check_OnGUI());
         }
         void OnGUI()
         {
             OptionMenuPiston.inst.stack_OnGUI();
             OptionMenuSwivel.inst.stack_OnGUI();
-            OptionMenuSteeringRegulator.inst.stack_OnGUI();
+            //OptionMenuSteeringRegulator.inst.stack_OnGUI();
             LogGUI.inst.stack_OnGUI();
         }
     }
@@ -1228,47 +1167,6 @@ namespace Control_Block
             }
         }
 
-        //SR
-
-        [HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
-        private static class HoverJetStabilizePatch
-        {
-            private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput)
-            {
-                ModuleSteeringRegulator sr = ((TankBlock)H_pB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
-                {
-                    float ___m_AutoStabiliseStrength = (float)H_mASS.GetValue(__instance);
-                    Vector3 lhs = Quaternion.Inverse(sr.rbody.rotation) * sr.lhs * sr.HoverMod;
-                    float num = 1f;
-                    driveInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCU.GetValue(__instance));
-                    driveInput = Mathf.Clamp(driveInput, -num, num);
-                    turnInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCR.GetValue(__instance));
-                    turnInput = Mathf.Clamp(turnInput, -num, num);
-                }
-            }
-        }
-
-        //public static bool AwaitingOverride;
-
-        //[HarmonyPatch(typeof(TargetAimer), "GetManualTarget")] // Create new hook to TargetAimer.GetManualTarget
-        //static class ChangeTarget
-        //{
-        //    private static bool Prefix(ref TargetAimer __instance, ref Visible __result)
-        //    {
-        //        if (!AwaitingOverride) return true;
-        //        AwaitingOverride = false;
-        //        var tank = __instance.GetComponentInParent<Tank>();
-        //        var swivel = tank.GetComponentInChildren<ModuleSwivel>();
-        //        if (swivel != null && swivel.mode == ModuleSwivel.Mode.AimAtPlayer)
-        //        {
-        //            __result = Singleton.playerTank.visible;
-        //            return false;
-        //        }
-        //        return true;
-        //    }
-        //}
-
 
         private static FieldInfo m_AwaitingPhysicsReset;
         private static Vector3 oldCOM;
@@ -1287,61 +1185,6 @@ namespace Control_Block
                 if (!CenterToOld) return;
                 CenterToOld = false;
                 __instance.transform.position = (__instance.rbody.position + oldCOM - __instance.rbody.worldCenterOfMass);
-            }
-        }
-
-        [HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
-        private static class FanJetStabilizePatch
-        {
-            private static void Postfix(ref FanJet __instance)
-            {
-                ModuleSteeringRegulator sr = ((TankBlock)F_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
-                {
-                    float ___m_AutoStabiliseStrength = (float)F_mASS.GetValue(__instance);
-                    if (___m_AutoStabiliseStrength > 0f)
-                    {
-                        Rigidbody rbody = sr.rbody;
-                        Vector3 forward = ((Transform)F_mE.GetValue(__instance)).forward;
-                        Vector3 pointVelocity = sr.lhs * sr.TurbineMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward);
-                        //if (Mathf.Abs(num) < 0.0125f)
-                        //{
-                        //    num = 0f;
-                        //}
-                        //else
-                        //{
-                        //    num -= Mathf.Sign(num) * 0.0125f;
-                        //}
-                        __instance.SetSpin(num + (float)F_mTSR.GetValue(__instance));
-                    }
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(BoosterJet), "AutoStabiliseTank")]
-        private static class BoosterJetStabilizePatch
-        {
-            private static void Postfix(ref BoosterJet __instance)
-            {
-                ModuleSteeringRegulator sr = ((TankBlock)B_mPB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-                if (sr != null && sr.CanWork)
-                {
-                    var ___m_AutoStabiliseStrength = (float)B_mASS.GetValue(__instance);
-                    if (___m_AutoStabiliseStrength > 0f)
-                    {
-                        Rigidbody rbody = sr.rbody;
-                        Vector3 forward = ((Transform)B_mE.GetValue(__instance)).forward;
-                        Vector3 pointVelocity = sr.lhs * sr.JetMod;
-                        float num = ___m_AutoStabiliseStrength * Vector3.Dot(pointVelocity, forward) - .075f;
-                        if (num < 0f)
-                        {
-                            num = 0f;
-                        }
-                        var cs = (float)B_mFSC.GetValue(__instance);
-                        B_mFSC.SetValue(__instance, Mathf.Clamp(cs + num, cs, 1f));
-                    }
-                }
             }
         }
     }
@@ -1658,83 +1501,83 @@ namespace Control_Block
         }
     }
 
-    internal class OptionMenuSteeringRegulator : MonoBehaviour
-    {
-        public OptionMenuSteeringRegulator()
-        {
-            inst = this;
-        }
-        public static OptionMenuSteeringRegulator inst;
+    //internal class OptionMenuSteeringRegulator : MonoBehaviour
+    //{
+    //    public OptionMenuSteeringRegulator()
+    //    {
+    //        inst = this;
+    //    }
+    //    public static OptionMenuSteeringRegulator inst;
 
-        private readonly int ID = 7788;
+    //    private readonly int ID = 7788;
 
-        private bool visible = false;
+    //    private bool visible = false;
 
-        private ModuleSteeringRegulator module;
+    //    private ModuleSteeringRegulator module;
 
-        private Rect win;
+    //    private Rect win;
 
-        private void Update()
-        {
-            if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
-            {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 200f);
-                try
-                {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSteeringRegulator>();
-                }
-                catch
-                {
-                    //Console.WriteLine(e);
-                    module = null;
-                }
-                visible = module;
-            }
-        }
+    //    private void Update()
+    //    {
+    //        if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
+    //        {
+    //            win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 200f);
+    //            try
+    //            {
+    //                module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSteeringRegulator>();
+    //            }
+    //            catch
+    //            {
+    //                //Console.WriteLine(e);
+    //                module = null;
+    //            }
+    //            visible = module;
+    //        }
+    //    }
 
-        public bool check_OnGUI()
-        {
-            return visible && module;
-        }
+    //    public bool check_OnGUI()
+    //    {
+    //        return visible && module;
+    //    }
 
-        public void stack_OnGUI()
-        {
-            if (!visible || !module)
-            {
-                return;
-            }
+    //    public void stack_OnGUI()
+    //    {
+    //        if (!visible || !module)
+    //        {
+    //            return;
+    //        }
 
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Stabiliser PiD");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
+    //        try
+    //        {
+    //            win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Stabiliser PiD");
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            Console.WriteLine(e);
+    //        }
+    //    }
 
-        private void DoWindow(int id)
-        {
-            if (module == null)
-            {
-                visible = false;
-                return;
-            }
-            GUILayout.Label("Sensitivity RADIUS : " + module.MaxDist.ToString());
-            module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
-            GUILayout.Label("Hover PiD Effect");
-            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 15f)) * .5f;
-            GUILayout.Label("Steering Jet PiD Effect");
-            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
-            GUILayout.Label("Turbine PiD Effect");
-            module.TurbineMod = Mathf.Round(GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f)) * .5f;
-            if (GUILayout.Button("Close"))
-            {
-                visible = false;
-                module = null;
-            }
-            GUI.DragWindow();
-        }
-    }
+    //    private void DoWindow(int id)
+    //    {
+    //        if (module == null)
+    //        {
+    //            visible = false;
+    //            return;
+    //        }
+    //        GUILayout.Label("Sensitivity RADIUS : " + module.MaxDist.ToString());
+    //        module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
+    //        GUILayout.Label("Hover PiD Effect");
+    //        module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 15f)) * .5f;
+    //        GUILayout.Label("Steering Jet PiD Effect");
+    //        module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
+    //        GUILayout.Label("Turbine PiD Effect");
+    //        module.TurbineMod = Mathf.Round(GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f)) * .5f;
+    //        if (GUILayout.Button("Close"))
+    //        {
+    //            visible = false;
+    //            module = null;
+    //        }
+    //        GUI.DragWindow();
+    //    }
+    //}
 }
