@@ -401,7 +401,7 @@ namespace Control_Block
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
                     .SetPrice(500)
-                    .SetHP(600)
+                    .SetHP(625)
                     .SetMass(0.5f)
                     .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadsmall), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
@@ -434,7 +434,7 @@ namespace Control_Block
             {
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Non Slip-A-Tron 3000")
-                    .SetDescription("'Name by Rasseru")
+                    .SetDescription("'Name by /-Shido, Shido named this block. Who, what?\n<i>What where am I-I need an adult</i>")
                     .SetBlockID(1293830)
                     .SetDetachFragility(0f)
                     .SetDamageableType(ManDamage.DamageableType.Rubber)
@@ -442,7 +442,7 @@ namespace Control_Block
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
                     .SetPrice(2000)
-                    .SetHP(2000)
+                    .SetHP(2500)
                     .SetMass(2f)
                     .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadbig), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
@@ -965,12 +965,12 @@ namespace Control_Block
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
             obj.strength = .5f;
-            obj.threshold = 1f;
+            obj.threshold = 1.5f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
             obj.strength = .76f;
-            obj.threshold = 2f;
+            obj.threshold = 3f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
