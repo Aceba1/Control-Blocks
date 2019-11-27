@@ -257,7 +257,7 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
+                    new CustomRecipe.RecipeOutput(1393838)
                     });
             }
 
@@ -298,8 +298,8 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
-                    });
+                    new CustomRecipe.RecipeOutput(1393837)
+                    }, NameOfFabricator: "venfab");
             }
 
             #endregion GSO Medium Swivel
@@ -340,7 +340,7 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
+                    new CustomRecipe.RecipeOutput(1393836)
                     });
             }
 
