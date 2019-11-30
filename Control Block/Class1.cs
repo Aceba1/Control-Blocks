@@ -23,7 +23,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("GSO Piston")
                     .SetDescription("A configurable piston that can push and pull blocks on a tech." + MoverText)
-                    .SetBlockID(1293838)//, "f53931ef3e14ba8e")
+                    .SetBlockID(1293838)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -70,7 +70,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("GeoCorp Large Piston")
                     .SetDescription("This is a bulky piston. Slower, and moves smoother.\nForged in the valleys of Uberkartoffel potatoes" + MoverText)
-                    .SetBlockID(129380)//, "f5b931ef3e14ba8e")
+                    .SetBlockID(129380)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -130,7 +130,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("HE_Block_Alt_01_(111)")
                     .SetName("Hawkeye Telescopic Piston")
                     .SetDescription("A set of enforced interlocked plates composing a piston that can extend to 4 blocks from its compressed state." + MoverText)
-                    .SetBlockID(129381)//, "e5bc31ef3e14ba8e")
+                    .SetBlockID(129381)
                     .SetFaction(FactionSubTypes.HE)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -181,7 +181,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Better Piston")
                     .SetDescription("This piston started the revolution for all pistons and swivels. Replacing the technology of ghost-phasing and uniting swivels and pistons as one in a series of events that this piston was not aware was happening." + MoverText)
-                    .SetBlockID(1293834)//, "f63931ef3e14ba8e")
+                    .SetBlockID(1293834)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(0)
@@ -332,7 +332,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Medium Embedded Swivel")
                     .SetDescription("A configurable swivel that can rotate blocks on a tech." + MoverText)
-                    .SetBlockID(1393838)//, "f64931ef3e14ba8e")
+                    .SetBlockID(1393838)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -362,7 +362,7 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
+                    new CustomRecipe.RecipeOutput(1393838)
                     });
             }
 
@@ -373,7 +373,7 @@ namespace Control_Block
                 var ControlBlock = new BlockPrefabBuilder("VENBlock(111)")
                     .SetName("Inline Embedded Swivel")
                     .SetDescription("An inline swivel, which's center disk rotates blocks. And it's fast, too" + MoverText)
-                    .SetBlockID(1393837)//, "f74931ef3e14ba8e")
+                    .SetBlockID(1393837)
                     .SetFaction(FactionSubTypes.VEN)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -403,8 +403,8 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
-                    });
+                    new CustomRecipe.RecipeOutput(1393837)
+                    }, NameOfFabricator: "venfab");
             }
 
             #endregion VEN Inline Swivel
@@ -413,8 +413,8 @@ namespace Control_Block
             {
                 var ControlBlock = new BlockPrefabBuilder("GSOBlock(111)")
                     .SetName("Small Embedded Swivel")
-                    .SetDescription("A smaller swivel, operational hopefully." + MoverText)
-                    .SetBlockID(1393836)//, "f84931ef3e14ba8e")
+                    .SetDescription("A smaller swivel. Rapidly-produced, but operational." + MoverText)
+                    .SetBlockID(1393836)
                     .SetFaction(FactionSubTypes.GSO)
                     .SetCategory(BlockCategories.Base)
                     .SetGrade(2)
@@ -486,7 +486,7 @@ namespace Control_Block
                     },
                     new CustomRecipe.RecipeOutput[]
                     {
-                    new CustomRecipe.RecipeOutput(1293838)
+                    new CustomRecipe.RecipeOutput(1393836)
                     });
             }
 
@@ -499,8 +499,8 @@ namespace Control_Block
             {
                 var SteeringRegulator = new BlockPrefabBuilder("BF_Block(111)")
                     .SetName("Stabilizer PiD S.Regulator Accessory")
-                    .SetDescription("The PiD technology has been discontinued, Please refer to the BF stabilization computer guidelines")
-                    .SetBlockID(1293839)//, "12ef3f7f30d4ba8e")
+                    .SetDescription("The PiD technology has been discontinued due to BF Stabilization Computer contracting holes. Please refer to the BF Stabilization Computer guidelines")
+                    .SetBlockID(1293839)
                     .SetFaction(FactionSubTypes.BF)
                     .SetCategory(BlockCategories.Accessories)
                     //.AddComponent<ModuleSteeringRegulator>()
@@ -540,12 +540,14 @@ namespace Control_Block
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Small Friction Pad")
                     .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
-                    .SetBlockID(1293831)//, "02ef3f7f30d4ba8e")
+                    .SetBlockID(1293831)
+                    .SetDetachFragility(0f)
+                    .SetDamageableType(ManDamage.DamageableType.Rubber)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
                     .SetPrice(500)
-                    .SetHP(600)
+                    .SetHP(625)
                     .SetMass(0.5f)
                     .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadsmall), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
@@ -578,13 +580,15 @@ namespace Control_Block
             {
                 var FrictionPad = new BlockPrefabBuilder("GCBlock(222)")
                     .SetName("Non Slip-A-Tron 3000")
-                    .SetDescription("'Name by Rasseru")
-                    .SetBlockID(1293830)//, "03ef3f7f30d4ba8e")
+                    .SetDescription("'Name by /-Shido, Shido named this block. Who, what?\n<i>What where am I-I need an adult</i>")
+                    .SetBlockID(1293830)
+                    .SetDetachFragility(0f)
+                    .SetDamageableType(ManDamage.DamageableType.Rubber)
                     .SetFaction(FactionSubTypes.GC)
                     .SetCategory(BlockCategories.Wheels)
                     .SetGrade(1)
                     .SetPrice(2000)
-                    .SetHP(2000)
+                    .SetHP(2500)
                     .SetMass(2f)
                     .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadbig), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
                     .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
@@ -1286,12 +1290,12 @@ namespace Control_Block
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
             obj.strength = .5f;
-            obj.threshold = 1f;
+            obj.threshold = 1.5f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
             obj.strength = .76f;
-            obj.threshold = 2f;
+            obj.threshold = 3f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
