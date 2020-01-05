@@ -15,14 +15,14 @@ namespace Control_Block
             GUILayout.BeginHorizontal();
             GUI.changed = false;
             bool Changed = false;
+            if (input == null) input = value.ToString();
             input = GUILayout.TextField(input, GUILayout.MaxWidth(80));
             if (GUI.changed && float.TryParse(input, out float sValue))
             {
                 if (clampText)
-                    value = Mathf.Clamp(sValue, min, max);
-                else
-                    value = sValue;
-                Changed = true;
+                    sValue = Mathf.Clamp(sValue, min, max);
+                Changed = sValue != value;
+                value = sValue;
             }
 
             GUI.changed = false;
@@ -30,8 +30,8 @@ namespace Control_Block
             if (GUI.changed)
             {
                 input = tValue.ToString();
+                Changed |= tValue != value;
                 value = tValue;
-                Changed = true;
             }
             GUILayout.EndHorizontal();
             return Changed;
@@ -142,8 +142,8 @@ namespace Control_Block
     {
         public OptionMenuMover()
         {
-            UIInputPopup = new Popup(Enum.GetNames(typeof(ModuleBlockMover.InputOperator.InputType)));
-            UIOperatorPopup = new Popup(Enum.GetNames(typeof(ModuleBlockMover.InputOperator.OperationType)));
+            UIInputPopup = new Popup(Enum.GetNames(typeof(InputOperator.InputType)));
+            UIOperatorPopup = new Popup(Enum.GetNames(typeof(InputOperator.OperationType)));
             inst = this;
         }
         GUIStyle pvOn, pvOff;
@@ -192,6 +192,7 @@ namespace Control_Block
             queueResetTextCache = false;
             maxCache = module.MAXVALUELIMIT.ToString();
             minCache = module.MINVALUELIMIT.ToString();
+            maxVelCache = module.MAXVELOCITY.ToString();
             springCache = module.SPRSTR.ToString();
             dampCache = module.SPRDAM.ToString();
             valueCache = module.VALUE.ToString();
@@ -226,7 +227,7 @@ namespace Control_Block
         private Popup UIInputPopup, UIOperatorPopup;
         private Vector2[] Scrolls = new Vector2[2];
         private string[] Texts;
-        private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxCache, springCache, dampCache;
+        private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxVelCache, maxCache, springCache, dampCache;
         private string Log = "";
         private bool showOldUI;
 
@@ -268,7 +269,7 @@ namespace Control_Block
                         {
                             if (Texts == null)
                             {
-                                Texts = module.ProcessOperationsToStringArray();
+                                Texts = InputOperator.ProcessOperationsToStringArray(module.ProcessOperations);
                             }
 
                             if (pvOn == null)
@@ -277,15 +278,16 @@ namespace Control_Block
                                 {
                                     alignment = TextAnchor.MiddleLeft
                                 };
-                                pvOn.onActive.textColor = Color.white;
-                                pvOn.active.textColor = Color.white;
-
                                 var normalColor = new Color(0.85f, 0.85f, 0.85f);
+                                var hoverColor = new Color(0.9f, 0.9f, 0.95f);
 
-                                pvOn.onFocused.textColor = Color.white;
-                                pvOn.focused.textColor = Color.white;
+                                pvOn.onActive.textColor = Color.white;
+                                pvOn.active.textColor = normalColor;
 
-                                pvOn.onNormal.textColor = normalColor;
+                                pvOn.onHover.textColor = Color.white;
+                                pvOn.hover.textColor = hoverColor;
+
+                                pvOn.onNormal.textColor = Color.white;
                                 pvOn.normal.textColor = normalColor;
 
                                 pvOn.stretchHeight = false;
@@ -326,7 +328,7 @@ namespace Control_Block
                             {
                                 if (GUILayout.Button("Add"))
                                 {
-                                    module.ProcessOperations.Insert(++SelectedIndex, new ModuleBlockMover.InputOperator());
+                                    module.ProcessOperations.Insert(++SelectedIndex, new InputOperator());
                                     Texts = null;
                                     UpdateSelection = true;
                                 }
@@ -368,7 +370,7 @@ namespace Control_Block
                                 }
                                 if (GUILayout.Button("Paste text"))
                                 {
-                                    Log = module.StringArrayToProcessOperations(GUIUtility.systemCopyBuffer);
+                                    Log = InputOperator.StringArrayToProcessOperations(GUIUtility.systemCopyBuffer, ref module.ProcessOperations);
                                     Texts = null;
                                 }
                                 // Copy as Text, Paste from Text
@@ -412,8 +414,8 @@ namespace Control_Block
                                     UIInputPopup.selectedItemIndex = (int)io.m_InputType;
                                     UIOperatorPopup.selectedItemIndex = (int)io.m_OperationType;
                                 }
-                                var uii = ModuleBlockMover.InputOperator.UIInputPairs[io.m_InputType];
-                                var uio = ModuleBlockMover.InputOperator.UIOperationPairs[io.m_OperationType];
+                                var uii = InputOperator.UIInputPairs[io.m_InputType];
+                                var uio = InputOperator.UIOperationPairs[io.m_OperationType];
 
                                 if (!uio.LockInputTypes)
                                 {
@@ -468,7 +470,7 @@ namespace Control_Block
                                                             }
                                                             else if (uii.SliderMaxIsMaxVel)
                                                             {
-                                                                temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), -module.MaxVELOCITY, module.MaxVELOCITY) * Mathf.Sign(temp);
+                                                                temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY) * Mathf.Sign(temp);
                                                             }
                                                             else
                                                             {
@@ -526,7 +528,7 @@ namespace Control_Block
                                         }
                                         else if (uio.SliderMaxIsMaxVel)
                                         {
-                                            float vel = module.MaxVELOCITY;
+                                            float vel = module.TrueMaxVELOCITY;
                                             temp = GUILayout.HorizontalSlider(temp, uio.SliderMin ? -vel : 0f, vel);
                                         }
                                         else if (uio.SliderPosFraction != 0f)
@@ -562,7 +564,9 @@ namespace Control_Block
                                 float round = module.IsPlanarVALUE ? 2.5f : 0.25f;
 
                                 GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref module.VALUE, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round);
-                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.MaxVELOCITY, module.MaxVELOCITY, true, round);
+                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY, true, round);
+
+                                if (GUIOverseer.TextSliderPair("Max Velocity: ", ref maxVelCache, ref module.MAXVELOCITY, 0f, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 10f))
 
                                 GUILayout.Space(4);
 
@@ -621,18 +625,18 @@ namespace Control_Block
                             {
                                 var io = module.ProcessOperations[SelectedIndex];
 
-                                var InputType = (ModuleBlockMover.InputOperator.InputType)UIInputPopup.List(rect1);
+                                var InputType = (InputOperator.InputType)UIInputPopup.List(rect1);
                                 if (InputType != io.m_InputType)
                                 {
                                     io.m_InputType = InputType;
                                     Texts = null;
                                 }
-                                var OperationType = (ModuleBlockMover.InputOperator.OperationType)UIOperatorPopup.List(rect2);
+                                var OperationType = (InputOperator.OperationType)UIOperatorPopup.List(rect2);
                                 if (OperationType != io.m_OperationType)
                                 {
                                     io.m_OperationType = OperationType;
-                                    if (OperationType == ModuleBlockMover.InputOperator.OperationType.ConditionEndIf)
-                                        io.m_InputType = ModuleBlockMover.InputOperator.InputType.AlwaysOn;
+                                    if (OperationType == InputOperator.OperationType.ConditionEndIf)
+                                        io.m_InputType = InputOperator.InputType.AlwaysOn;
                                     Texts = null;
                                 }
                             }

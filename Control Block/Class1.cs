@@ -638,7 +638,7 @@ namespace Control_Block
                     .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
                     .AddComponent<ModuleMTMagnet>(SetFixedMTMag);
 
-                AddCollider(new Vector3(1f, 0.5f, 1f), Vector3.down * 0.25f, mtmag.Prefab.transform);
+                AddFrictionlessCollider(new Vector3(1f, 0.5f, 1f), Vector3.down * 0.25f, mtmag.Prefab.transform);
 
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
@@ -757,7 +757,7 @@ namespace Control_Block
                     //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
                     .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
 
-                AddCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f, 0f, 0.5f), mtmag.Prefab.transform);
+                AddFrictionlessCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f, 0f, 0.5f), mtmag.Prefab.transform);
 
                 var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
                 trigger.isTrigger = true;
@@ -811,14 +811,17 @@ namespace Control_Block
 
         #region PrefabBaker
 
-        internal static GameObject AddCollider(Vector3 colliderSize, Vector3 colliderOffset, Transform par)
+        static PhysicMaterial Frictionless = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0.3f },
+                              Normal = new PhysicMaterial();
+
+        internal static GameObject AddFrictionlessCollider(Vector3 colliderSize, Vector3 colliderOffset, Transform par)
         {
             GameObject sub = new GameObject("Frictionless Collider") { layer = Globals.inst.layerTank };
 
             var mhc = sub.AddComponent<BoxCollider>();
             mhc.size = colliderSize;
             mhc.center = colliderOffset;
-            mhc.material = new PhysicMaterial() { dynamicFriction = 0, frictionCombine = PhysicMaterialCombine.Maximum, staticFriction = 0.3f };
+            mhc.sharedMaterial = Frictionless;
             sub.transform.SetParent(par);
             sub.transform.localPosition = Vector3.zero;
             sub.transform.localRotation = Quaternion.identity;
@@ -834,6 +837,7 @@ namespace Control_Block
             var mhc = sub.AddComponent<BoxCollider>();
             mhc.size = colliderSize;
             mhc.center = colliderOffset;
+            mhc.sharedMaterial = Normal;
             sub.transform.SetParent(par);
             sub.transform.localPosition = Vector3.zero;
             sub.transform.localRotation = Quaternion.identity;
@@ -974,7 +978,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 2;
-            piston.MaxVELOCITY = 0.08f;
+            piston.TrueMaxVELOCITY = 0.08f;
             //piston.StretchSpeed = 0.08f;
             //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 1f;
@@ -1006,7 +1010,7 @@ namespace Control_Block
             };
             piston.PartCount = 3;
             //piston.StretchSpeed = 0.03f;
-            piston.MaxVELOCITY = 0.06f;
+            piston.TrueMaxVELOCITY = 0.06f;
             //piston.CanModifyStretch = false;
             piston.MINVALUELIMIT = 0;
             piston.TrueLimitVALUE = 2;
@@ -1046,7 +1050,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 5;
-            piston.MaxVELOCITY = 0.075f;
+            piston.TrueMaxVELOCITY = 0.075f;
             //piston.StretchSpeed = 0.025f;
             //piston.CanModifyStretch = true;
             piston.MINVALUELIMIT = 0;
@@ -1072,7 +1076,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 1;
-            piston.MaxVELOCITY = 0.12f;
+            piston.TrueMaxVELOCITY = 0.12f;
             //piston.StretchSpeed = 0.12f;
             //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 1f;
@@ -1119,7 +1123,7 @@ namespace Control_Block
                 new AnimationCurve(),
             };
             piston.PartCount = 3;
-            piston.MaxVELOCITY = 0.1f;
+            piston.TrueMaxVELOCITY = 0.1f;
             //piston.StretchSpeed = 0.12f;
             //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 2f;
@@ -1144,7 +1148,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 1;
-            piston.MaxVELOCITY = 0.15f;
+            piston.TrueMaxVELOCITY = 0.15f;
             //piston.StretchSpeed = 0.12f;
             //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 64f;
@@ -1178,7 +1182,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 5;
-            swivel.MaxVELOCITY = 9;
+            swivel.TrueMaxVELOCITY = 9;
             //swivel.MaxSpeed = 12f;
             //swivel.MINVALUELIMIT = 0;
             //swivel.MAXVALUELIMIT = 360;
@@ -1209,7 +1213,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 7.5f;
-            swivel.MaxVELOCITY = 12;
+            swivel.TrueMaxVELOCITY = 12;
             //swivel.MaxSpeed = 15;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1240,7 +1244,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 5f;
-            swivel.MaxVELOCITY = 6;
+            swivel.TrueMaxVELOCITY = 6;
             //swivel.MaxSpeed = 8;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1268,7 +1272,7 @@ namespace Control_Block
             swivel.PartCount = 1;
             //swivel.CanModifySpeed = true;
             //swivel.RotateSpeed = 7.5f;
-            swivel.MaxVELOCITY = 6;
+            swivel.TrueMaxVELOCITY = 6;
             //swivel.MaxSpeed = 15;
             //swivel.LockAngle = false;
             //swivel.MINVALUELIMIT = 0;
@@ -1334,45 +1338,49 @@ namespace Control_Block
 
         void LateUpdate()
         {
-            var ray = Singleton.camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, PointerDistance, PointerLayerMask, QueryTriggerInteraction.Ignore))
+            try // Must put it in a try catch block because sometimes the camera dies internally
             {
-                PointerPos = hitInfo.point;
-            }
-            else
-            {
-                PointerPos = ray.GetPoint(PointerDistance);
-            }
-            if (ManPointer.inst.DraggingItem != null && ManPointer.inst.DraggingFocusTech != null)
-            {
-                float num = float.MaxValue;
-                Tank tank = ManPointer.inst.DraggingFocusTech;
-                ClusterBody tankbody = null;
-                var cast = PhysicsUtils.RaycastAllNonAlloc(Singleton.camera.ScreenPointToRay(Input.mousePosition), ManPointer.inst.PickupRange, Globals.inst.layerTank.mask, QueryTriggerInteraction.Ignore);
-                foreach (var hit in cast)
+                var ray = Singleton.camera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, PointerDistance, PointerLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    float distance = hit.distance;
-                    if (distance < num && hit.rigidbody != null)
+                    PointerPos = hitInfo.point;
+                }
+                else
+                {
+                    PointerPos = ray.GetPoint(PointerDistance);
+                }
+                if (ManPointer.inst.DraggingItem != null && ManPointer.inst.DraggingFocusTech != null)
+                {
+                    float num = float.MaxValue;
+                    Tank tank = ManPointer.inst.DraggingFocusTech;
+                    ClusterBody tankbody = null;
+                    var cast = PhysicsUtils.RaycastAllNonAlloc(Singleton.camera.ScreenPointToRay(Input.mousePosition), ManPointer.inst.PickupRange, Globals.inst.layerTank.mask, QueryTriggerInteraction.Ignore);
+                    foreach (var hit in cast)
                     {
-                        ClusterBody component = hit.rigidbody.GetComponent<ClusterBody>();
-                        if (component && (tank == null || component.coreTank == tank))
+                        float distance = hit.distance;
+                        if (distance < num && hit.rigidbody != null)
                         {
-                            tankbody = component;
-                            num = distance;
+                            ClusterBody component = hit.rigidbody.GetComponent<ClusterBody>();
+                            if (component && (tank == null || component.coreTank == tank))
+                            {
+                                tankbody = component;
+                                num = distance;
+                            }
                         }
                     }
-                }
-                if (tankbody != null)
-                {
-                    Patches.ClusterBody = tankbody.transform;
-                    Patches.FocusedTech = tankbody.coreTank.trans;
-                    if (tank == null)
+                    if (tankbody != null)
                     {
-                        ManPointer.inst.DraggingFocusTech = tankbody.coreTank;
+                        Patches.ClusterBody = tankbody.transform;
+                        Patches.FocusedTech = tankbody.coreTank.trans;
+                        if (tank == null)
+                        {
+                            ManPointer.inst.DraggingFocusTech = tankbody.coreTank;
+                        }
+                        Patches.DoOffsetAttachParticles = 4;
                     }
-                    Patches.DoOffsetAttachParticles = 4;
                 }
             }
+            catch { /* fail silently */ }
         }
     }
 
