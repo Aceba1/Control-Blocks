@@ -23,8 +23,9 @@ namespace Control_Block
             public string ToggleComment;
             public float ToggleMultiplier;
             //public float SliderStep;
+            public bool DimensionParam;
 
-            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false)
+            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, bool noDimensionParam = false)
             {
                 LockInputTypes = lockInputTypes;
                 PermittedInputType = permittedInputType;
@@ -41,6 +42,7 @@ namespace Control_Block
                 ToggleMultiplier = toggleMultiplier;
                 //SliderStep = sliderStep;
                 SliderMinOnPlanar = sliderMinOnPlanar;
+                DimensionParam = !noDimensionParam;
             }
         }
         public struct UIDispInput
@@ -54,8 +56,9 @@ namespace Control_Block
             public string ToggleComment;
             public float ToggleMultiplier;
             //public float SliderStep;
+            public bool DimensionParam;
 
-            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false)
+            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, bool dimensionParam = false)
             {
                 HideInputKey = hideInputKey;
                 HideParam = hideParam;
@@ -68,6 +71,7 @@ namespace Control_Block
                 SliderMaxIsMaxVal = sliderMaxIsMaxVal;
                 SliderMaxIsMaxVel = sliderMaxIsMaxVel;
                 //SliderStep = sliderStep;
+                DimensionParam = dimensionParam;
             }
         }
 
@@ -149,24 +153,24 @@ namespace Control_Block
 
         public static Dictionary<OperationType, UIDispOperation> UIOperationPairs = new Dictionary<OperationType, UIDispOperation>
         {
-            {OperationType.ShiftPos, new UIDispOperation("Shift Position", "Move the position or angle by Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle to Strength", sliderFraction:1f, sliderMinOnPlanar:true) },
-            {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the velocity by Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.ShiftPos, new UIDispOperation("Shift Position", "Move the position or angle (by Strength)", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle (to Strength)", sliderFraction:1f, sliderMinOnPlanar:true) },
+            {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the positional velocity (by Strength)", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the positional velocity (to Strength)", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
             {OperationType.ArrowPoint, new UIDispOperation("Arrow Point", "Aim towards the velocity of the tech (multiplied by Strength)", clampStrength:true) },
             {OperationType.GravityPoint, new UIDispOperation("Gravity Point", "Aim towards the direction of gravity (multiplied by Strength)", clampStrength:true) },
             {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)", clampStrength:true) },
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", clampStrength:true) },
             {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", clampStrength:true) },
             {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", clampStrength:true) },
-            {OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
-            {OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true) },
-            {OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
-            {OperationType.IfThen, new UIDispOperation("IF Condition", "Run everything up to EndIF (or ELSE), if the condition is met (for Strength amount of time)", sliderHasNegative:true, sliderMax:5f, toggleComment:"False after time") },
-            {OperationType.OrThen, new UIDispOperation("OR IF Condition", "Check this condition if the one above condition is not met", strengthIsToggle:true, toggleComment:"Use timer from top") },
-            {OperationType.ElseThen, new UIDispOperation("ELSE", "Skip to EndIF if the condition above is met, or run to EndIF if it is not", lockInputTypes:true, hideStrength:true) },
-            {OperationType.EndIf, new UIDispOperation("End IF", "Close the highest IF branch and proceed as normal", lockInputTypes:true, hideStrength:true) },
-            {OperationType.Nothing, new UIDispOperation("Do Nothing", "No contribution to the block mover", hideStrength:true) },
+            {OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true, noDimensionParam:true) },
+            {OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true, noDimensionParam:true) },
+            {OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true, noDimensionParam:true) },
+            {OperationType.IfThen, new UIDispOperation("IF Condition", "Run everything up to EndIF (or ELSE), if the condition is met (for Strength amount of time)", sliderHasNegative:true, sliderMax:5f, toggleComment:"False after time", noDimensionParam:true) },
+            {OperationType.OrThen, new UIDispOperation("OR IF Condition", "Check this condition if the one above condition is not met", strengthIsToggle:true, toggleComment:"Use timer from top", noDimensionParam:true) },
+            {OperationType.ElseThen, new UIDispOperation("ELSE", "Skip to EndIF if the condition above is met, or run to EndIF if it is not", lockInputTypes:true, hideStrength:true, noDimensionParam:true) },
+            {OperationType.EndIf, new UIDispOperation("End IF", "Close the highest IF branch and proceed as normal", lockInputTypes:true, hideStrength:true, noDimensionParam:true) },
+            {OperationType.Nothing, new UIDispOperation("Do Nothing", "Lights up in GUI, and that's it", hideStrength:true, noDimensionParam:true) },
 #warning Might want to fix Deny Firing at some point
             {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
         };
@@ -182,12 +186,12 @@ namespace Control_Block
             {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", hideInputKey:true, sliderMax:64) },
             {InputType.AboveVelocity, new UIDispInput("Above Velocity", hideInputKey:true, sliderMax:60) },
 
-            {InputType.IfPosAbove, new UIDispInput("If Position Above", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosBelow, new UIDispInput("If Position Below", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosEqual, new UIDispInput("If Position Equal", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfPosAbove, new UIDispInput("If Position Above", hideInputKey:true, sliderMaxIsMaxVal:true, dimensionParam:true) },
+            {InputType.IfPosBelow, new UIDispInput("If Position Below", hideInputKey:true, sliderMaxIsMaxVal:true, dimensionParam:true) },
+            {InputType.IfPosEqual, new UIDispInput("If Position Equal", hideInputKey:true, sliderMaxIsMaxVal:true, dimensionParam:true) },
+            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", hideInputKey:true, sliderMaxIsMaxVel:true, dimensionParam:true) },
+            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", hideInputKey:true, sliderMaxIsMaxVel:true, dimensionParam:true) },
+            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", hideInputKey:true, sliderMaxIsMaxVel:true, dimensionParam:true) },
 
 
             //{InputType.IfSprStrengthAbove, new UIDispInput("If Spring strength Above", hideInputKey:true, paramIsTrueValue:true) },

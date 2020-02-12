@@ -12,6 +12,27 @@ namespace Control_Block
             public ModuleBlockMover parent;
         }
 
+        [Flags]
+        public enum Dimensions : byte
+        {
+            X = 1,
+            Y = 2,
+            ZPlanar = X | Y,
+            Z = 4,
+            YPlanar = X | Z,
+            XPlanar = Y | Z,
+            AllPos = X | Y | Z,
+            Pitch = 8,
+            Yaw = 16,
+            Roll = 32,
+            FrontBend = Pitch | Yaw,
+            TopBend = Pitch | Roll,
+            AllRot = Pitch | Yaw | Roll
+        }
+
+        public Dimensions AllDimensions;
+        public int CountOfDimensions = 1;
+
         public TechAudio.SFXType SFX;
         /// <summary>
         /// Body for holding blocks
@@ -41,12 +62,12 @@ namespace Control_Block
         /// <summary>
         /// Animation curves for determining position
         /// </summary>
-        public AnimationCurve[] posCurves;
+        public AnimationCurve[,] posCurves;
         public bool useRotCurves = false, usePosCurves = false;
         /// <summary>
         /// Animation curves for determining rotation
         /// </summary>
-        public AnimationCurve[] rotCurves;
+        public AnimationCurve[,] rotCurves;
         /// <summary>
         /// Relative location of where blocks should be if attached to the head of this block
         /// </summary>
@@ -76,122 +97,104 @@ namespace Control_Block
         public Rigidbody ownerBody => transform.parent.GetComponentInParent<Rigidbody>();
         public bool IsControlledByNet => ManGameMode.inst.IsCurrentModeMultiplayer() && block.tank != ManNetwork.inst.MyPlayer.CurTech.tech;
 
-        internal float MINVALUELIMIT
+        internal float GetMINVALUELIMIT(int index) => _CENTERLIMIT[index] - _EXTENTLIMIT[index];
+        internal void SetMINVALUELIMIT(int index, float value)
         {
-            get
+            float o = GetMAXVALUELIMIT(index);
+            if (IsPlanarVALUE[index])
             {
-                //if (IsPlanarVALUE)
-                //    return (_CENTERLIMIT - _EXTENTLIMIT + 720) % 360;
-                //else 
-                    return _CENTERLIMIT - _EXTENTLIMIT;
+                float v = (value + 360) % 360;
+                if (o < v)
+                    o = o + 360;
+                _CENTERLIMIT[index] = ((v + o) * 0.5f + 360) % 360;
+                _EXTENTLIMIT[index] = (o - v) * 0.5f;
+                if (_EXTENTLIMIT[index].Approximately(0f)) _EXTENTLIMIT[index] = HalfLimitVALUE(index);
             }
-            set
+            else
             {
-                float o = MAXVALUELIMIT;
-                if (IsPlanarVALUE)
+                if (value > o)
                 {
-                    float v = (value + 360) % 360;
-                    if (o < v)
-                        o = o + 360;
-                    _CENTERLIMIT = ((v + o) * 0.5f + 360) % 360;
-                    _EXTENTLIMIT = (o - v) * 0.5f;
-                    if (_EXTENTLIMIT.Approximately(0f)) _EXTENTLIMIT = HalfLimitVALUE;
+                    _CENTERLIMIT[index] = value;
+                    _EXTENTLIMIT[index] = 0f;
                 }
                 else
                 {
-                    if (value > o)
-                    {
-                        _CENTERLIMIT = value;
-                        _EXTENTLIMIT = 0f;
-                    }
-                    else
-                    {
-                        _CENTERLIMIT = (value + o) * 0.5f;
-                        _EXTENTLIMIT = (o - value) * 0.5f;
-                    }
+                    _CENTERLIMIT[index] = (value + o) * 0.5f;
+                    _EXTENTLIMIT[index] = (o - value) * 0.5f;
                 }
             }
         }
-        internal float MAXVALUELIMIT
+        internal float GetMAXVALUELIMIT(int index) => _CENTERLIMIT[index] + _EXTENTLIMIT[index];
+        internal void SetMAXVALUELIMIT(int index, float value)
         {
-            get
-            {
-                //if (IsPlanarVALUE)
-                //    return (_CENTERLIMIT + _EXTENTLIMIT + 720) % 360;
-                //else 
-                    return _CENTERLIMIT + _EXTENTLIMIT;
-            }
-            set
-            {
-                float o = MINVALUELIMIT;
-                if (IsPlanarVALUE)
+                float o = GetMINVALUELIMIT(index);
+                if (IsPlanarVALUE[index])
                 {
                     float v = (value + 360) % 360;
                     if (o > v)
                         v = v + 360;
-                    _CENTERLIMIT = ((v + o) * 0.5f + 360) % 360;
-                    _EXTENTLIMIT = (v - o) * 0.5f;
-                    if (_EXTENTLIMIT.Approximately(0f)) _EXTENTLIMIT = HalfLimitVALUE;
+                    _CENTERLIMIT[index] = ((v + o) * 0.5f + 360) % 360;
+                    _EXTENTLIMIT[index] = (v - o) * 0.5f;
+                    if (_EXTENTLIMIT[index].Approximately(0f)) _EXTENTLIMIT[index] = HalfLimitVALUE(index);
                 }
                 else
                 {
                     if (value < o)
                     {
-                        _CENTERLIMIT = value;
-                        _EXTENTLIMIT = 0f;
+                        _CENTERLIMIT[index] = value;
+                        _EXTENTLIMIT[index] = 0f;
                     }
                     else
                     {
-                        _CENTERLIMIT = (value + o) * 0.5f;
-                        _EXTENTLIMIT = (value - o) * 0.5f;
+                        _CENTERLIMIT[index] = (value + o) * 0.5f;
+                        _EXTENTLIMIT[index] = (value - o) * 0.5f;
                     }
                 }
-            }
         }
-        internal float _CENTERLIMIT, _EXTENTLIMIT;
-        public bool UseLIMIT;
+        internal float[] _CENTERLIMIT, _EXTENTLIMIT;
+        public bool[] UseLIMIT;
 
-        public float MAXVELOCITY, TrueMaxVELOCITY = 1f, TrueLimitVALUE = 1f;
-        public float HalfLimitVALUE => TrueLimitVALUE * 0.5f;
+        public float[] MAXVELOCITY, TrueMaxVELOCITY, TrueLimitVALUE;
+        public float HalfLimitVALUE(int index) => TrueLimitVALUE[index] * 0.5f;
         public bool LOCALINPUT = false;
-        public void SetMinLimit(float value, bool ChangeValue = true)
+        public void SetMinLimit(int index, float value, bool ChangeValue = true)
         {
             if (ChangeValue)
-                MINVALUELIMIT = value;
+                SetMINVALUELIMIT(index, value);
             if (IsFreeJoint && HolderJoint != null)
             {
-                if (IsPlanarVALUE)
+                if (IsPlanarVALUE[index])
                 {
                     var modify = HolderJoint.lowAngularXLimit;
                     modify.limit = value;
                     HolderJoint.lowAngularXLimit = modify;
                 }
                 else
-                    SetLinearLimit();
+                    SetLinearLimit(index);
             }
         }
-        public void SetMaxLimit(float value, bool ChangeValue = true)
+        public void SetMaxLimit(int index, float value, bool ChangeValue = true)
         {
             if (ChangeValue)
-                MAXVALUELIMIT = value;
+                SetMAXVALUELIMIT(index, value);
             if (IsFreeJoint && HolderJoint != null)
             {
-                if (IsPlanarVALUE)
+                if (IsPlanarVALUE[index])
                 {
                     var modify = HolderJoint.highAngularXLimit;
                     modify.limit = value;
                     HolderJoint.highAngularXLimit = modify;
                 }
                 else
-                    SetLinearLimit();
+                    SetLinearLimit(index);
             }
         }
-        public void SetLinearLimit()
+        public void SetLinearLimit(int index)
         {
-            Vector3 min = GetPosCurve(PartCount - 1, MINVALUELIMIT), max = GetPosCurve(PartCount - 1, MAXVALUELIMIT), cen = (min + max) * 0.5f; // Do not use _CENTERLIMIT, because some animations will have different centers at different positions
+            Vector3 min = GetPosCurve(PartCount - 1, GetMINVALUELIMIT(index)), max = GetPosCurve(PartCount - 1, GetMAXVALUELIMIT(index)), cen = (min + max) * 0.5f; // Do not use _CENTERLIMIT, because some animations will have different centers at different positions
             HolderJoint.anchor = transform.parent.InverseTransformPoint(transform.TransformPoint(cen));
             var ll = HolderJoint.linearLimit;
-            ll.limit = _EXTENTLIMIT; // Could use (max - min).magnitude * 0.5f instead...
+            ll.limit = _EXTENTLIMIT[index]; // Could use (max - min).magnitude * 0.5f instead...
             HolderJoint.linearLimit = ll;
         }
 
@@ -217,9 +220,9 @@ namespace Control_Block
         /// <summary>
         /// Current value
         /// </summary>
-        public float PVALUE;
-        public float VELOCITY;
-        public bool IsPlanarVALUE;
+        public float[] PVALUE;
+        public float[] VELOCITY;
+        public bool[] IsPlanarVALUE;
         /// <summary>
         /// Back-push, Offset the parent rigidbody by lockjoint movement
         /// </summary>
@@ -278,9 +281,11 @@ namespace Control_Block
 
         public void UpdateSFX(float Speed)
         {
-            Speed = Speed / TrueMaxVELOCITY * SFXVolume;
-            bool on = !(Speed).Approximately(0f, 0.05f);
-            PlaySFX(on, Mathf.Abs(Speed));
+            float _Speed = 0f;
+            for (int i = 0; i > CountOfDimensions; i++)
+            _Speed += Speed / TrueMaxVELOCITY[i] * SFXVolume;
+            bool on = !(_Speed).Approximately(0f, 0.05f);
+            PlaySFX(on, Mathf.Abs(_Speed));
         }
 
         internal void PlaySFX(bool On, float Speed)
