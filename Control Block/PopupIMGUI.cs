@@ -1,101 +1,196 @@
-﻿// Popup list with multi-instance support created by Xiaohang Miao. (xmiao2@ncsu.edu)
+﻿// Popup list with multi-instance support, originally created by Xiaohang Miao. (xmiao2@ncsu.edu)
 
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace Control_Block
 {
-    public class Popup
+    // Possible change: Make a generic for value types
+    public class PopupBase
     {
+        public static Popup<InputOperator.InputType> CreateFromInputCategories()
+        {
+            string[] items = InputOperator.InputCategoryNames;
+            var subItems = new List<string[]>();
+            var subValues = new List<InputOperator.InputType[]>();
+            foreach (InputOperator.InputType[] list in InputOperator.InputCategoryLists)
+            {
+                subItems.Add(Array.ConvertAll(list, item => item.ToString()));
+                subValues.Add(list);
+            }
+            return new Popup<InputOperator.InputType>(items, subItems, subValues);
+        }
+
+        public static Popup<InputOperator.OperationType> CreateFromOperatorCategories()
+        {
+            string[] items = InputOperator.OperationCategoryNames;
+            var subItems = new List<string[]>();
+            var subValues = new List<InputOperator.OperationType[]>();
+            foreach (InputOperator.OperationType[] list in InputOperator.OperationCategoryLists)
+            {
+                subItems.Add(Array.ConvertAll(list, item => item.ToString()));
+                subValues.Add(list);
+            }
+            return new Popup<InputOperator.OperationType>(items, subItems, subValues);
+        }
+    }
+    public class Popup<T> : PopupBase
+    {
+        const float MaxLength = 200;
+
         public Popup(string[] items)
         {
             this.items = items;
         }
-        private string[] items;
 
-        private Vector2 scroll = Vector2.zero;
+        public Popup(string[] items, List<string[]> subItems, List<T[]> subValues)
+        {
+            this.items = items;
+            this.subItems = subItems;
+            this.subValues = subValues;
+            hasSubItems = true;
+        }
+
+        private string[] items;
+        private bool hasSubItems = false;
+        private List<string[]> subItems;
+        private List<T[]> subValues;
+
+        private Vector2 scroll = Vector2.zero,
+            subScroll = Vector2.zero;
 
         // Represents the selected index of the popup list, the default selected index is 0, or the first item
-        public int selectedItemIndex = 0;
+        public int SelectedIndex = 0;
+        public T SelectedValue;
+        public string SelectedName = "List...";
 
         // Represents whether the popup selections are visible (active)
-        private bool isVisible = false;
+
+        public bool isVisible { get; set; }
+        bool isSubVisible = false;
 
         // Represents whether the popup button is clicked once to expand the popup selections
         private bool isClicked = false;
 
         // If multiple Popup objects exist, this static variable represents the active instance, or a Popup object whose selection is currently expanded
-        private static Popup current;
+        private static PopupBase currentPopup;
 
-        public Rect Show()
+        private Rect box;
+
+        public void Hide()
         {
-            // Draw a button. If the button is clicked
-            if (GUILayout.Button(items[selectedItemIndex]))
+            if (currentPopup == this)
+            {
+                isVisible = false;
+                isSubVisible = false;
+                currentPopup = null;
+            }
+        }
+
+        public void Button()
+        {
+            if (GUILayout.Button(SelectedName))
             {
                 // If the button was not clicked before, set the current instance to be the active instance
                 if (!isClicked)
                 {
-                    current = this;
+                    currentPopup = this;
                     isClicked = true;
                 }
                 // If the button was clicked before (it was the active instance), reset the isClicked boolean
                 else
                 {
                     isClicked = false;
-                    if (current == this) current = null;
+                    if (currentPopup == this) currentPopup = null;
+                    isSubVisible = false;
                     isVisible = false;
                 }
             }
-            var box = GUILayoutUtility.GetLastRect();
-
-            if (isVisible)
-            {
-                // Draw a Box
-                Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
-                Rect scrollRect = new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, 120));
-                //GUI.Box(scrollRect, "");
-
-                scroll = GUI.BeginScrollView(scrollRect, scroll, listRect, GUIStyle.none, GUIStyle.none);
-
-                GUI.changed = false;
-                // Draw a SelectionGrid and listen for user selection
-                selectedItemIndex = GUI.SelectionGrid(listRect, selectedItemIndex, items, 1, GUIStyle.none);
-
-                // If the user makes a selection, make the popup list disappear
-                if (GUI.changed)
-                {
-                    current = null;
-                }
-                GUI.EndScrollView();
-            }
-
-            return box;
+            box = GUILayoutUtility.GetLastRect();
         }
 
-        // This function is ran inside of OnGUI()
-        // For usage, see http://wiki.unity3d.com/index.php/PopupList#Javascript_-_PopupListUsageExample.js
-        public int List(Rect box)
+        public void Show(float CornerOffsetX, float CornerOffsetY)
         {
+            if (isVisible)
+            {
+                Rect inputBox = new Rect(box);
+                inputBox.center += new Vector2(CornerOffsetX, CornerOffsetY);
+                SelectedIndex = InputPopup(inputBox, false, SelectedIndex, items, ref scroll, out bool changed);
 
+                if (changed)
+                {
+                    if (hasSubItems)
+                    {
+                        isSubVisible = true;
+                        subScroll = Vector2.zero;
+                    }
+                    else
+                    {
+                        currentPopup = null;
+                    }
+                }
+
+                if (isSubVisible)
+                {
+                    int SelectedSubIndex = InputPopup(inputBox, true, -1, subItems[SelectedIndex], ref subScroll, out changed);
+                    
+                    if (changed)
+                    {
+                        SelectedValue = subValues[SelectedIndex][SelectedSubIndex]; // Set the index to the Enum type
+                        SelectedName = subItems[SelectedIndex][SelectedSubIndex]; // Set the render name to the Enum name
+                        currentPopup = null;
+                    }
+                }
+            }
+        }
+
+        private static int InputPopup(Rect box, bool listOnSide, int selectedItemIndex, string[] items, ref Vector2 scroll, out bool Changed)
+        {
+            Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
+            Rect scrollRect = listOnSide ?
+                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength)) :
+                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength));
+
+            scroll = GUI.BeginScrollView(scrollRect, scroll, listRect, false, true, GUIStyle.none, GUIStyle.none);
+
+            GUI.changed = false;
+
+            int result = GUI.SelectionGrid(listRect, selectedItemIndex, items, 1, GUIStyle.none);
+            Changed = GUI.changed || result != selectedItemIndex;
+
+            GUI.EndScrollView();
+
+            return result;
+        }
+
+        private static void DrawPopup(Rect box, bool listOnSide, int selectedItemIndex, string[] items, Vector2 scroll)
+        {
+            Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
+            Rect scrollRect = listOnSide ?
+                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength)) :
+                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength));
+            GUI.Box(scrollRect, "");
+
+            GUI.BeginScrollView(scrollRect, scroll, listRect, false, true);
+            
+            GUI.SelectionGrid(listRect, selectedItemIndex, items, 1);
+            
+            GUI.EndScrollView();
+        }
+
+        public void List(float CornerOffsetX, float CornerOffsetY)
+        {
             // If the instance's popup selection is visible
             if (isVisible)
             {
-                // Draw a Box
-                Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
-                Rect scrollRect = new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, 120));
-                GUI.Box(scrollRect, "");
-
-                scroll = GUI.BeginScrollView(scrollRect, scroll, listRect);
-
-                GUI.changed = false;
-                // Draw a SelectionGrid and listen for user selection
-                selectedItemIndex = GUI.SelectionGrid(listRect, selectedItemIndex, items, 1);
-
-                // If the user makes a selection, make the popup list disappear
-                if (GUI.changed)
+                Rect drawBox = new Rect(box);
+                drawBox.center += new Vector2(CornerOffsetX, CornerOffsetY);
+                DrawPopup(drawBox, false, SelectedIndex, items, scroll);
+                if (isSubVisible)
                 {
-                    current = null;
+                    DrawPopup(drawBox, true, -1, subItems[SelectedIndex], subScroll);
                 }
-                GUI.EndScrollView();
             }
 
             // Get the control ID
@@ -107,33 +202,22 @@ namespace Control_Block
                 // If mouse button is clicked, set all Popup selections to be retracted
                 case EventType.MouseUp:
                     {
-                        current = null;
-                        isVisible = false;
+                        currentPopup = null;
                         break;
                     }
             }
 
             // If the instance is the active instance, set its popup selections to be visible
-            if (current == this)
+            if (currentPopup == this)
             {
                 isVisible = true;
             }
-
-            // These resets are here to do some cleanup work for OnGUI() updates
-            else
+            else // These resets are here to do some cleanup work for OnGUI() updates
             {
                 isVisible = false;
+                isSubVisible = false;
                 isClicked = false;
             }
-
-            // Return the selected item's index
-            return selectedItemIndex;
-        }
-
-        // Get the instance variable outside of OnGUI()
-        public int GetSelectedItemIndex()
-        {
-            return selectedItemIndex;
         }
     }
 

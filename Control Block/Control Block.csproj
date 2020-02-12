@@ -46,6 +46,11 @@
       <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\TerraTech\QMods\Nuterra.BlockInjector\BlockInjector.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\TerraTech\TerraTechWin64_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -311,6 +316,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockMoverConverter.cs" />
     <Compile Include="BlockMoverIMGUI.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="ClusterBody.cs" />
@@ -335,8 +341,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -350,8 +356,8 @@
     <None Include="Blocks\MTMags\mtmag ball.obj" />
     <None Include="Blocks\MTMags\mtmag fixed.obj" />
     <None Include="Blocks\MTMags\mtmag swivel large.obj" />
-    <None Include="Blocks\MTMags\mtmag_ball_large_png" />
-    <None Include="Blocks\MTMags\mtmag_ball_png" />
+    <None Include="Blocks\MTMags\mtmag_ball_large._png" />
+    <None Include="Blocks\MTMags\mtmag_ball._png" />
     <None Include="Blocks\Pads\GCfrictionpadsmall.obj" />
     <None Include="Blocks\Pads\GCfrictionpadbig.obj" />
     <None Include="Blocks\Piston\BF\BFpiston.blend" />
@@ -359,8 +365,13 @@
     <None Include="Blocks\Piston\BF\BFp_blocktop.obj" />
     <None Include="Blocks\Piston\BF\Rail\bf_rail_piston.blend" />
     <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_base.obj" />
+    <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_corner.obj" />
+    <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_corner_2.obj" />
     <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_extension.obj" />
+    <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_extension_2.obj" />
     <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_head.obj" />
+    <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_wedge.obj" />
+    <None Include="Blocks\Piston\BF\Rail\bf_rail_piston_wedge_2.obj" />
     <None Include="Blocks\Piston\GeoCorp\GEO_piston.blend" />
     <None Include="Blocks\Piston\GSO\piston.blend" />
     <None Include="Blocks\Piston\HE\HEp_blockbottom.obj" />
@@ -370,13 +381,24 @@
     <None Include="Blocks\Piston\HE\HEp_shaftmidt.obj" />
     <None Include="Blocks\Piston\HE\HEp_shafttop.obj" />
     <None Include="Blocks\Piston\HE\HE_piston.blend" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_base.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_deco_base.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_deco_head.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_deco_shaft.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_head.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_shaft_1.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_shaft_2.obj" />
+    <None Include="Blocks\Piston\HE\Panel\HEps_shaft_3.obj" />
+    <None Include="Blocks\Piston\HE\Panel\pistonblock he panel deco._png" />
+    <None Include="Blocks\Piston\HE\Panel\pistonblock he panel._png" />
     <None Include="Blocks\Piston\VEN\ven twist piston base.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston head.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston shaft 1.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston shaft 2.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston.blend" />
-    <None Include="Blocks\Piston\VEN\ven_twist_piston_png" />
+    <None Include="Blocks\Piston\VEN\ven_twist_piston._png" />
     <None Include="Blocks\Swivel\Double\swivel.blend" />
+    <None Include="Blocks\Swivel\Double\swivelblock he._png" />
     <None Include="Blocks\Swivel\Double\swivel_double_base.obj" />
     <None Include="Blocks\Swivel\Double\swivel_double_head.obj" />
     <None Include="Blocks\Swivel\Inline\Swivel ven.blend" />
@@ -397,12 +419,20 @@
     <Resource Include="Blocks\Piston\GSO\piston_shaft.obj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\Piston\HE\HEp_icon_png" />
-    <Resource Include="Blocks\Piston\GeoCorp\GEOp_icon_png" />
+    <None Include="Blocks\Piston\HE\HEp_icon._png" />
+    <None Include="Blocks\Piston\GeoCorp\GEOp_icon._png" />
     <Resource Include="Blocks\SteeringRegulator\sr_png" />
-    <Resource Include="Blocks\Piston\GSO\piston_icon_png" />
+    <None Include="Blocks\Piston\GSO\piston_icon._png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Blocks\Piston\BF\Rail\bf rail piston._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment corner large._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment corner._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment long._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment streamline large._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment streamline._png" />
+    <None Include="Blocks\Piston\BF\Rail\bf rail segment._png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Blocks\Swivel\Inline\swivel_ven_png" />
     <Resource Include="Blocks\Swivel\Medium\swivel_png" />
@@ -411,13 +441,13 @@
     <Resource Include="Blocks\Swivel\Small\swivel_small_png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\Piston\BF\BFp_png" />
+    <None Include="Blocks\Piston\BF\BFp._png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\Pads\friction pad gc small_png" />
+    <None Include="Blocks\Pads\friction pad gc small._png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blocks\Pads\friction pad gc big_png" />
+    <None Include="Blocks\Pads\friction pad gc big,_png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -433,5 +463,9 @@ mkdir !modpath!
 echo Copying to game
 set e=$(TargetDir)..\&gt;nul
 xcopy /S /Y /R "!e:~0,-1!" !modpath!</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

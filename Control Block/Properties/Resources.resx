@@ -124,17 +124,11 @@
   <data name="BFp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\bf\bfp_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="BFp_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\piston\bf\bfp_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="GEOp_blockbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\geocorp\geop_blockbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="GEOp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\geocorp\geop_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="GEOp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\piston\geocorp\geop_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="GEOp_shaftbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\geocorp\geop_shaftbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -147,9 +141,6 @@
   </data>
   <data name="HEp_blocktop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\he\hep_blocktop.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HEp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\piston\he\hep_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="HEp_shaftbottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\he\hep_shaftbottom.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -168,9 +159,6 @@
   </data>
   <data name="piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\gso\piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="piston_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\piston\gso\piston_icon_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="piston_shaft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\gso\piston_shaft.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -208,12 +196,6 @@
   <data name="swivel_ven_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\swivel\inline\swivel_ven_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="friction_pad_gc_big_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\pads\friction pad gc big_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="friction_pad_gc_small_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\pads\friction pad gc small_png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="GCfrictionpadbig" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\pads\gcfrictionpadbig.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -238,12 +220,6 @@
   <data name="mtmag_ball_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\mtmags\mtmag ball large.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="mtmag_ball_large_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\mtmags\mtmag_ball_large_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="mtmag_ball_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Blocks\MTMags\mtmag_ball_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="swivel_double_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\swivel\double\swivel_double_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -265,13 +241,115 @@
   <data name="ven_twist_piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\ven\ven twist piston head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="ven_twist_piston_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blocks\piston\ven\ven_twist_piston_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ven_twist_piston_shaft_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\ven\ven twist piston shaft 1.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ven_twist_piston_shaft_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\blocks\piston\ven\ven twist piston shaft 2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="BFp_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\bfp._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_piston" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail piston._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_piston_base1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_corner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_corner.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_corner_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_corner_2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_extension1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_extension.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_extension_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_extension_2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_head1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_wedge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_wedge.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_piston_wedge_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\BF\Rail\bf_rail_piston_wedge_2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bf_rail_segment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_segment_corner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment corner._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_segment_corner_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment corner large._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_segment_long" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment long._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_segment_streamline" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment streamline._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bf_rail_segment_streamline_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\bf\rail\bf rail segment streamline large._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="friction_pad_gc_big_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\friction pad gc big,_png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="friction_pad_gc_small_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\pads\friction pad gc small._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="GEOp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\geocorp\geop_icon._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="HEp_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\he\hep_icon._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="mtmag_ball_large_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\mtmags\mtmag_ball_large._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="mtmag_ball_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\mtmags\mtmag_ball._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="piston_icon_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\gso\piston_icon._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ven_twist_piston_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blocks\piston\ven\ven_twist_piston._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="HEps_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_deco_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_deco_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_deco_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_deco_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_deco_shaft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_deco_shaft.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_shaft_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_shaft_1.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="HEps_shaft_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_shaft_2.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HEps_shaft_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\HEps_shaft_3.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pistonblock_he_panel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\pistonblock he panel._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pistonblock_he_panel_deco" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Piston\HE\Panel\pistonblock he panel deco._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="swivelblock_he" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Swivel\Double\swivelblock he._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

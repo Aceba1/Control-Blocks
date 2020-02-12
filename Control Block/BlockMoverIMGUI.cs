@@ -46,7 +46,7 @@ namespace Control_Block
         {
             inst.gameObject.SetActive(OptionMenuMover.inst.check_OnGUI() || /*OptionMenuSwivel.inst.check_OnGUI() || */OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
         }
-        void OnGUI()
+        public void OnGUI()
         {
             OptionMenuMover.inst.stack_OnGUI();
             //OptionMenuSwivel.inst.stack_OnGUI();
@@ -74,7 +74,7 @@ namespace Control_Block
 
         private Rect win;
 
-        private void Update()
+        public void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
             {
@@ -142,11 +142,11 @@ namespace Control_Block
     {
         public OptionMenuMover()
         {
-            UIInputPopup = new Popup(Enum.GetNames(typeof(InputOperator.InputType)));
-            UIOperatorPopup = new Popup(Enum.GetNames(typeof(InputOperator.OperationType)));
+            UIInputPopup = PopupBase.CreateFromInputCategories();
+            UIOperatorPopup = PopupBase.CreateFromOperatorCategories();
             inst = this;
         }
-        GUIStyle pvOn, pvOff;
+        GUIStyle pvOn, pvOff, pvSelOn, pvSelOff, noWrap;
 
         public static OptionMenuMover inst;
 
@@ -160,19 +160,30 @@ namespace Control_Block
 
         public bool queueResetTextCache;
 
-        private void Update()
+        public void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
                 win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 700f, 400f);
                 try
                 {
-                    module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleBlockMover>();
+                    var block = Singleton.Manager<ManPointer>.inst.targetVisible.block;
+                    if (block != null)
+                    {
+                        module = block.GetComponent<ModuleBlockMover>();
+                        if (module == null)
+                        {
+                            var seg = block.GetComponent<ModuleBMSegment>();
+                            if (seg != null) module = seg.VerifyBlockMover;
+                        }
+                    }
                 }
                 catch
                 {
                     //Console.WriteLine(e);
                     module = null;
+                    PresetsIMGUI.SetState(false, null, win);
+                    showPresetsUI = false;
                 }
                 visible = module;
                 if (visible)
@@ -211,9 +222,21 @@ namespace Control_Block
                 return;
             }
 
+            if (module.IsControlledByNet)
+            {
+                visible = false;
+                return;
+            }
+
             try
             {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), module.gameObject.name);
+                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), StringLookup.GetItemName(module.block.visible.m_ItemType));
+                if (showPresetsUI && PresetsIMGUI.DoWindow())
+                {
+                    Log = PresetsIMGUI.Log;
+                    Texts = null;
+                    ResetTextCache();
+                }
             }
             catch (Exception e)
             {
@@ -222,14 +245,57 @@ namespace Control_Block
         }
 
         private bool IsSettingKeybind;
-        private int SelectedIndex;
+        internal static int SelectedIndex;
 
-        private Popup UIInputPopup, UIOperatorPopup;
+        private Popup<InputOperator.InputType> UIInputPopup;
+        private Popup<InputOperator.OperationType> UIOperatorPopup;
         private Vector2[] Scrolls = new Vector2[2];
         private string[] Texts;
         private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxVelCache, maxCache, springCache, dampCache;
         private string Log = "";
-        private bool showOldUI;
+        internal static bool showPresetsUI;
+
+        void CreateGUIStyles()
+        {
+            var normalColor = new Color(0.8f, 0.8f, 0.8f);
+            var hoverColor = Color.white;
+            var activeColor = new Color(0.6f, 0.8f, 1f);
+
+            pvOff = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleLeft
+            };
+            pvOff.active.textColor = activeColor;
+            pvOff.hover.textColor = hoverColor;
+            pvOff.normal.textColor = normalColor;
+
+            //pvOn.stretchHeight = false;
+            //pvOn.fontSize += 2;
+            pvOff.margin = new RectOffset(3, 3, 3, 3);
+            //pvOn.clipping = TextClipping.Overflow;
+            pvOff.wordWrap = false;
+
+            pvOn = new GUIStyle(pvOff)
+            {
+                fontStyle = FontStyle.Bold
+            };
+
+            pvSelOff = new GUIStyle(pvOff);
+            pvSelOff.active.textColor = activeColor;
+            pvSelOff.hover.textColor = activeColor;
+            pvSelOff.normal.textColor = activeColor;
+
+            pvSelOn = new GUIStyle(pvSelOff)
+            {
+                fontStyle = FontStyle.Bold
+            };
+
+            noWrap = new GUIStyle(GUI.skin.label);
+            noWrap.wordWrap = false;
+            noWrap.fontStyle = FontStyle.Bold;
+        }
+
+        bool UpdateSelection;
 
         private void DoWindow(int id)
         {
@@ -259,150 +325,22 @@ namespace Control_Block
                     }
                 }
 
+                if (pvOn == null)
+                {
+                    CreateGUIStyles();
+                }
 
-                bool UpdateSelection;
                 GUILayout.BeginHorizontal();
                 { // Splitter
-                    GUILayout.BeginVertical(GUILayout.MaxWidth(250));
-                    {
-                        Scrolls[0] = GUILayout.BeginScrollView(Scrolls[0]);
-                        {
-                            if (Texts == null)
-                            {
-                                Texts = InputOperator.ProcessOperationsToStringArray(module.ProcessOperations);
-                            }
 
-                            if (pvOn == null)
-                            {
-                                pvOn = new GUIStyle(GUI.skin.label)
-                                {
-                                    alignment = TextAnchor.MiddleLeft
-                                };
-                                var normalColor = new Color(0.85f, 0.85f, 0.85f);
-                                var hoverColor = new Color(0.9f, 0.9f, 0.95f);
+                    bool allowGUI = !UIInputPopup.isVisible && !UIOperatorPopup.isVisible;
+                    GUI.enabled = allowGUI;
 
-                                pvOn.onActive.textColor = Color.white;
-                                pvOn.active.textColor = normalColor;
-
-                                pvOn.onHover.textColor = Color.white;
-                                pvOn.hover.textColor = hoverColor;
-
-                                pvOn.onNormal.textColor = Color.white;
-                                pvOn.normal.textColor = normalColor;
-
-                                pvOn.stretchHeight = false;
-                                pvOn.fontStyle = FontStyle.Bold;
-                                pvOn.fontSize += 2;
-                                pvOn.padding = new RectOffset(8, 8, 2, 2);
-                                pvOn.clipping = TextClipping.Overflow;
-                                pvOn.wordWrap = false;
-                                pvOff = new GUIStyle(pvOn)
-                                {
-                                    fontStyle = FontStyle.Normal
-                                };
-                            }
-
-                            GUI.changed = false;
-
-                            GUILayout.Space(16);
-
-                            for (int index = 0; index < Texts.Length; index++)
-                            {
-                                bool state = module.ProcessOperations[index].LASTSTATE;
-                                if (GUILayout.Toggle(state, Texts[index], index == SelectedIndex ? pvOn : pvOff) != state)
-                                {
-                                    SelectedIndex = index;
-                                }
-                            }
-
-                            UpdateSelection = GUI.changed;
-
-                            GUILayout.FlexibleSpace(); // Inflate scrollview hopefully
-                        }
-                        GUILayout.EndScrollView();
-
-                        GUILayout.BeginVertical("Edit", GUI.skin.window);
-                        {
-                            //GUILayout.Space(8);
-                            GUILayout.BeginHorizontal();
-                            {
-                                if (GUILayout.Button("Add"))
-                                {
-                                    module.ProcessOperations.Insert(++SelectedIndex, new InputOperator());
-                                    Texts = null;
-                                    UpdateSelection = true;
-                                }
-                                if (SelectedIndex > -1)
-                                {
-                                    if (GUILayout.Button("▲") && SelectedIndex > 0)
-                                    {
-                                        var current = module.ProcessOperations[SelectedIndex];
-                                        var swap = module.ProcessOperations[SelectedIndex - 1];
-                                        module.ProcessOperations[SelectedIndex] = swap;
-                                        module.ProcessOperations[--SelectedIndex] = current;
-                                        Texts = null;
-                                        //UpdateSelection = true;
-                                    }
-                                    if (GUILayout.Button("▼") && SelectedIndex < module.ProcessOperations.Count - 1)
-                                    {
-                                        var current = module.ProcessOperations[SelectedIndex];
-                                        var swap = module.ProcessOperations[SelectedIndex + 1];
-                                        module.ProcessOperations[SelectedIndex] = swap;
-                                        module.ProcessOperations[++SelectedIndex] = current;
-                                        Texts = null;
-                                        //UpdateSelection = true;
-                                    }
-                                    if (GUILayout.Button("Delete"))
-                                    {
-                                        module.ProcessOperations.RemoveAt(SelectedIndex--);
-                                        Texts = null;
-                                        UpdateSelection = true;
-                                    }
-                                }
-                            }
-                            GUILayout.EndHorizontal();
-                            GUILayout.BeginHorizontal();
-                            {
-                                if (GUILayout.Button("Copy text"))
-                                {
-                                    GUIUtility.systemCopyBuffer = string.Join("\n", Texts);
-                                    Log = "Copied";
-                                }
-                                if (GUILayout.Button("Paste text"))
-                                {
-                                    Log = InputOperator.StringArrayToProcessOperations(GUIUtility.systemCopyBuffer, ref module.ProcessOperations);
-                                    Texts = null;
-                                }
-                                // Copy as Text, Paste from Text
-                            }
-                            GUILayout.EndHorizontal();
-                            if (!string.IsNullOrEmpty(Log))
-                                GUILayout.Label(Log);
-                        }
-                        GUILayout.EndVertical();
-                        bool _showOldUI = GUILayout.Toggle(showOldUI, "Function Presets (Old UI)");
-                        if (_showOldUI != showOldUI)
-                        {
-                            LegacyBlockMoverIMGUI.SetState(_showOldUI, module, win);
-                            showOldUI = _showOldUI;
-                        }
-                        if (showOldUI)
-                        {
-#warning                    REINCOROPRATE SIMPLE UI so cloud doesn't hate me
-                            if (LegacyBlockMoverIMGUI.DoWindow(module, win))
-                            {
-                                Log = LegacyBlockMoverIMGUI.Log;
-                            }
-                        }
-                    }
-                    GUILayout.EndVertical(); // Processes for <block>
-
-                    GUILayout.BeginVertical(); // Parameters for processes
+                    GUILayout.BeginVertical(GUILayout.MaxWidth(380)); // Parameters for processes
                     {
                         Scrolls[1] = GUILayout.BeginScrollView(Scrolls[1]);
                         {
-                            Rect rect1 = default, rect2 = default;
-                            bool PairEdit = SelectedIndex != -1 && SelectedIndex < module.ProcessOperations.Count;
+                            bool PairEdit = IsItemSelected;
 
                             if (PairEdit)
                             {
@@ -411,8 +349,11 @@ namespace Control_Block
                                 {
                                     paramCache = io.m_InputParam.ToString();
                                     strengthCache = io.m_Strength.ToString();
-                                    UIInputPopup.selectedItemIndex = (int)io.m_InputType;
-                                    UIOperatorPopup.selectedItemIndex = (int)io.m_OperationType;
+                                    UIInputPopup.SelectedValue = io.m_InputType;
+                                    UIInputPopup.SelectedName = io.m_InputType.ToString();
+                                    UIOperatorPopup.SelectedValue = io.m_OperationType;
+                                    UIOperatorPopup.SelectedName = io.m_OperationType.ToString();
+                                    UpdateSelection = false;
                                 }
                                 var uii = InputOperator.UIInputPairs[io.m_InputType];
                                 var uio = InputOperator.UIOperationPairs[io.m_OperationType];
@@ -422,7 +363,7 @@ namespace Control_Block
                                     GUILayout.BeginVertical("Condition " + uii.UIName, GUI.skin.window);
                                     {
                                         //GUILayout.Space(8);
-                                        rect1 = UIInputPopup.Show();
+                                        UIInputPopup.Button();
                                         GUILayout.Label(uii.UIName);
                                         GUILayout.BeginHorizontal();
                                         {
@@ -501,7 +442,7 @@ namespace Control_Block
                                 GUILayout.BeginVertical("Operator " + uio.UIName, GUI.skin.window);
                                 {
                                     //GUILayout.Space(8);
-                                    rect2 = UIOperatorPopup.Show();
+                                    UIOperatorPopup.Button();
                                     GUILayout.Label(uio.UIDesc);
                                     if (!uio.HideStrength)
                                     {
@@ -534,11 +475,15 @@ namespace Control_Block
                                         else if (uio.SliderPosFraction != 0f)
                                         {
                                             float frac = module.MAXVALUELIMIT * uio.SliderPosFraction;
-                                            temp = GUILayout.HorizontalSlider(temp, uio.SliderMin ? -frac : 0f, frac);
+                                            temp = GUILayout.HorizontalSlider(temp, (uio.SliderMin || uio.SliderMinOnPlanar && module.IsPlanarVALUE) ? -frac : 0f, frac);
                                         }
                                         else if (uio.SliderMax != 0f)
                                         {
                                             temp = GUILayout.HorizontalSlider(temp, uio.SliderMin ? uio.SliderMax : 0f, uio.SliderMax);
+                                            if (uio.SliderMin && !string.IsNullOrEmpty(uio.ToggleComment))
+                                            {
+                                                temp = (GUILayout.Toggle(temp < 0, uio.ToggleComment) ? -1f : 1f) * Mathf.Abs(temp);
+                                            }
                                         }
                                         if (GUI.changed)
                                         {
@@ -553,55 +498,144 @@ namespace Control_Block
                                 GUILayout.Space(16);
                             }
 
+                            GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
+
                             GUILayout.Space(16);
 
                             GUILayout.BeginVertical("Properties", GUI.skin.window);
                             {
-                                //GUILayout.Space(8);
+                                module.LOCALINPUT = GUILayout.Toggle(module.LOCALINPUT, "Input local to tech");
+
+                                GUILayout.Space(12);
+                                
                                 GUILayout.Label($"Current Value: {module.PVALUE}");
                                 //GUILayout.Label($"Target Value: {module.VALUE}");
 
                                 float round = module.IsPlanarVALUE ? 2.5f : 0.25f;
 
-                                GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref module.VALUE, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round);
-                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY, true, round);
-
-                                if (GUIOverseer.TextSliderPair("Max Velocity: ", ref maxVelCache, ref module.MAXVELOCITY, 0f, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 10f))
-
-                                GUILayout.Space(4);
-
-                                if (GUIOverseer.TextSliderPair("Min Value Limit: ", ref minCache, ref module.MINVALUELIMIT, module.IsPlanarVALUE ? -module.TrueLimitVALUE : 0, module.TrueLimitVALUE, true, round))
+                                float value = module.VALUE;
+                                if (module.IsPlanarVALUE)
                                 {
-                                    module.SetMinValueLimit(module.MINVALUELIMIT);
-                                    if (module.MAXVALUELIMIT < module.MINVALUELIMIT)
+                                    value = ((value + 180) % 360) - 180;
+                                    if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, -180f, 180f, true, round))
+                                        module.VALUE = (value + 360) % 360;
+                                }
+                                else
+                                {
+                                    if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round))
+                                        module.VALUE = value;
+                                }
+
+                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 20f);
+                                GUIOverseer.TextSliderPair("Max Velocity: ", ref maxVelCache, ref module.MAXVELOCITY, 0f, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 10f);
+
+                                GUILayout.Space(12);
+
+                                GUI.changed = false;
+                                module.UseLIMIT = GUILayout.Toggle(module.UseLIMIT, "Use limits");
+                                if (GUI.changed && module.IsFreeJoint)
+                                {
+                                    module.SetupFreeJoint();
+                                }
+
+                                GUILayout.BeginHorizontal();
+                                {
+                                    GUILayout.Space(12);
+                                    GUILayout.BeginVertical();
                                     {
-                                        module.SetMaxValueLimit(module.MINVALUELIMIT);
-                                        maxCache = module.MINVALUELIMIT.ToString();
+                                        if (module.IsPlanarVALUE)
+                                        {
+                                            float min = ((module.MINVALUELIMIT + 180f) % 450f) - 180f;
+                                            float max = ((module.MAXVALUELIMIT + 180f) % 450f) - 180f;
+                                            GUILayout.Label("Min Value Limit: " + min);
+                                            GUILayout.Label("Max Value Limit: " + max);
+                                            float cen = module._CENTERLIMIT, ext = module._EXTENTLIMIT;
+                                            GUILayout.Label("Note, CENTER & EXTENT are used here for percision");
+                                            if (GUIOverseer.TextSliderPair("Center of Limit: ", ref minCache, ref cen, 0f, module.TrueLimitVALUE, true, round)
+                                                | GUIOverseer.TextSliderPair("Extent of Limit: ", ref maxCache, ref ext, 0f, module.TrueLimitVALUE / 0.5f, true, round)) // | instead of ||, so it doesn't skip
+                                            {
+                                                module._CENTERLIMIT = cen;
+                                                module._EXTENTLIMIT = ext;
+                                                module.SetMinLimit(module.MINVALUELIMIT, false);
+                                                module.SetMaxLimit(module.MAXVALUELIMIT, false);
+                                                queueResetTextCache = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            float min = module.MINVALUELIMIT;
+                                            if (GUIOverseer.TextSliderPair("Min Value Limit: ", ref minCache, ref min, 0f, module.TrueLimitVALUE, true, round))
+                                            {
+                                                module.SetMinLimit(min);
+                                                queueResetTextCache = true;
+                                            }
+                                            float max = module.MAXVALUELIMIT;
+                                            if (GUIOverseer.TextSliderPair("Max Value Limit: ", ref maxCache, ref max, 0f, module.TrueLimitVALUE, true, round))
+                                            {
+                                                module.SetMaxLimit(max);
+                                                queueResetTextCache = true;
+                                            }
+                                        }
                                     }
-                                    queueResetTextCache = true;
+                                    GUILayout.EndVertical();
                                 }
-                                if (GUIOverseer.TextSliderPair("Max Value Limit: ", ref maxCache, ref module.MAXVALUELIMIT, module.MINVALUELIMIT, module.TrueLimitVALUE, true, round))
+                                GUILayout.EndHorizontal();
+
+                                if (!module.CanOnlyBeLockJoint)
                                 {
-                                    module.SetMaxValueLimit(module.MAXVALUELIMIT);
-                                    queueResetTextCache = true;
+                                    GUILayout.Space(12);
+
+                                    GUILayout.BeginVertical(GUI.skin.window);
+                                    {
+                                        GUILayout.Label("Joint dynamics");
+                                        if (GUILayout.Toggle(module.IsLockJoint, "Lock-Joint (Static state)"))
+                                            module.moverType = ModuleBlockMover.MoverType.Static;
+                                        GUILayout.Label("Static state fixates the position and removes physics from the body entirely. (Pre-overhaul)");
+                                        GUILayout.BeginHorizontal();
+                                        {
+                                            GUILayout.Space(12);
+                                            GUILayout.BeginVertical();
+                                            {
+                                                module.LockJointBackPush = GUILayout.Toggle(module.LockJointBackPush, "Back-push movement");
+                                            }
+                                            GUILayout.EndVertical();
+                                        }
+                                        GUILayout.EndHorizontal();
+                                        GUILayout.Space(12);
+
+                                        if (GUILayout.Toggle(module.IsBodyJoint, "Dynamic-Joint (Dynamic state)"))
+                                            module.moverType = ModuleBlockMover.MoverType.Dynamic;
+                                        GUILayout.Label("Dynamic state gives the body rigid physics, restricted to the joint.");
+
+                                        GUILayout.Space(12);
+
+                                        GUI.enabled = !module.CannotBeFreeJoint;
+
+                                        if (GUILayout.Toggle(module.IsFreeJoint, "Free-Joint (Suspension state)"))
+                                            module.moverType = ModuleBlockMover.MoverType.Physics;
+                                        GUILayout.Label("Suspension state frees the physics joints to allow manipulation from influences, including the spring joint");
+                                        GUILayout.BeginHorizontal();
+                                        {
+                                            GUILayout.Space(12);
+                                            GUILayout.BeginVertical();
+                                            {
+                                                if (GUIOverseer.TextSliderPair("  Spring Strength: ", ref springCache, ref module.SPRSTR, 0, 2000, false, 5f))
+                                                    module.UpdateSpringForce();
+                                                if (GUIOverseer.TextSliderPair("  Spring Dampen: ", ref dampCache, ref module.SPRDAM, 0, 1000, false, 2.5f))
+                                                    module.UpdateSpringForce();
+                                            }
+                                            GUILayout.EndVertical();
+                                        }
+                                        GUILayout.EndHorizontal();
+
+                                        module.CannotBeFreeJoint = module.CannotBeFreeJoint; // Ensure GUI did not set it to free-joint if unpermitted
+                                        GUI.enabled = allowGUI;
+                                    }
+                                    GUILayout.EndVertical();
                                 }
-
-                                GUILayout.Space(4);
-
-                                GUILayout.Label("Joint dynamics");
-                                module.FREEJOINT = GUILayout.Toggle(module.FREEJOINT, "Free-Joint (Suspension state");
-                                GUILayout.Label("Suspension state frees the physics joints to allow manipulation from influences");
-                                if (GUIOverseer.TextSliderPair("Spring Strength: ", ref springCache, ref module.SPRSTR, 0, 2000, false, 5f))
-                                    module.UpdateSpringForce();
-                                if (GUIOverseer.TextSliderPair("Spring Dampen: ", ref dampCache, ref module.SPRDAM, 0, 1000, false, 2.5f))
-                                    module.UpdateSpringForce();
-                                GUILayout.Space(4);
-                                module.LOCKJOINT = GUILayout.Toggle(module.LOCKJOINT, "Lock-Joint (Static state");
-                                GUILayout.Label("Static state fixes the position and removes physics from the clusterbody entirely.");
-
-                                GUILayout.Space(4);
                             }
                             GUILayout.EndVertical();
+
                             GUILayout.Space(16);
 
                             if (module.Holder != null)
@@ -609,41 +643,172 @@ namespace Control_Block
                                 GUILayout.Label($"Rigidbody mass: {module.Holder.rbody_mass}");
                                 GUILayout.Label($"Rigidbody CoM: {module.Holder.rbody_centerOfMass}");
                                 GUILayout.Label($"Blocks on body: {module.Holder.blocks.Count}");
+                                if (module.HolderJoint != null)
+                                {
+                                    GUILayout.Label($"Target spring: {(module.IsPlanarVALUE ? module.HolderJoint.targetRotation * Vector3.forward : module.HolderJoint.targetPosition)}");
+                                }
                             }
                             GUILayout.Label($"Tank mass: {module.block.tank.rbody.mass}");
                             GUILayout.Label($"Tank CoM: {module.block.tank.rbody.centerOfMass}");
 
+                            //GUILayout.Space(16);
+
+                            //if (GUILayout.Button("Close"))
+                            //{
+                            //    visible = false;
+                            //    IsSettingKeybind = false;
+                            //    module = null;
+                            //}
+
                             GUILayout.Space(16);
+                            GUILayout.Label("EXPERIMENTAL SOUND TEST, BEWARE");
+                            GUILayout.Label("SFX: " + module.SFX.ToString());
+                            if (int.TryParse(GUILayout.TextField(((int)module.SFX).ToString()), out int result))
+                                module.SFX = (TechAudio.SFXType)result;
+                            string v = module.SFXVolume.ToString();
+                            GUIOverseer.TextSliderPair("Volume: ", ref v, ref module.SFXVolume, 0f, 2f, false, 0.1f);
 
-                            if (GUILayout.Button("Close"))
-                            {
-                                visible = false;
-                                IsSettingKeybind = false;
-                                module = null;
-                            }
-                            if (PairEdit)
-                            {
-                                var io = module.ProcessOperations[SelectedIndex];
+                            //if (Input.GetKeyDown(KeyCode.Backslash)) rebuildpropertycache();
+                            //GUILayout.Label(propertycache);
 
-                                var InputType = (InputOperator.InputType)UIInputPopup.List(rect1);
-                                if (InputType != io.m_InputType)
-                                {
-                                    io.m_InputType = InputType;
-                                    Texts = null;
-                                }
-                                var OperationType = (InputOperator.OperationType)UIOperatorPopup.List(rect2);
-                                if (OperationType != io.m_OperationType)
-                                {
-                                    io.m_OperationType = OperationType;
-                                    if (OperationType == InputOperator.OperationType.ConditionEndIf)
-                                        io.m_InputType = InputOperator.InputType.AlwaysOn;
-                                    Texts = null;
-                                }
-                            }
+                            module.SFXParam = GUILayout.TextField(module.SFXParam);
                         }
                         GUILayout.EndScrollView();
+
+                        GUI.enabled = true;
+                        UIInputPopup.Show(32f, 16f - Scrolls[1].y);
+                        UIOperatorPopup.Show(32f, 16f - Scrolls[1].y);
+                        GUI.enabled = allowGUI;
                     }
                     GUILayout.EndVertical();
+
+                    GUILayout.BeginVertical(GUILayout.MaxWidth(320));
+                    {
+                        Scrolls[0] = GUILayout.BeginScrollView(Scrolls[0]);
+                        {
+                            if (Texts == null)
+                            {
+                                Texts = InputOperator.ProcessOperationsToStringArray(module.ProcessOperations, true);
+                            }
+
+                            GUI.changed = false;
+
+                            GUILayout.Space(16);
+
+                            for (int index = 0; index < Texts.Length; index++)
+                            {
+                                bool state = module.ProcessOperations[index].LASTSTATE;
+                                if (GUILayout.Button(Texts[index], SelectedIndex == index ? (state ? pvSelOn : pvSelOff) : (state ? pvOn : pvOff)))
+                                {
+                                    SelectedIndex = index;
+                                }
+                            }
+
+                            UpdateSelection = GUI.changed;
+
+                            GUILayout.FlexibleSpace(); // Inflate scrollview hopefully
+                        }
+                        GUILayout.EndScrollView();
+
+                        GUILayout.BeginVertical("Edit", GUI.skin.window);
+                        {
+                            //GUILayout.Space(8);
+                            GUILayout.BeginHorizontal();
+                            {
+                                if (GUILayout.Button("Insert"))
+                                {
+                                    module.ProcessOperations.Insert(++SelectedIndex, new InputOperator());
+                                    Texts = null;
+                                    UpdateSelection = true;
+                                }
+                                if (SelectedIndex > -1)
+                                {
+                                    if (GUILayout.Button("▲") && SelectedIndex > 0)
+                                    {
+                                        var current = module.ProcessOperations[SelectedIndex];
+                                        var swap = module.ProcessOperations[SelectedIndex - 1];
+                                        module.ProcessOperations[SelectedIndex] = swap;
+                                        module.ProcessOperations[--SelectedIndex] = current;
+                                        Texts = null;
+                                        //UpdateSelection = true;
+                                    }
+                                    if (GUILayout.Button("▼") && SelectedIndex < module.ProcessOperations.Count - 1)
+                                    {
+                                        var current = module.ProcessOperations[SelectedIndex];
+                                        var swap = module.ProcessOperations[SelectedIndex + 1];
+                                        module.ProcessOperations[SelectedIndex] = swap;
+                                        module.ProcessOperations[++SelectedIndex] = current;
+                                        Texts = null;
+                                        //UpdateSelection = true;
+                                    }
+                                    if (GUILayout.Button("Remove"))
+                                    {
+                                        module.ProcessOperations.RemoveAt(SelectedIndex--);
+                                        Texts = null;
+                                        UpdateSelection = true;
+                                    }
+                                }
+                            }
+                            GUILayout.EndHorizontal();
+                            GUILayout.BeginHorizontal();
+                            {
+                                if (GUILayout.Button("Copy text"))
+                                {
+                                    GUIUtility.systemCopyBuffer = string.Join("\n", InputOperator.ProcessOperationsToStringArray(module.ProcessOperations));
+                                    Log = "Copied";
+                                }
+                                if (GUILayout.Button("Paste text"))
+                                {
+                                    Log = InputOperator.StringArrayToProcessOperations(GUIUtility.systemCopyBuffer, ref module.ProcessOperations);
+                                    Texts = null;
+                                }
+                                // Copy as Text, Paste from Text
+                            }
+                            GUILayout.EndHorizontal();
+                            if (!string.IsNullOrEmpty(Log))
+                                GUILayout.Label(Log);
+                        }
+                        GUILayout.EndVertical();
+                        bool _showPresetsUI = GUILayout.Toggle(showPresetsUI, "Function Presets", GUI.skin.button);
+                        if (_showPresetsUI != showPresetsUI)
+                        {
+                            PresetsIMGUI.SetState(_showPresetsUI, module, win);
+                            showPresetsUI = _showPresetsUI;
+                        }
+                    }
+                    GUILayout.EndVertical(); // Processes for <block>
+
+                    GUI.enabled = true;
+
+                    if (IsItemSelected && !UpdateSelection)
+                    {
+                        var io = module.ProcessOperations[SelectedIndex];
+
+                        UIOperatorPopup.List(16f, 16f - Scrolls[1].y);
+                        UIInputPopup.List(16f, 16f - Scrolls[1].y);
+
+                        var InputType = UIInputPopup.SelectedValue;
+                        if (InputType != io.m_InputType)
+                        {
+                            io.m_InputType = InputType;
+                            io.m_Strength = InputType == InputOperator.InputType.Toggle ? -1 : Mathf.Abs(io.m_Strength);
+                            Texts = null;
+                        }
+                        var OperationType = UIOperatorPopup.SelectedValue;
+                        if (OperationType != io.m_OperationType)
+                        {
+                            io.m_OperationType = OperationType;
+                            if (OperationType == InputOperator.OperationType.EndIf)
+                                io.m_InputType = InputOperator.InputType.AlwaysOn;
+                            io.m_InternalTimer = 0f;
+                            Texts = null;
+                        }
+                    }
+                    else
+                    {
+                        if (UIInputPopup.isVisible) UIInputPopup.Hide();
+                        if (UIOperatorPopup.isVisible) UIOperatorPopup.Hide();
+                    }
                 }
                 GUILayout.EndHorizontal();
 
@@ -654,8 +819,26 @@ namespace Control_Block
                 Console.WriteLine(E);
                 visible = false;
                 module = null;
+                PresetsIMGUI.SetState(false, null, win);
+                showPresetsUI = false;
             }
         }
+
+        //string propertycache = "Press BACKSLASH";
+        //private void rebuildpropertycache()
+        //{
+        //    propertycache = "Params: ";
+        //    foreach (var mmmm in (typeof(FMODEventInstance).GetField("m_ParamDatabase", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null) as Dictionary<string, Dictionary<string, int>>))
+        //    {
+        //        propertycache += "\n- " + mmmm.Key;
+        //        foreach (var mmmmm in mmmm.Value)
+        //        {
+        //            propertycache += "\n  - " + mmmmm.Value + " " + mmmmm.Key;
+        //        }
+        //    }
+        //}
+
+        private bool IsItemSelected => SelectedIndex != -1 && SelectedIndex < module.ProcessOperations.Count;
     }
 
     internal class OptionMenuSteeringRegulator : MonoBehaviour
@@ -674,7 +857,7 @@ namespace Control_Block
 
         private Rect win;
 
-        private void Update()
+        public void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
