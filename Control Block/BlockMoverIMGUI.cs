@@ -156,6 +156,8 @@ namespace Control_Block
 
         private ModuleBlockMover module;
 
+        //private ModuleBMSegment segment;
+
         private Rect win;
 
         public bool queueResetTextCache;
@@ -173,8 +175,8 @@ namespace Control_Block
                         module = block.GetComponent<ModuleBlockMover>();
                         if (module == null)
                         {
-                            var seg = block.GetComponent<ModuleBMSegment>();
-                            if (seg != null) module = seg.VerifyBlockMover;
+                            var segment = block.GetComponent<ModuleBMSegment>();
+                            if (segment != null) module = segment.VerifyBlockMover;
                         }
                     }
                 }
@@ -182,6 +184,7 @@ namespace Control_Block
                 {
                     //Console.WriteLine(e);
                     module = null;
+                    //segment = null;
                     PresetsIMGUI.SetState(false, null, win);
                     showPresetsUI = false;
                 }
@@ -198,11 +201,11 @@ namespace Control_Block
             if (queueResetTextCache) ResetTextCache();
         }
 
-        private void ResetTextCache()
+        internal void ResetTextCache()
         {
             queueResetTextCache = false;
-            maxCache = module.MAXVALUELIMIT.ToString();
-            minCache = module.MINVALUELIMIT.ToString();
+            maxCache = null; //module.MAXVALUELIMIT.ToString();
+            minCache = null; //module.MINVALUELIMIT.ToString();
             maxVelCache = module.MAXVELOCITY.ToString();
             springCache = module.SPRSTR.ToString();
             dampCache = module.SPRDAM.ToString();
@@ -231,12 +234,8 @@ namespace Control_Block
             try
             {
                 win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), StringLookup.GetItemName(module.block.visible.m_ItemType));
-                if (showPresetsUI && PresetsIMGUI.DoWindow())
-                {
-                    Log = PresetsIMGUI.Log;
-                    Texts = null;
-                    ResetTextCache();
-                }
+                if (showPresetsUI) 
+                    PresetsIMGUI.DoWindow();
             }
             catch (Exception e)
             {
@@ -250,9 +249,9 @@ namespace Control_Block
         private Popup<InputOperator.InputType> UIInputPopup;
         private Popup<InputOperator.OperationType> UIOperatorPopup;
         private Vector2[] Scrolls = new Vector2[2];
-        private string[] Texts;
+        internal string[] Texts;
         private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxVelCache, maxCache, springCache, dampCache;
-        private string Log = "";
+        internal string Log = "";
         internal static bool showPresetsUI;
 
         void CreateGUIStyles()
@@ -470,20 +469,24 @@ namespace Control_Block
                                         else if (uio.SliderMaxIsMaxVel)
                                         {
                                             float vel = module.TrueMaxVELOCITY;
-                                            temp = GUILayout.HorizontalSlider(temp, uio.SliderMin ? -vel : 0f, vel);
+                                            temp = GUILayout.HorizontalSlider(temp, uio.SliderHasNegative ? -vel : 0f, vel);
                                         }
                                         else if (uio.SliderPosFraction != 0f)
                                         {
                                             float frac = module.MAXVALUELIMIT * uio.SliderPosFraction;
-                                            temp = GUILayout.HorizontalSlider(temp, (uio.SliderMin || uio.SliderMinOnPlanar && module.IsPlanarVALUE) ? -frac : 0f, frac);
+                                            temp = GUILayout.HorizontalSlider(temp, (uio.SliderHasNegative || uio.SliderMinOnPlanar && module.IsPlanarVALUE) ? -frac : 0f, frac);
                                         }
                                         else if (uio.SliderMax != 0f)
                                         {
-                                            temp = GUILayout.HorizontalSlider(temp, uio.SliderMin ? uio.SliderMax : 0f, uio.SliderMax);
-                                            if (uio.SliderMin && !string.IsNullOrEmpty(uio.ToggleComment))
+                                            if (uio.SliderHasNegative)
+                                                temp = GUILayout.HorizontalSlider(temp, -uio.SliderMax, uio.SliderMax);
+                                            else
+                                                temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), 0f, uio.SliderMax) * Mathf.Sign(temp);
+                                            if (!string.IsNullOrEmpty(uio.ToggleComment))
                                             {
                                                 temp = (GUILayout.Toggle(temp < 0, uio.ToggleComment) ? -1f : 1f) * Mathf.Abs(temp);
                                             }
+
                                         }
                                         if (GUI.changed)
                                         {
@@ -522,8 +525,16 @@ namespace Control_Block
                                 }
                                 else
                                 {
-                                    if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round))
-                                        module.VALUE = value;
+                                    if (module.UseLIMIT)
+                                    {
+                                        if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round))
+                                            module.VALUE = value;
+                                    }
+                                    else
+                                    {
+                                        if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, 0f, module.TrueLimitVALUE, true, round))
+                                            module.VALUE = value;
+                                    }
                                 }
 
                                 GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 20f);
@@ -531,16 +542,19 @@ namespace Control_Block
 
                                 GUILayout.Space(12);
 
-                                GUI.changed = false;
-                                module.UseLIMIT = GUILayout.Toggle(module.UseLIMIT, "Use limits");
-                                if (GUI.changed && module.IsFreeJoint)
+                                if (!module.HardLIMIT)
                                 {
-                                    module.SetupFreeJoint();
+                                    GUI.changed = false;
+                                    module.UseLIMIT = GUILayout.Toggle(module.UseLIMIT, "Use limits");
+                                    if (GUI.changed && module.IsFreeJoint)
+                                    {
+                                        module.SetupFreeJoint();
+                                    }
                                 }
 
                                 GUILayout.BeginHorizontal();
                                 {
-                                    GUILayout.Space(12);
+                                    if (!module.HardLIMIT) GUILayout.Space(12);
                                     GUILayout.BeginVertical();
                                     {
                                         if (module.IsPlanarVALUE)
@@ -661,17 +675,26 @@ namespace Control_Block
                             //}
 
                             GUILayout.Space(16);
+                            GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
+                            GUILayout.Space(16);
+
                             GUILayout.Label("EXPERIMENTAL SOUND TEST, BEWARE");
                             GUILayout.Label("SFX: " + module.SFX.ToString());
                             if (int.TryParse(GUILayout.TextField(((int)module.SFX).ToString()), out int result))
                                 module.SFX = (TechAudio.SFXType)result;
                             string v = module.SFXVolume.ToString();
                             GUIOverseer.TextSliderPair("Volume: ", ref v, ref module.SFXVolume, 0f, 2f, false, 0.1f);
-
-                            //if (Input.GetKeyDown(KeyCode.Backslash)) rebuildpropertycache();
-                            //GUILayout.Label(propertycache);
-
                             module.SFXParam = GUILayout.TextField(module.SFXParam);
+
+                            //if (segment)
+                            //{
+                            //    GUILayout.Space(16);
+                            //    GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
+                            //    GUILayout.Space(16);
+                            //    GUILayout.Label("Rail Segment Weights");
+                            //    string c = segment.AnimWeight.ToString();
+                            //    GUIOverseer.TextSliderPair("This Weight: ", ref c, ref segment.AnimWeight, 0f, 0.25f, false, 0.01f);
+                            //}
                         }
                         GUILayout.EndScrollView();
 
@@ -791,17 +814,20 @@ namespace Control_Block
                         if (InputType != io.m_InputType)
                         {
                             io.m_InputType = InputType;
-                            io.m_Strength = InputType == InputOperator.InputType.Toggle ? -1 : Mathf.Abs(io.m_Strength);
+                            io.m_InputParam = InputOperator.UIInputPairs[InputType].DefaultValue;
                             Texts = null;
+                            ResetTextCache();
                         }
                         var OperationType = UIOperatorPopup.SelectedValue;
                         if (OperationType != io.m_OperationType)
                         {
                             io.m_OperationType = OperationType;
-                            if (OperationType == InputOperator.OperationType.EndIf)
+                            if (OperationType == InputOperator.OperationType.EndIf || OperationType == InputOperator.OperationType.ElseThen)
                                 io.m_InputType = InputOperator.InputType.AlwaysOn;
+                            io.m_Strength = InputOperator.UIOperationPairs[OperationType].DefaultValue;
                             io.m_InternalTimer = 0f;
                             Texts = null;
+                            ResetTextCache();
                         }
                     }
                     else

@@ -16,120 +16,115 @@ namespace Control_Block
         {
 
             #region Blocks
-
-            #region Pistons
-
-            #region GSO Piston
-
             {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
-                    .SetName("GSO Piston")
-                    .SetDescription("A configurable piston that can push and pull blocks on a tech." + MoverText)
-                    .SetBlockID(1293838)
-                    .SetFaction(FactionSubTypes.GSO)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(4527)
-                    .SetHP(1000)
-                    .SetMass(2.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.piston_icon_png)));
+                #region Pistons
+                {
+                    #region GSO Piston
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
+                            .SetName("GSO Piston")
+                            .SetDescription("A configurable piston that can push and pull blocks on a tech. Constructed from the poorly-fabricated concept of a child, by his own future being. Because nothing is impossible." + MoverText)
+                            .SetBlockID(1293838)
+                            .SetFaction(FactionSubTypes.GSO)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(4527)
+                            .SetHP(1000)
+                            .SetMass(2.5f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.piston_icon_png)));
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
-                var par = ControlBlock.Prefab.transform;
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-                AddMeshToBlockMover(mat, new Vector3(.95f, .725f, .95f), new Vector3(0f, -.125f, 0f), par, Properties.Resources.piston_base);
-                AddMeshToBlockMover(mat, new Vector3(.75f, .8f, .75f), Vector3.zero, par, Properties.Resources.piston_shaft);
-                AddMeshToBlockMover(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .725f, .95f), new Vector3(0f, -.125f, 0f), par, Properties.Resources.piston_base);
+                        AddMeshToBlockMover(mat, new Vector3(.75f, .8f, .75f), Vector3.zero, par, Properties.Resources.piston_shaft);
+                        AddMeshToBlockMover(mat, new Vector3(.8f, .9f, .8f), Vector3.zero, par, Properties.Resources.piston_head);
 
-                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                    Vector3.up * 0.5f,
-                    Vector3.down * 0.5f,
-                    Vector3.left * 0.5f,
-                    Vector3.right * 0.5f,
-                    Vector3.forward * 0.5f,
-                    Vector3.back * 0.5f })
-                    .AddComponent<ModuleBlockMover>(SetGSOPiston)
-                    .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
-                    .RegisterLater();
-            }
+                        ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                                Vector3.up * 0.5f,
+                                Vector3.down * 0.5f,
+                                Vector3.left * 0.5f,
+                                Vector3.right * 0.5f,
+                                Vector3.forward * 0.5f,
+                                Vector3.back * 0.5f })
+                            .AddComponent<ModuleBlockMover>(SetGSOPiston)
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
+                            .RegisterLater();
+                    }
+                    #endregion GSO Piston
 
-            #endregion GSO Piston
+                    #region GeoCorp Piston
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
+                            .SetName("GeoCorp Large Piston")
+                            .SetDescription("This is a bulky piston. Slower, smoother, and sturdy as heck.\nForged in the valleys of Uberkartoffel potatoes" + MoverText)
+                            .SetBlockID(129380)
+                            .SetFaction(FactionSubTypes.GC)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(7323)
+                            .SetHP(8000)
+                            .SetMass(10f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.GEOp_icon_png)));
 
-            #region GeoCorp Piston
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
-                    .SetName("GeoCorp Large Piston")
-                    .SetDescription("This is a bulky piston. Slower, smoother, and sturdy as heck.\nForged in the valleys of Uberkartoffel potatoes" + MoverText)
-                    .SetBlockID(129380)
-                    .SetFaction(FactionSubTypes.GC)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(7323)
-                    .SetHP(8000)
-                    .SetMass(10f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.GEOp_icon_png)));
+                        AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
+                        AddMeshToBlockMover(mat, new Vector3(1.6f, 1f, 1.6f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shaftbottom);
+                        AddMeshToBlockMover(mat, new Vector3(1.3f, 1f, 1.3f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shafttop);
+                        AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 1f, .5f), par, Properties.Resources.GEOp_blocktop);
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main");
-                var par = ControlBlock.Prefab.transform;
+                        ControlBlock.SetSizeManual(new IntVector3[] {
+                                new IntVector3(0,0,0),
+                                new IntVector3(0,0,1),
+                                new IntVector3(0,1,0),
+                                new IntVector3(0,1,1),
+                                new IntVector3(1,0,0),
+                                new IntVector3(1,0,1),
+                                new IntVector3(1,1,0),
+                                new IntVector3(1,1,1)
+                            }, new Vector3[]{
+                                new Vector3(0f,-.5f,0f),
+                                new Vector3(1f,-.5f,0f),
+                                new Vector3(0f,-.5f,1f),
+                                new Vector3(1f,-.5f,1f),
+                                new Vector3(0f,1.5f,0f),
+                                new Vector3(1f,1.5f,0f),
+                                new Vector3(0f,1.5f,1f),
+                                new Vector3(1f,1.5f,1f)
+                            }).AddComponent<ModuleBlockMover>(SetGeoCorpPiston)
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
+                                       ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
+                            .RegisterLater();
+                    }
+                    #endregion GeoCorp Piston
 
-                AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.GEOp_blockbottom);
-                AddMeshToBlockMover(mat, new Vector3(1.6f, 1f, 1.6f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shaftbottom);
-                AddMeshToBlockMover(mat, new Vector3(1.3f, 1f, 1.3f), new Vector3(.5f, .5f, .5f), par, Properties.Resources.GEOp_shafttop);
-                AddMeshToBlockMover(mat, new Vector3(1.99f, .95f, 1.99f), new Vector3(.5f, 1f, .5f), par, Properties.Resources.GEOp_blocktop);
+                    #region Hawkeye Piston
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_StdBlock_Alt_1_02_111)
+                            .SetName("Hawkeye Telescopic Piston")
+                            .SetDescription("A set of enforced interlocked plates composing a piston that can extend to 4 blocks from its compressed state." + MoverText)
+                            .SetBlockID(129381)
+                            .SetFaction(FactionSubTypes.HE)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(7323)
+                            .SetHP(2250)
+                            .SetMass(5f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.HEp_icon_png)));
 
-                ControlBlock.SetSizeManual(new IntVector3[] {
-                    new IntVector3(0,0,0),
-                    new IntVector3(0,0,1),
-                    new IntVector3(0,1,0),
-                    new IntVector3(0,1,1),
-                    new IntVector3(1,0,0),
-                    new IntVector3(1,0,1),
-                    new IntVector3(1,1,0),
-                    new IntVector3(1,1,1)
-                }, new Vector3[]{
-                    new Vector3(0f,-.5f,0f),
-                    new Vector3(1f,-.5f,0f),
-                    new Vector3(0f,-.5f,1f),
-                    new Vector3(1f,-.5f,1f),
-                    new Vector3(0f,1.5f,0f),
-                    new Vector3(1f,1.5f,0f),
-                    new Vector3(0f,1.5f,1f),
-                    new Vector3(1f,1.5f,1f)
-                }).AddComponent<ModuleBlockMover>(SetGeoCorpPiston)
-                    .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                               ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
-                    .RegisterLater();
-            }
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-            #endregion GeoCorp Piston
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blockbottom);
+                        AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.down * .25f, par, Properties.Resources.HEp_shaftbottom);
+                        AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidb);
+                        AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidt);
+                        AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.up * .25f, par, Properties.Resources.HEp_shafttop);
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blocktop);
 
-            #region Hawkeye Piston
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_StdBlock_Alt_1_02_111)
-                    .SetName("Hawkeye Telescopic Piston")
-                    .SetDescription("A set of enforced interlocked plates composing a piston that can extend to 4 blocks from its compressed state." + MoverText)
-                    .SetBlockID(129381)
-                    .SetFaction(FactionSubTypes.HE)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(7323)
-                    .SetHP(2250)
-                    .SetMass(5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.HEp_icon_png)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blockbottom);
-                AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.down * .25f, par, Properties.Resources.HEp_shaftbottom);
-                AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidb);
-                AddMeshToBlockMover(mat, new Vector3(.75f, .95f, .75f), Vector3.zero, par, Properties.Resources.HEp_shaftmidt);
-                AddMeshToBlockMover(mat, new Vector3(.875f, .47f, .875f), Vector3.up * .25f, par, Properties.Resources.HEp_shafttop);
-                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.HEp_blocktop);
-
-                ControlBlock.SetSizeManual(new IntVector3[] {
+                        ControlBlock.SetSizeManual(new IntVector3[] {
                     new IntVector3(0,0,0)
                 }, new Vector3[]{
                     new Vector3(0f,-.5f,0f),
@@ -137,979 +132,991 @@ namespace Control_Block
                     new Vector3(0f,.5f, 0f),
                     new Vector3(0f, 0f,.5f),
                 }).AddComponent<ModuleBlockMover>(SetHawkeyePiston)
-                    .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                               ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
-                    .RegisterLater();
-            }
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
+                                       ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
+                            .RegisterLater();
+                    }
 
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_ArmouredBlock_10_111)
-                    .SetName("Hawkeye Armoured Panel Piston")
-                    .SetDescription("Another set of enforced interlocked plates composing a piston that can extend to 4 blocks from its relatively less compressed state of 2. Works pretty well as armor. Armour? What region is this?" + MoverText)
-                    .SetBlockID(6194710)
-                    .SetFaction(FactionSubTypes.HE)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(7323)
-                    .SetHP(2250)
-                    .SetMass(2f)
-                    .SetCenterOfMass(new Vector3(0f, 0.5f, -0.4f))
-                    .SetDamageableType(ManDamage.DamageableType.Armour)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.pistonblock_he_panel)));
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_ArmouredBlock_10_111)
+                            .SetName("Hawkeye Armoured Panel Piston")
+                            .SetDescription("Another set of enforced interlocked plates composing a piston that can extend to 4 blocks from its relatively less compressed state of 2. Works pretty well as armor. Armour? What region is this?" + MoverText)
+                            .SetBlockID(6194710)
+                            .SetFaction(FactionSubTypes.HE)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(7323)
+                            .SetHP(2250)
+                            .SetMass(2f)
+                            .SetCenterOfMass(new Vector3(0f, 0.5f, -0.4f))
+                            .SetDamageableType(ManDamage.DamageableType.Armour)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.pistonblock_he_panel)));
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
-                var par = ControlBlock.Prefab.transform;
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-                AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_base);
-                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.HEps_shaft_1);
-                AddMeshToBlockMover(mat, new Vector3(1f, 2f, .1f), new Vector3(0f, .5f, -0.4f), par, Properties.Resources.HEps_shaft_2);
-                AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.HEps_shaft_3);
-                AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 1f, -0.4f), par, Properties.Resources.HEps_head);
+                        AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_base);
+                        AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.HEps_shaft_1);
+                        AddMeshToBlockMover(mat, new Vector3(1f, 2f, .1f), new Vector3(0f, .5f, -0.4f), par, Properties.Resources.HEps_shaft_2);
+                        AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.HEps_shaft_3);
+                        AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 1f, -0.4f), par, Properties.Resources.HEps_head);
 
-                ControlBlock.SetSizeManual(new IntVector3[] {
+                        ControlBlock.SetSizeManual(new IntVector3[] {
                     new IntVector3(0,0,0), new IntVector3(0,1,0)
                 }, new Vector3[]{
                     new Vector3(0f,0f,-.5f),
                     new Vector3(0f,1f,-.5f),
                 }).AddComponent<ModuleBlockMover>(SetHawkeyePanelPiston)
-                    .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                               ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
-                    .RegisterLater();
-            }
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
+                                       ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
+                            .RegisterLater();
+                    }
+                    #endregion Hawkeye Piston
 
-            #endregion Hawkeye Piston
+                    #region BetterFuture Piston
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                            .SetName("Better Piston")
+                            .SetDescription("This piston started the revolution for all pistons and swivels. Replacing the technology of ghost-phasing and uniting swivels and pistons as one in a series of events that this piston was not aware was happening." + MoverText)
+                            .SetBlockID(1293834)
+                            .SetFaction(FactionSubTypes.BF)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(0)
+                            .SetPrice(6213)
+                            .SetHP(2000)
+                            .SetMass(3f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
 
-            #region BetterFuture Piston
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Piston")
-                    .SetDescription("This piston started the revolution for all pistons and swivels. Replacing the technology of ghost-phasing and uniting swivels and pistons as one in a series of events that this piston was not aware was happening." + MoverText)
-                    .SetBlockID(1293834)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(6213)
-                    .SetHP(2000)
-                    .SetMass(3f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blockbottom);
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blocktop);
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blockbottom);
-                AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blocktop);
-
-                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                        ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.up * 0.5f,
                     Vector3.down * 0.5f })
-                    .AddComponent<ModuleBlockMover>(SetBFPiston)
-                    .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
-                    .RegisterLater();
-            }
+                            .AddComponent<ModuleBlockMover>(SetBFPiston)
+                            .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
+                            .RegisterLater();
+                    }
+                    #endregion BetterFuture Piston
 
-            #endregion BetterFuture Piston
+                    #region Venture Piston
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.VENBlock_111)
+                            .SetName("Venture Twist Piston")
+                            .SetDescription("Venture wanted to get their own piston, but with a twist. That's literally it. It could be used quite well as a shock absorber..." + MoverText)
+                            .SetBlockID(1293837)
+                            .SetFaction(FactionSubTypes.VEN)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(0)
+                            .SetPrice(6075)
+                            .SetHP(1250)
+                            .SetMass(1f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.ven_twist_piston_png)));
 
-            #region Venture Piston
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.VENBlock_111)
-                    .SetName("Venture Twist Piston")
-                    .SetDescription("Venture wanted to get their own piston, but with a twist. That's literally it. It could be used quite well as a shock absorber..." + MoverText)
-                    .SetBlockID(1293837)
-                    .SetFaction(FactionSubTypes.VEN)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(6075)
-                    .SetHP(1250)
-                    .SetMass(1f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.ven_twist_piston_png)));
+                        AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.down * 0.5f, par, Properties.Resources.ven_twist_piston_base);
+                        AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_1);
+                        AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_2);
+                        AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.up * 0.5f, par, Properties.Resources.ven_twist_piston_head);
 
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.down * 0.5f, par, Properties.Resources.ven_twist_piston_base);
-                AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_1);
-                AddMeshToBlockMover(mat, new Vector3(.3f, .95f, .95f), Vector3.zero, par, Properties.Resources.ven_twist_piston_shaft_2);
-                AddMeshToBlockMover(mat, new Vector3(.5f, .5f, .5f), Vector3.up * 0.5f, par, Properties.Resources.ven_twist_piston_head);
-
-                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                        ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                         Vector3.up * 0.5f,
                         Vector3.down * 0.5f })
-                    .AddComponent<ModuleBlockMover>(SetVENPiston)
-                    .SetRecipe(ChunkTypes.PlubonicGreebles, ChunkTypes.PlubonicGreebles, ChunkTypes.BlastCaps, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
-                    .RegisterLater();
-            }
-
-            #endregion BetterFuture Piston
-
-            #region Special Pistons
-
-            #region BetterFuture Rail Piston
-
-            var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail Piston")
-                    .SetDescription("An extendable rail, with a small cart that can move blocks attached to it. Add rail segment blocks to the end to make it longer!" + MoverText)
-                    .SetBlockID(1293835)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(20000)
-                    .SetHP(400)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(1.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_piston)));
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_base);
-                AddMeshToBlockMover(bfmat, new Vector3(0.2f, 0.4f, 0.2f), new Vector3(0f, 0f, 0.5f), par, Properties.Resources.bf_rail_piston_head);
-
-                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleBMRail>(SetBFRailPiston)
-                    .RegisterLater();
-            }
-            BlockTypes railID = (BlockTypes)1293835;
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail segment")
-                    .SetDescription("(Travel length: 1) A segment for the Better Future Rail Piston, add it to the end of the line to make it go farther")
-                    .SetBlockID(1293836)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(2000)
-                    .SetHP(400)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(1.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                        Vector3.up * 0.5f,
-                        Vector3.down * 0.5f,
-                        Vector3.left * 0.5f,
-                        Vector3.right * 0.5f,
-                        Vector3.back * 0.5f })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_extension);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
-                {
-                    new AttachPoint()
-                    {
-                        AnimLength = 1f,
-                        AnimPosChange = Vector3.up,
-                        Tangent = Vector3.up,
-                        apPos = new Vector3(0f, -0.5f, 0f),
-                        blockPos = new IntVector3(0, -1, 0),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward,
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 1f,
-                        AnimPosChange = Vector3.down,
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(0f, 0.5f, 0f),
-                        blockPos = new IntVector3(0, 1, 0),
-                        apDirForward = new IntVector3(0, 1, 0),
-                        apDirUp = IntVector3.forward,
+                            .AddComponent<ModuleBlockMover>(SetVENPiston)
+                            .SetRecipe(ChunkTypes.PlubonicGreebles, ChunkTypes.PlubonicGreebles, ChunkTypes.BlastCaps, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
+                            .RegisterLater();
                     }
-                };
+                    #endregion BetterFuture Piston
 
-                ControlBlock.RegisterLater();
-            }
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail long segment")
-                    .SetDescription("(Trevel length: 2) A longer segment for the Better Future Rail Piston, add it to the end of the line to make it go even farther")
-                    .SetBlockID(1393800)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(4000)
-                    .SetHP(800)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(3f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_long)))
-                    .SetSize(new IntVector3(1, 2, 1))
-                    .SetAPsManual(new Vector3[] {
-                        Vector3.up * 1.5f,
-                        Vector3.down * 0.5f,
-                        Vector3.left * 0.5f,
-                        Vector3.right * 0.5f,
-                        Vector3.back * 0.5f,
-                        new Vector3(-0.5f, 1f, 0f),
-                        new Vector3(0.5f, 1f, 0f),
-                        new Vector3(0f, 1f, -0.5f) })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 2f, 1f), new Vector3(0f, 0.5f, 0f), par, Properties.Resources.bf_rail_piston_extension_2);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
-                {
-                    new AttachPoint()
+                    #region Reticule Research Piston
                     {
-                        AnimLength = 2f,
-                        AnimPosChange = Vector3.up * 2f,
-                        Tangent = Vector3.up,
-                        apPos = new Vector3(0f, -0.5f, 0f),
-                        blockPos = new IntVector3(0, -1, 0),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 2f,
-                        AnimPosChange = Vector3.down * 2f,
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(0f, 1.5f, 0f),
-                        blockPos = new IntVector3(0, 2, 0),
-                        apDirForward = new IntVector3(0, 1, 0),
-                        apDirUp = IntVector3.forward
+                        var Piston = new BlockPrefabBuilder(BlockTypes.EXP_RR_Block_111)
+                            .SetName("R.R. Floating Piston")
+                            .SetDescription("The Floating Piston is an experimental block-mover developed at A.C.E. laboratories, in an effort to make a floating table which dogs wouldn’t bump into while playing around the lab (the facility is famous for the large cloned dog population).\n" +
+                            "It uses the new R- AF ionic engine to move a tiny platform up and down. One can even pass their hand between both blocks, as the ionic beam is completely harmless on short term." + MoverText + "\n\n<b>Aceba1</b>: And so King Rafs pronounced, 'Let it do be so', with two pitchforks in each hand; And piercing the sky at all 4 corners, raised the man hole cover from the grasp of the pothole pathways for the first time since two days ago. Then, proceeded to fire at it with grace and pitchforks to propel it to the heavens, gifting it with the imprinted psychological trauma of flight.\n<b>Rafs</b>: What the-")
+                            .SetBlockID(1980325)
+                            .SetFaction(FactionSubTypes.EXP)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(0)
+                            .SetPrice(1000000000) // Fix later
+                            .SetRarity(BlockRarity.Rare)
+                            .SetHP(600)
+                            .SetMass(4f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.rr_floating_piston)))
+                            .AddComponent(out SimpleConnectLineRenderer lineRenderer);
+
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("RR_Main");
+                        var par = Piston.Prefab.transform;
+
+                        AddMeshToBlockMover(mat, new Vector3(1f, 0.8f, 1f), Vector3.down * 0.1f, par, Properties.Resources.rr_floating_piston_base);
+                        lineRenderer.refObj = AddMeshToBlockMover(mat, new Vector3(1f, 0.2f, 1f), Vector3.up * 0.4f, par, Properties.Resources.rr_floating_piston_head);
+                        lineRenderer.strPos = new Vector3(0f, 0.3f, 0f);
+                        lineRenderer.refPos = new Vector3(0f, 0.4f, 0f);
+                        lineRenderer.width = 0.6f;
+                        lineRenderer.material = GameObjectJSON.GetObjectFromGameResources<Material>("MAT_BF_SkyAnchor_Beam");
+
+                        Piston.SetSize(IntVector3.one)
+                            .SetAPsManual(new Vector3[] { Vector3.down * 0.5f, Vector3.up * 0.5f })
+                            .SetCustomEmissionMode(BlockPrefabBuilder.EmissionMode.Active)
+                            .AddComponent<ModuleBlockMover>(SetRRFloatingPiston)
+                            .RegisterLater();
                     }
-                };
+                    #endregion Reticule Research Piston
 
-                ControlBlock.RegisterLater();
-            }
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail wedge segment")
-                    .SetDescription("(Travel length: 2) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
-                    .SetBlockID(1393801)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(4000)
-                    .SetHP(800)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(1f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline)))
-                    .SetSize(new IntVector3(1, 1, 1))
-                    .SetAPsManual(new Vector3[]{
-                        Vector3.down * 0.5f,
-                        Vector3.left * 0.5f,
-                        Vector3.right * 0.5f,
-                        Vector3.back * 0.5f })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_wedge);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
-                {
-                    new AttachPoint()
+                    #region Special Pistons
                     {
-                        AnimLength = 2f,
-                        AnimPosChange = new Vector3(0f, 0.5f, -0.5f),
-                        AnimRotChange = new Vector3(-90f, 0f, 0f),
-                        Tangent = Vector3.back,
-                        apPos = new Vector3(0f, -0.5f, 0f),
-                        blockPos = new IntVector3(0, -1, 0),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 2f,
-                        AnimPosChange = new Vector3(0f, -0.5f, 0.5f),
-                        AnimRotChange = new Vector3(90f, 0f, 0f),
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(0f, 0f, -0.5f),
-                        blockPos = new IntVector3(0, 0, -1),
-                        apDirForward = new IntVector3(0, 0, -1),
-                        apDirUp = IntVector3.up
+                        #region BetterFuture Rail Piston
+                        var bfmat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail Piston")
+                                .SetDescription("An extendable rail, with a small cart that can move blocks attached to it. Add rail segment blocks to the end to make it longer!" + MoverText)
+                                .SetBlockID(1293835)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(20000)
+                                .SetHP(400)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(1.5f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_piston)));
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_base);
+                            AddMeshToBlockMover(bfmat, new Vector3(0.2f, 0.4f, 0.2f), new Vector3(0f, 0f, 0.5f), par, Properties.Resources.bf_rail_piston_head);
+
+                            ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                                .AddComponent<ModuleBMRail>(SetBFRailPiston)
+                                .RegisterLater();
+                        }
+                        BlockTypes railID = (BlockTypes)1293835;
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail segment")
+                                .SetDescription("(Travel length: 1) A segment for the Better Future Rail Piston, add it to the end of the line to make it go farther")
+                                .SetBlockID(1293836)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(2000)
+                                .SetHP(400)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(1.5f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment)))
+                                .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                                    Vector3.up * 0.5f,
+                                    Vector3.down * 0.5f,
+                                    Vector3.left * 0.5f,
+                                    Vector3.right * 0.5f,
+                                    Vector3.back * 0.5f })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_extension);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 1f,
+                                    AnimPosChange = Vector3.up,
+                                    Tangent = Vector3.up,
+                                    apPos = new Vector3(0f, -0.5f, 0f),
+                                    blockPos = new IntVector3(0, -1, 0),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward,
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 1f,
+                                    AnimPosChange = Vector3.down,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(0f, 0.5f, 0f),
+                                    blockPos = new IntVector3(0, 1, 0),
+                                    apDirForward = new IntVector3(0, 1, 0),
+                                    apDirUp = IntVector3.forward,
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail long segment")
+                                .SetDescription("(Trevel length: 2) A longer segment for the Better Future Rail Piston, add it to the end of the line to make it go even farther")
+                                .SetBlockID(1393800)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(4000)
+                                .SetHP(800)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(3f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_long)))
+                                .SetSize(new IntVector3(1, 2, 1))
+                                .SetAPsManual(new Vector3[] {
+                                    Vector3.up * 1.5f,
+                                    Vector3.down * 0.5f,
+                                    Vector3.left * 0.5f,
+                                    Vector3.right * 0.5f,
+                                    Vector3.back * 0.5f,
+                                    new Vector3(-0.5f, 1f, 0f),
+                                    new Vector3(0.5f, 1f, 0f),
+                                    new Vector3(0f, 1f, -0.5f) })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 2f, 1f), new Vector3(0f, 0.5f, 0f), par, Properties.Resources.bf_rail_piston_extension_2);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 2f,
+                                    AnimPosChange = Vector3.up * 2f,
+                                    Tangent = Vector3.up,
+                                    apPos = new Vector3(0f, -0.5f, 0f),
+                                    blockPos = new IntVector3(0, -1, 0),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 2f,
+                                    AnimPosChange = Vector3.down * 2f,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(0f, 1.5f, 0f),
+                                    blockPos = new IntVector3(0, 2, 0),
+                                    apDirForward = new IntVector3(0, 1, 0),
+                                    apDirUp = IntVector3.forward
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail wedge segment")
+                                .SetDescription("(Travel length: 2) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetBlockID(1393801)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(4000)
+                                .SetHP(800)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(1f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline)))
+                                .SetSize(new IntVector3(1, 1, 1))
+                                .SetAPsManual(new Vector3[]{
+                                    Vector3.down * 0.5f,
+                                    Vector3.left * 0.5f,
+                                    Vector3.right * 0.5f,
+                                    Vector3.back * 0.5f })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_wedge);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.AnimWeight = 0.13f;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 2f,
+                                    AnimPosChange = new Vector3(0f, 0.5f, -0.5f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.back,
+                                    apPos = new Vector3(0f, -0.5f, 0f),
+                                    blockPos = new IntVector3(0, -1, 0),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 2f,
+                                    AnimPosChange = new Vector3(0f, -0.5f, 0.5f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(0f, 0f, -0.5f),
+                                    blockPos = new IntVector3(0, 0, -1),
+                                    apDirForward = new IntVector3(0, 0, -1),
+                                    apDirUp = IntVector3.up
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail large wedge segment")
+                                .SetDescription("(Travel length: 4) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetBlockID(1393802)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(4000)
+                                .SetHP(1200)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(4.5f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline_large)))
+                                .SetSize(new IntVector3(1, 2, 2))
+                                .SetAPsManual(new Vector3[]{
+                                    new Vector3(0f, -0.5f, 0f), new Vector3(0f, -0.5f, 1f),
+                                    new Vector3(-0.5f, 0f, 0f), new Vector3(-0.5f, 0f, 1f), new Vector3(-0.5f, 1f, 0f),
+                                    new Vector3(0.5f, 0f, 0f),  new Vector3(0.5f, 0f, 1f),  new Vector3(0.5f, 1f, 0f),
+                                    new Vector3(0f, 0f, -0.5f), new Vector3(0f, 1f, -0.5f), })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 2f, 2f), new Vector3(0f, 0.5f, 0.5f), par, Properties.Resources.bf_rail_piston_wedge_2);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.AnimWeight = 0.2f;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 4f,
+                                    AnimPosChange = new Vector3(0f, 1.5f, -1.5f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.back,
+                                    apPos = new Vector3(0f, -0.5f, 1f),
+                                    blockPos = new IntVector3(0, -1, 1),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 4f,
+                                    AnimPosChange = new Vector3(0f, -1.5f, 1.5f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(0f, 1f, -0.5f),
+                                    blockPos = new IntVector3(0, 1, -1),
+                                    apDirForward = new IntVector3(0, 0, -1),
+                                    apDirUp = IntVector3.up
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail corner segment")
+                                .SetDescription("(Travel length: 1) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it twist, but at the cost of Free-Joint...")
+                                .SetBlockID(1393803)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(4000)
+                                .SetHP(400)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(1.5f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner)))
+                                .SetSize(new IntVector3(1, 1, 1))
+                                .SetAPsManual(new Vector3[]{
+                                    Vector3.down * 0.5f,
+                                    Vector3.right * 0.5f,
+                                    Vector3.left * 0.5f,
+                                    Vector3.up * 0.5f,
+                                    Vector3.back * 0.5f
+                                })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_corner);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.AnimWeight = 0.25f;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 1f,
+                                    AnimPosChange = new Vector3(0.5f, 0.5f, 0f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.right,
+                                    apPos = new Vector3(0f, -0.5f, 0f),
+                                    blockPos = new IntVector3(0, -1, 0),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 1f,
+                                    AnimPosChange = new Vector3(-0.5f, -0.5f, 0f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(0.5f, 0f, 0f),
+                                    blockPos = new IntVector3(1, 0, 0),
+                                    apDirForward = new IntVector3(1, 0, 0),
+                                    apDirUp = IntVector3.forward
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                                .SetName("Better Future Rail large corner segment")
+                                .SetDescription("(Travel length: 3) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetBlockID(1393804)//, "f63931ef3e14ba8e")
+                                .SetFaction(FactionSubTypes.BF)
+                                .SetCategory(BlockCategories.Base)
+                                .SetGrade(0)
+                                .SetPrice(4000)
+                                .SetHP(1200)
+                                .SetDetachFragility(0.5f)
+                                .SetMass(4.5f)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner_large)))
+                                .SetSize(new IntVector3(2, 2, 1))
+                                .SetAPsManual(new Vector3[]{
+                                    new Vector3(0f, -0.5f, 0f), new Vector3(1f, -0.5f, 0f), // bottom
+                                    new Vector3(-0.5f, 0f, 0f), new Vector3(-0.5f, 1f, 0f), // left
+                                    new Vector3(1.5f, 0f, 0f),  new Vector3(1.5f, 1f, 0f), // right
+                                    new Vector3(0f, 1.5f, 0f), new Vector3(1f, 1.5f, 0f),
+                                    new Vector3(0f, 0f, -0.5f), new Vector3(0f, 1f, -0.5f), new Vector3(1f, 0f, -0.5f), new Vector3(1f, 1f, -0.5f), })
+                                .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(bfmat, new Vector3(2f, 2f, 1f), new Vector3(0.5f, 0.5f, 0f), par, Properties.Resources.bf_rail_piston_corner_2);
+
+                            segment.blockMoverHeadType = railID;
+                            segment.AnimWeight = 0.27f;
+                            segment.APs = new AttachPoint[2]
+                            {
+                                new AttachPoint()
+                                {
+                                    AnimLength = 3f,
+                                    AnimPosChange = new Vector3(1.5f, 1.5f, 0f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.right,
+                                    apPos = new Vector3(0f, -0.5f, 0f),
+                                    blockPos = new IntVector3(0, -1, 0),
+                                    apDirForward = new IntVector3(0, -1, 0),
+                                    apDirUp = IntVector3.forward
+                                },
+                                new AttachPoint()
+                                {
+                                    AnimLength = 3f,
+                                    AnimPosChange = new Vector3(-1.5f, -1.5f, 0f),
+                                    DisableFreeJoint = true,
+                                    Tangent = Vector3.down,
+                                    apPos = new Vector3(1.5f, 1f, 0f),
+                                    blockPos = new IntVector3(2, 1, 0),
+                                    apDirForward = new IntVector3(1, 0, 0),
+                                    apDirUp = IntVector3.forward
+                                }
+                            };
+
+                            ControlBlock.RegisterLater();
+                        }
+                        #endregion BetterFuture Rail Piston
+
+                        #region Decorational Pistons
+                        {
+                            var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_ArmouredBlock_10_111)
+                                .SetName("Hawkeye Armoured Panel Gate")
+                                .SetDescription("A conveniently compactable set of extendable panels for armoring whatever you want to hide behind a series of whatever conditions are most convenient. Armour? What region is this?" + FakeMoverText)
+                                .SetBlockID(6194711)
+                                .SetFaction(FactionSubTypes.HE)
+                                .SetCategory(BlockCategories.Accessories)
+                                .SetGrade(2)
+                                .SetPrice(4263)
+                                .SetHP(2250)
+                                .SetMass(2f)
+                                .SetCenterOfMass(new Vector3(0f, 0f, -0.4f))
+                                .SetDamageableType(ManDamage.DamageableType.Armour)
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.pistonblock_he_panel_deco)));
+
+                            var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                            var par = ControlBlock.Prefab.transform;
+
+                            AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_base);
+                            AddMeshToBlockMover(mat, new Vector3(1f, 1f, .1f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_shaft);
+                            AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_head);
+
+                            ControlBlock.SetSizeManual(new IntVector3[] {
+                                    new IntVector3(0,0,0)
+                                }, new Vector3[]{
+                                    new Vector3(0f,0f,-.5f)
+                                }).AddComponent<ModuleBlockMover>(SetHawkeyePanelDecoPiston)
+                                .SetRecipe(ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
+                                           ChunkTypes.TitanicAlloy)
+                                .RegisterLater();
+                        }
+                        #endregion
                     }
-                };
+                    #endregion Special Pistons
+                }
+                #endregion Pistons
 
-                ControlBlock.RegisterLater();
-            }
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail large wedge segment")
-                    .SetDescription("(Travel length: 4) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
-                    .SetBlockID(1393802)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(4000)
-                    .SetHP(1200)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(4.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline_large)))
-                    .SetSize(new IntVector3(1, 2, 2))
-                    .SetAPsManual(new Vector3[]{
-                        new Vector3(0f, -0.5f, 0f), new Vector3(0f, -0.5f, 1f),
-                        new Vector3(-0.5f, 0f, 0f), new Vector3(-0.5f, 0f, 1f), new Vector3(-0.5f, 1f, 0f),
-                        new Vector3(0.5f, 0f, 0f),  new Vector3(0.5f, 0f, 1f),  new Vector3(0.5f, 1f, 0f),
-                        new Vector3(0f, 0f, -0.5f), new Vector3(0f, 1f, -0.5f), })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 2f, 2f), new Vector3(0f, 0.5f, 0.5f), par, Properties.Resources.bf_rail_piston_wedge_2);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
+                #region Swivels
                 {
-                    new AttachPoint()
+                    #region GSO Medium Swivel
                     {
-                        AnimLength = 4f,
-                        AnimPosChange = new Vector3(0f, 1.5f, -1.5f),
-                        AnimRotChange = new Vector3(-90f, 0f, 0f),
-                        Tangent = Vector3.back,
-                        apPos = new Vector3(0f, -0.5f, 1f),
-                        blockPos = new IntVector3(0, -1, 1),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 4f,
-                        AnimPosChange = new Vector3(0f, -1.5f, 1.5f),
-                        AnimRotChange = new Vector3(90f, 0f, 0f),
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(0f, 1f, -0.5f),
-                        blockPos = new IntVector3(0, 1, -1),
-                        apDirForward = new IntVector3(0, 0, -1),
-                        apDirUp = IntVector3.up
-                    }
-                };
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
+                            .SetName("Medium Embedded Swivel")
+                            .SetDescription("A configurable swivel that can rotate blocks on a tech." + MoverText)
+                            .SetBlockID(1393838)
+                            .SetFaction(FactionSubTypes.GSO)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(4470)
+                            .SetHP(2000)
+                            .SetMass(2.5f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_png)));
 
-                ControlBlock.RegisterLater();
-            }
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                        var par = ControlBlock.Prefab.transform;
 
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail corner segment")
-                    .SetDescription("(Travel length: 1) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it twist, but at the cost of Free-Joint...")
-                    .SetBlockID(1393803)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(4000)
-                    .SetHP(400)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(1.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner)))
-                    .SetSize(new IntVector3(1, 1, 1))
-                    .SetAPsManual(new Vector3[]{
-                        Vector3.down * 0.5f,
-                        Vector3.right * 0.5f,
-                        Vector3.left * 0.5f,
-                        Vector3.up * 0.5f,
-                        Vector3.back * 0.5f
-                    })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
+                        AddMeshToBlockMover(mat, new Vector3(2f, .9f, 2f), new Vector3(.5f, -.05f, .5f), par, Properties.Resources.swivel_base);
+                        AddMeshToBlockMover(mat, new Vector3(1.4f, .1f, 1.4f), new Vector3(0f, .45f, 0f), par, Properties.Resources.swivel_head, new Vector3(.5f, 0f, .5f));
+                        //gimbal.aimClampMaxPercent = 360;
+                        //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
 
-                var par = ControlBlock.Prefab.transform;
+                        ControlBlock.SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.All)
+                            .AddComponent<ModuleBlockMover>(SetMediumSwivel)
+                            .RegisterLater();
 
-                AddMeshToBlockMover(bfmat, new Vector3(1f, 1f, 1f), Vector3.zero, par, Properties.Resources.bf_rail_piston_corner);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
-                {
-                    new AttachPoint()
-                    {
-                        AnimLength = 1f,
-                        AnimPosChange = new Vector3(0.5f, 0.5f, 0f),
-                        AnimRotChange = new Vector3(0f, 0f, -90f),
-                        Tangent = Vector3.right,
-                        apPos = new Vector3(0f, -0.5f, 0f),
-                        blockPos = new IntVector3(0, -1, 0),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 1f,
-                        AnimPosChange = new Vector3(-0.5f, -0.5f, 0f),
-                        AnimRotChange = new Vector3(0f, 0f, 90f),
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(0.5f, 0f, 0f),
-                        blockPos = new IntVector3(1, 0, 0),
-                        apDirForward = new IntVector3(1, 0, 0),
-                        apDirUp = IntVector3.forward
-                    }
-                };
-
-                ControlBlock.RegisterLater();
-            }
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Better Future Rail large corner segment")
-                    .SetDescription("(Travel length: 3) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
-                    .SetBlockID(1393804)//, "f63931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(0)
-                    .SetPrice(4000)
-                    .SetHP(1200)
-                    .SetDetachFragility(0.5f)
-                    .SetMass(4.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner_large)))
-                    .SetSize(new IntVector3(2, 2, 1))
-                    .SetAPsManual(new Vector3[]{
-                        new Vector3(0f, -0.5f, 0f), new Vector3(1f, -0.5f, 0f), // bottom
-                        new Vector3(-0.5f, 0f, 0f), new Vector3(-0.5f, 1f, 0f), // left
-                        new Vector3(1.5f, 0f, 0f),  new Vector3(1.5f, 1f, 0f), // right
-                        new Vector3(0f, 1.5f, 0f), new Vector3(1f, 1.5f, 0f),
-                        new Vector3(0f, 0f, -0.5f), new Vector3(0f, 1f, -0.5f), new Vector3(1f, 0f, -0.5f), new Vector3(1f, 1f, -0.5f), })
-                    .AddComponent<ModuleBMSegment>(out ModuleBMSegment segment);
-
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(bfmat, new Vector3(2f, 2f, 1f), new Vector3(0.5f, 0.5f, 0f), par, Properties.Resources.bf_rail_piston_corner_2);
-
-                segment.blockMoverHeadType = railID;
-                segment.APs = new AttachPoint[2]
-                {
-                    new AttachPoint()
-                    {
-                        AnimLength = 3f,
-                        AnimPosChange = new Vector3(1.5f, 1.5f, 0f),
-                        AnimRotChange = new Vector3(0f, 0f, -90f),
-                        Tangent = Vector3.right,
-                        apPos = new Vector3(0f, -0.5f, 0f),
-                        blockPos = new IntVector3(0, -1, 0),
-                        apDirForward = new IntVector3(0, -1, 0),
-                        apDirUp = IntVector3.forward
-                    },
-                    new AttachPoint()
-                    {
-                        AnimLength = 3f,
-                        AnimPosChange = new Vector3(-1.5f, -1.5f, 0f),
-                        AnimRotChange = new Vector3(0f, 0f, 90f),
-                        Tangent = Vector3.down,
-                        apPos = new Vector3(1.5f, 1f, 0f),
-                        blockPos = new IntVector3(2, 1, 0),
-                        apDirForward = new IntVector3(1, 0, 0),
-                        apDirUp = IntVector3.forward
-                    }
-                };
-
-                ControlBlock.RegisterLater();
-            }
-            #endregion BetterFuture Rail Piston
-
-            #region Decorational Pistons
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_ArmouredBlock_10_111)
-                    .SetName("Hawkeye Armoured Panel Gate")
-                    .SetDescription("A conveniently compactable set of extendable panels for armoring whatever you want to hide behind a series of whatever conditions are most convenient. Armour? What region is this?" + FakeMoverText)
-                    .SetBlockID(6194711)
-                    .SetFaction(FactionSubTypes.HE)
-                    .SetCategory(BlockCategories.Accessories)
-                    .SetGrade(2)
-                    .SetPrice(4263)
-                    .SetHP(2250)
-                    .SetMass(2f)
-                    .SetCenterOfMass(new Vector3(0f, 0f, -0.4f))
-                    .SetDamageableType(ManDamage.DamageableType.Armour)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.pistonblock_he_panel_deco)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_base);
-                AddMeshToBlockMover(mat, new Vector3(1f, 1f, .1f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_shaft);
-                AddMeshToBlockMover(mat, new Vector3(1f, 1f, .2f), new Vector3(0f, 0f, -0.4f), par, Properties.Resources.HEps_deco_head);
-
-                ControlBlock.SetSizeManual(new IntVector3[] {
-                    new IntVector3(0,0,0)
-                }, new Vector3[]{
-                    new Vector3(0f,0f,-.5f)
-                }).AddComponent<ModuleBlockMover>(SetHawkeyePanelDecoPiston)
-                    .SetRecipe(ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                               ChunkTypes.TitanicAlloy)
-                    .RegisterLater();
-            }
-
-            #endregion
-
-            #endregion Special Pistons
-
-            #endregion Pistons
-
-            #region Swivels
-
-            #region GSO Medium Swivel
-
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
-                    .SetName("Medium Embedded Swivel")
-                    .SetDescription("A configurable swivel that can rotate blocks on a tech." + MoverText)
-                    .SetBlockID(1393838)
-                    .SetFaction(FactionSubTypes.GSO)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(4470)
-                    .SetHP(2000)
-                    .SetMass(2.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_png)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(2f, .9f, 2f), new Vector3(.5f, -.05f, .5f), par, Properties.Resources.swivel_base);
-                AddMeshToBlockMover(mat, new Vector3(1.4f, .1f, 1.4f), new Vector3(0f, .45f, 0f), par, Properties.Resources.swivel_head, new Vector3(.5f, 0f, .5f));
-                //gimbal.aimClampMaxPercent = 360;
-                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
-
-                ControlBlock.SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleBlockMover>(SetMediumSwivel)
-                    .RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
-                    {
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1393838)
-                    });
-            }
+                            });
+                    }
+                    #endregion GSO Medium Swivel
 
-            #endregion GSO Medium Swivel
-
-            #region VEN Inline Swivel
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.VENBlock_111)
-                    .SetName("Inline Embedded Swivel")
-                    .SetDescription("An inline swivel, which's center disk rotates blocks. And it's fast, too" + MoverText)
-                    .SetBlockID(1393837)
-                    .SetFaction(FactionSubTypes.VEN)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(4470)
-                    .SetHP(2000)
-                    .SetMass(1f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddColliderToGameObject(
-                    AddMeshToBlockMover(mat, new Vector3(.95f, .3f, .95f), new Vector3(0f, -.35f, 0f), par, Properties.Resources.swivel_ven_base),
-                    new Vector3(.95f, .3f, .95f), new Vector3(0f, .35f, 0f), false
-                );
-                AddColliderToGameObject(
-                    AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_ven_head),
-                    Vector3.one * .9f, Vector3.zero, true
-                );
-                //gimbal.aimClampMaxPercent = 360;
-                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
-
-                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleBlockMover>(SetInlineSwivel)
-                    .RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                    #region VEN Inline Swivel
                     {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.VENBlock_111)
+                            .SetName("Inline Embedded Swivel")
+                            .SetDescription("An inline swivel, which's center disk rotates blocks. And it's fast, too" + MoverText)
+                            .SetBlockID(1393837)
+                            .SetFaction(FactionSubTypes.VEN)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(4470)
+                            .SetHP(2000)
+                            .SetMass(1f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)));
+
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
+                        var par = ControlBlock.Prefab.transform;
+
+                        AddColliderToGameObject(
+                            AddMeshToBlockMover(mat, new Vector3(.95f, .3f, .95f), new Vector3(0f, -.35f, 0f), par, Properties.Resources.swivel_ven_base),
+                            new Vector3(.95f, .3f, .95f), new Vector3(0f, .35f, 0f), false
+                        );
+                        AddColliderToGameObject(
+                            AddMeshToBlockMover(mat, Vector3.zero, par, Properties.Resources.swivel_ven_head),
+                            Vector3.one * .9f, Vector3.zero, true
+                        );
+                        //gimbal.aimClampMaxPercent = 360;
+                        //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                        ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                            .AddComponent<ModuleBlockMover>(SetInlineSwivel)
+                            .RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1393837)
-                    }, NameOfFabricator: "venfab");
-            }
+                            }, NameOfFabricator: "venfab");
+                    }
+                    #endregion VEN Inline Swivel
 
-            #endregion VEN Inline Swivel
-
-            #region GSO Small Swivel
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
-                    .SetName("Small Embedded Swivel")
-                    .SetDescription("A smaller swivel. Rapidly-produced, but operational." + MoverText)
-                    .SetBlockID(1393836)
-                    .SetFaction(FactionSubTypes.GSO)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(4470)
-                    .SetHP(2000)
-                    .SetMass(1.5f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_small_png)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(.9f, .5f, .9f), new Vector3(0f, -.25f, 0f), par, Properties.Resources.swivel_small_base);
-                AddMeshToBlockMover(mat, new Vector3(.9f, .5f, .9f), new Vector3(0f, 0.25f, 0f), par, Properties.Resources.swivel_small_head);//.AddComponent<GimbalAimer>();
-                //gimbal.aimClampMaxPercent = 360;
-                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
-
-                ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero },
-                    new Vector3[] { Vector3.down * .5f, Vector3.up * .5f })
-                    .AddComponent<ModuleBlockMover>(SetSmallSwivel)
-                    .RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                    #region GSO Small Swivel
                     {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
+                            .SetName("Small Embedded Swivel")
+                            .SetDescription("A smaller swivel. Rapidly-produced, but operational." + MoverText)
+                            .SetBlockID(1393836)
+                            .SetFaction(FactionSubTypes.GSO)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(4470)
+                            .SetHP(2000)
+                            .SetMass(1.5f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_small_png)));
+
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
+                        var par = ControlBlock.Prefab.transform;
+
+                        AddMeshToBlockMover(mat, new Vector3(.9f, .5f, .9f), new Vector3(0f, -.25f, 0f), par, Properties.Resources.swivel_small_base);
+                        AddMeshToBlockMover(mat, new Vector3(.9f, .5f, .9f), new Vector3(0f, 0.25f, 0f), par, Properties.Resources.swivel_small_head);//.AddComponent<GimbalAimer>();
+                                                                                                                                                      //gimbal.aimClampMaxPercent = 360;
+                                                                                                                                                      //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                        ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero },
+                            new Vector3[] { Vector3.down * .5f, Vector3.up * .5f })
+                            .AddComponent<ModuleBlockMover>(SetSmallSwivel)
+                            .RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1293838)
-                    });
-            }
+                            });
+                    }
+                    #endregion GSO Small Swivel
 
-            #endregion GSO Small Swivel
-
-            #region HE Double Swivel
-            {
-                var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_StdBlock_Alt_1_02_111)
-                    .SetName("Dual Rotor Swivel")
-                    .SetDescription("A swivel with two heads at the top and bottom. Designed by Rafs!" + MoverText)
-                    .SetBlockID(1393835)//, "f74931ef3e14ba8e")
-                    .SetFaction(FactionSubTypes.HE)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(4470)
-                    .SetHP(2000)
-                    .SetMass(2f)
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivelblock_he)));
-
-                var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
-                var par = ControlBlock.Prefab.transform;
-
-                AddMeshToBlockMover(mat, new Vector3(1f, .8f, 1f), Vector3.zero, par, Properties.Resources.swivel_double_base);
-                AddMeshToBlockMover(mat, new Vector3(.5f, 1f, .5f), Vector3.zero, par, Properties.Resources.swivel_double_head);//.AddComponent<GimbalAimer>();
-                //gimbal.aimClampMaxPercent = 360;
-                //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
-
-                ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                    .AddComponent<ModuleBlockMover>(SetDoubleSwivel)
-                    .RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                    #region HE Double Swivel
                     {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_StdBlock_Alt_1_02_111)
+                            .SetName("Dual Rotor Swivel")
+                            .SetDescription("A swivel with two heads at the top and bottom. Designed by Rafs!" + MoverText)
+                            .SetBlockID(1393835)//, "f74931ef3e14ba8e")
+                            .SetFaction(FactionSubTypes.HE)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(4470)
+                            .SetHP(2000)
+                            .SetMass(2f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivelblock_he)));
+
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
+                        var par = ControlBlock.Prefab.transform;
+
+                        AddMeshToBlockMover(mat, new Vector3(1f, .8f, 1f), Vector3.zero, par, Properties.Resources.swivel_double_base);
+                        AddMeshToBlockMover(mat, new Vector3(.5f, 1f, .5f), Vector3.zero, par, Properties.Resources.swivel_double_head);//.AddComponent<GimbalAimer>();
+                                                                                                                                        //gimbal.aimClampMaxPercent = 360;
+                                                                                                                                        //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                        ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                            .AddComponent<ModuleBlockMover>(SetDoubleSwivel)
+                            .RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1393836)
-                    });
-            }
+                            });
+                    }
+                    #endregion GSO Medium Swivel
+                }
+                #endregion Swivels
 
-            #endregion GSO Medium Swivel
-
-            #endregion Swivels
-
-            #region Steering Regulator
-
-            {
-                var SteeringRegulator = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("Stabilizer PiD S.Regulator Accessory")
-                    .SetDescription("The PiD technology has been discontinued due to BF Stabilization Computer contracting holes. Please refer to the BF Stabilization Computer guidelines")
-                    .SetBlockID(1293839)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Accessories)
-                    //.AddComponent<ModuleSteeringRegulator>()
-                    .SetGrade(0)
-                    .SetPrice(3467)
-                    .SetHP(200)
-                    .SetMass(3.5f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.sr), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                #region Steering Regulator
+                {
+                    var SteeringRegulator = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                        .SetName("Stabilizer PiD S.Regulator Accessory")
+                        .SetDescription("The PiD technology has been discontinued due to BF Stabilization Computer contracting holes. Please refer to the BF Stabilization Computer guidelines")
+                        .SetBlockID(1293839)
+                        .SetFaction(FactionSubTypes.BF)
+                        .SetCategory(BlockCategories.Accessories)
+                        //.AddComponent<ModuleSteeringRegulator>()
+                        .SetGrade(0)
+                        .SetPrice(3467)
+                        .SetHP(200)
+                        .SetMass(3.5f)
+                        .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.sr), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
+                        .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
+                        .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.down * 0.5f,
                     Vector3.left * 0.5f,
                     Vector3.right * 0.5f,
                     Vector3.forward * 0.5f,
                     Vector3.back * 0.5f })
-                    .RegisterLater();
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
-                    {
+                        .RegisterLater();
+                    CustomRecipe.RegisterRecipe(
+                        new CustomRecipe.RecipeInput[]
+                        {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
                     new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                        },
+                        new CustomRecipe.RecipeOutput[]
+                        {
                     new CustomRecipe.RecipeOutput(1293839)
-                    });
-            }
+                        });
+                }
+                #endregion Steering Regulator
 
-            #endregion Steering Regulator
-
-            #region Pads
-
-            #region GC Small Pad
-
-            {
-                var FrictionPad = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
-                    .SetName("Small Friction Pad")
-                    .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
-                    .SetBlockID(1293831)
-                    .SetDetachFragility(0f)
-                    .SetDamageableType(ManDamage.DamageableType.Rubber)
-                    .SetFaction(FactionSubTypes.GC)
-                    .SetCategory(BlockCategories.Wheels)
-                    .SetGrade(1)
-                    .SetPrice(500)
-                    .SetHP(625)
-                    .SetMass(0.5f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadsmall), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
-                    .AddComponent<ModuleFrictionPad>(SetGCSmallPad);
-
-                var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(0.925f, 0.5f, 0.925f);
-                trigger.center = Vector3.up * 0.25f;
-
-                FrictionPad.RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                #region Pads
+                {
+                    #region GC Small Pad
                     {
+                        var FrictionPad = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
+                            .SetName("Small Friction Pad")
+                            .SetDescription("Nice and grippy. Little sticky. Will break reality if used improperly")
+                            .SetBlockID(1293831)
+                            .SetDetachFragility(0f)
+                            .SetDamageableType(ManDamage.DamageableType.Rubber)
+                            .SetFaction(FactionSubTypes.GC)
+                            .SetCategory(BlockCategories.Wheels)
+                            .SetGrade(1)
+                            .SetPrice(500)
+                            .SetHP(625)
+                            .SetMass(0.5f)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadsmall), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_small_png)))
+                            .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * 0.5f })
+                            .AddComponent<ModuleFrictionPad>(SetGCSmallPad);
+
+                        var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(0.925f, 0.5f, 0.925f);
+                        trigger.center = Vector3.up * 0.25f;
+
+                        FrictionPad.RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1293831)
-                    });
-            }
+                            });
+                    }
+                    #endregion GC Small Pad
 
-            #endregion GC Small Pad
-
-            #region GC Large Pad
-
-            {
-                var FrictionPad = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
-                    .SetName("Non Slip-A-Tron 3000")
-                    .SetDescription("'Name by /-Shido, Shido named this block. Who, what?\n<i>What where am I-I need an adult</i>")
-                    .SetBlockID(1293830)
-                    .SetDetachFragility(0f)
-                    .SetDamageableType(ManDamage.DamageableType.Rubber)
-                    .SetFaction(FactionSubTypes.GC)
-                    .SetCategory(BlockCategories.Wheels)
-                    .SetGrade(1)
-                    .SetPrice(2000)
-                    .SetHP(2500)
-                    .SetMass(2f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadbig), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1, 0, 1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
-                    .AddComponent<ModuleFrictionPad>(SetGCBigPad);
-
-                var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(1.9f, 1f, 1.9f);
-                trigger.center = new Vector3(1f, 0f, 1f);
-
-                FrictionPad.RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                    #region GC Large Pad
                     {
+                        var FrictionPad = new BlockPrefabBuilder(BlockTypes.GCBlock_222)
+                            .SetName("Non Slip-A-Tron 3000")
+                            .SetDescription("'Name by /-Shido, Shido named this block. Who, what?\n<i>What where am I-I need an adult</i>")
+                            .SetBlockID(1293830)
+                            .SetDetachFragility(0f)
+                            .SetDamageableType(ManDamage.DamageableType.Rubber)
+                            .SetFaction(FactionSubTypes.GC)
+                            .SetCategory(BlockCategories.Wheels)
+                            .SetGrade(1)
+                            .SetPrice(2000)
+                            .SetHP(2500)
+                            .SetMass(2f)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.GCfrictionpadbig), true, GameObjectJSON.GetObjectFromGameResources<Material>("GC_Main", true))
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.friction_pad_gc_big_png)))
+                            .SetSizeManual(new IntVector3[] { IntVector3.zero, IntVector3.forward, IntVector3.right, new IntVector3(1, 0, 1) }, new Vector3[] { Vector3.up * 0.5f, new Vector3(1f, 0.5f, 0f), new Vector3(1f, 0.5f, 1f), new Vector3(0f, 0.5f, 1f), })
+                            .AddComponent<ModuleFrictionPad>(SetGCBigPad);
+
+                        var trigger = FrictionPad.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(1.9f, 1f, 1.9f);
+                        trigger.center = new Vector3(1f, 0f, 1f);
+
+                        FrictionPad.RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 16),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1293831)
-                    });
-            }
+                            });
+                    }
+                    #endregion GC Large Pad
+                }
+                #endregion Pads
 
-            #endregion GC Large Pad
-
-            #endregion Pads
-
-            #region MultiTech Magnets
-
-            #region Fixed MTMag
-
-            {
-                var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("FixedJoint MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\n\n")
-                    .SetBlockID(1293700)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(500)
-                    .SetHP(600)
-                    .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_fixed), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
-                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
-                    .AddComponent<ModuleMTMagnet>(SetFixedMTMag);
-
-                AddFrictionlessCollider(new Vector3(1f, 0.5f, 1f), Vector3.down * 0.25f, mtmag.Prefab.transform);
-
-                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(0.5f, 0.4f, 0.5f);
-                trigger.center = Vector3.zero;
-
-                mtmag.RegisterLater();
-
-                //CustomRecipe.RegisterRecipe(
-                //    new CustomRecipe.RecipeInput[]
-                //    {
-                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
-                //    },
-                //    new CustomRecipe.RecipeOutput[]
-                //    {
-                //    new CustomRecipe.RecipeOutput(/*Edit*/)
-                //    });
-            }
-
-            #endregion Fixed MTMag
-
-            #region Ball MTMag
-
-            {
-                var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("BallJoint MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nThis is literally the best joint. In terms of stability and reliability. Now if only it were bigger...")
-                    .SetBlockID(1293701)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(1)
-                    .SetPrice(800)
-                    .SetHP(600)
-                    .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_png)))
-                    .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
-                    .AddComponent<ModuleMTMagnet>(SetBallMTMag);
-
-                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(.8f, .7f, .8f);
-                trigger.center = Vector3.up * 0.2f;
-
-                mtmag.RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                #region MultiTech Magnets
+                {
+                    #region Fixed MTMag
                     {
+                        var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                            .SetName("FixedJoint MTMag")
+                            .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\n\n")
+                            .SetBlockID(1293700)
+                            .SetFaction(FactionSubTypes.BF)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(500)
+                            .SetHP(600)
+                            .SetMass(1f)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_fixed), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                            //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                            .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
+                            .AddComponent<ModuleMTMagnet>(SetFixedMTMag);
+
+                        AddFrictionlessCollider(new Vector3(1f, 0.5f, 1f), Vector3.down * 0.25f, mtmag.Prefab.transform);
+
+                        var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(0.5f, 0.4f, 0.5f);
+                        trigger.center = Vector3.zero;
+
+                        mtmag.RegisterLater();
+
+                        //CustomRecipe.RegisterRecipe(
+                        //    new CustomRecipe.RecipeInput[]
+                        //    {
+                        //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                        //    },
+                        //    new CustomRecipe.RecipeOutput[]
+                        //    {
+                        //    new CustomRecipe.RecipeOutput(/*Edit*/)
+                        //    });
+                    }
+                    #endregion Fixed MTMag
+
+                    #region Ball MTMag
+                    {
+                        var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                            .SetName("BallJoint MTMag")
+                            .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nThis is literally the best joint. In terms of stability and reliability. Now if only it were bigger...")
+                            .SetBlockID(1293701)
+                            .SetFaction(FactionSubTypes.BF)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(1)
+                            .SetPrice(800)
+                            .SetHP(600)
+                            .SetMass(1f)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_png)))
+                            .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[] { Vector3.up * -0.5f })
+                            .AddComponent<ModuleMTMagnet>(SetBallMTMag);
+
+                        var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(.8f, .7f, .8f);
+                        trigger.center = Vector3.up * 0.2f;
+
+                        mtmag.RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicGreebles, 3),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1293701)
-                    });
-            }
+                            });
+                    }
+                    #endregion Ball MTMag
 
-            #endregion Ball MTMag
-
-            #region Large Ball MTMag
-
-            {
-                var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("BallJoint Large MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nA bigger version of the best joint in all of existence!")
-                    .SetBlockID(1293703)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(1)
-                    .SetPrice(1500)
-                    .SetHP(600)
-                    .SetMass(1f)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_large), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider_large), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
-                    .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_large_png)))
-                    .SetSize(new IntVector3(2, 2, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
-                    .AddComponent<ModuleMTMagnet>(SetLargeBallMTMag);
-
-                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(1.5f, 1.5f, 1.5f);
-                trigger.center = new Vector3(0.5f, 0.5f, 0.5f);
-
-                mtmag.RegisterLater();
-
-                CustomRecipe.RegisterRecipe(
-                    new CustomRecipe.RecipeInput[]
+                    #region Large Ball MTMag
                     {
+                        var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                            .SetName("BallJoint Large MTMag")
+                            .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!\nA bigger version of the best joint in all of existence!")
+                            .SetBlockID(1293703)
+                            .SetFaction(FactionSubTypes.BF)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(1)
+                            .SetPrice(1500)
+                            .SetHP(600)
+                            .SetMass(1f)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_large), GameObjectJSON.MeshFromData(Properties.Resources.mtmag_ball_collider_large), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_ball_large_png)))
+                            .SetSize(new IntVector3(2, 2, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
+                            .AddComponent<ModuleMTMagnet>(SetLargeBallMTMag);
+
+                        var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(1.5f, 1.5f, 1.5f);
+                        trigger.center = new Vector3(0.5f, 0.5f, 0.5f);
+
+                        mtmag.RegisterLater();
+
+                        CustomRecipe.RegisterRecipe(
+                            new CustomRecipe.RecipeInput[]
+                            {
                     new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 4),
-                    },
-                    new CustomRecipe.RecipeOutput[]
-                    {
+                            },
+                            new CustomRecipe.RecipeOutput[]
+                            {
                     new CustomRecipe.RecipeOutput(1293703)
-                    });
+                            });
+                    }
+                    #endregion Large Ball MTMag
+
+                    #region Large Swivel MTMag
+                    {
+                        var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
+                            .SetName("SwivelJoint Large MTMag")
+                            .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
+                            .SetBlockID(1293702)
+                            .SetFaction(FactionSubTypes.BF)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(2)
+                            .SetPrice(500)
+                            .SetHP(600)
+                            .SetMass(3f)
+                            .SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
+                            .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_swivel_large), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
+                            //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
+                            .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
+
+                        AddFrictionlessCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f, 0f, 0.5f), mtmag.Prefab.transform);
+
+                        var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
+                        trigger.isTrigger = true;
+
+                        trigger.size = new Vector3(1f, 1f, 1f);
+                        trigger.center = new Vector3(0.5f, 0.5f, 0.5f);
+
+                        mtmag.RegisterLater();
+
+                        //CustomRecipe.RegisterRecipe(
+                        //    new CustomRecipe.RecipeInput[]
+                        //    {
+                        //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
+                        //    },
+                        //    new CustomRecipe.RecipeOutput[]
+                        //    {
+                        //    new CustomRecipe.RecipeOutput(/*Edit*/)
+                        //    });
+                    }
+                    #endregion Large Swivel MTMag
+                }
+                #endregion MultiTech Magnets
             }
-
-            #endregion Large Ball MTMag
-
-            #region Large Swivel MTMag
-
-            {
-                var mtmag = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                    .SetName("SwivelJoint Large MTMag")
-                    .SetDescription("Use this with another of its kind on a separate tech to lock them together through the power of PHYSICS!")
-                    .SetBlockID(1293702)
-                    .SetFaction(FactionSubTypes.BF)
-                    .SetCategory(BlockCategories.Base)
-                    .SetGrade(2)
-                    .SetPrice(500)
-                    .SetHP(600)
-                    .SetMass(3f)
-                    .SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.Bottom)
-                    .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.mtmag_swivel_large), false, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", false))
-                    //.SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.mtmag_fixed_png)))
-                    .AddComponent<ModuleMTMagnet>(SetLargeSwivelMTMag);
-
-                AddFrictionlessCollider(new Vector3(2f, 1f, 2f), new Vector3(0.5f, 0f, 0.5f), mtmag.Prefab.transform);
-
-                var trigger = mtmag.Prefab.gameObject.AddComponent<BoxCollider>();
-                trigger.isTrigger = true;
-
-                trigger.size = new Vector3(1f, 1f, 1f);
-                trigger.center = new Vector3(0.5f, 0.5f, 0.5f);
-
-                mtmag.RegisterLater();
-
-                //CustomRecipe.RegisterRecipe(
-                //    new CustomRecipe.RecipeInput[]
-                //    {
-                //    new CustomRecipe.RecipeInput((int)ChunkTypes.RubberBrick, 4),
-                //    },
-                //    new CustomRecipe.RecipeOutput[]
-                //    {
-                //    new CustomRecipe.RecipeOutput(/*Edit*/)
-                //    });
-            }
-
-            #endregion Large Swivel MTMag
-
-            #endregion MultiTech Magnets
-
             #endregion Blocks
 
             GameObject _holder = new GameObject();
@@ -1311,7 +1318,6 @@ namespace Control_Block
 
         internal static void SetGSOPiston(ModuleBlockMover piston)
         {
-            //piston.MaximumBlockPush = 108;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1325,11 +1331,7 @@ namespace Control_Block
             };
             piston.PartCount = 2;
             piston.TrueMaxVELOCITY = 0.08f;
-            //piston.StretchSpeed = 0.08f;
-            //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 1f;
-            piston.MINVALUELIMIT = 0f;
-            piston.MAXVALUELIMIT = 1f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
@@ -1339,7 +1341,6 @@ namespace Control_Block
         }
         internal static void SetGeoCorpPiston(ModuleBlockMover piston)
         {
-            //piston.MaximumBlockPush = 384;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1355,12 +1356,8 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 3;
-            //piston.StretchSpeed = 0.03f;
             piston.TrueMaxVELOCITY = 0.06f;
-            //piston.CanModifyStretch = false;
-            piston.MINVALUELIMIT = 0;
             piston.TrueLimitVALUE = 2;
-            piston.MAXVALUELIMIT = 2;
             //piston.StretchModifier = 2; piston.MaxStr = 2;
             piston.startblockpos = new IntVector3[]
             {
@@ -1374,7 +1371,6 @@ namespace Control_Block
         }
         internal static void SetHawkeyePiston(ModuleBlockMover piston)
         {
-            //piston.MaximumBlockPush = 120;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1397,12 +1393,7 @@ namespace Control_Block
             };
             piston.PartCount = 5;
             piston.TrueMaxVELOCITY = 0.075f;
-            //piston.StretchSpeed = 0.025f;
-            //piston.CanModifyStretch = true;
-            piston.MINVALUELIMIT = 0;
             piston.TrueLimitVALUE = 3;
-            piston.MAXVALUELIMIT = 3;
-            //piston.StretchModifier = 3; piston.MaxStr = 3;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
@@ -1413,7 +1404,6 @@ namespace Control_Block
         }
         internal static void SetHawkeyePanelPiston(ModuleBlockMover piston)
         {
-            //piston.MaximumBlockPush = 120;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1433,12 +1423,7 @@ namespace Control_Block
             };
             piston.PartCount = 4;
             piston.TrueMaxVELOCITY = 0.075f;
-            //piston.StretchSpeed = 0.025f;
-            //piston.CanModifyStretch = true;
-            piston.MINVALUELIMIT = 0;
             piston.TrueLimitVALUE = 2;
-            piston.MAXVALUELIMIT = 2;
-            //piston.StretchModifier = 3; piston.MaxStr = 3;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,-1)
@@ -1449,7 +1434,6 @@ namespace Control_Block
         internal static void SetHawkeyePanelDecoPiston(ModuleBlockMover piston)
         {
             piston.CanOnlyBeLockJoint = true;
-            //piston.MaximumBlockPush = 120;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1462,19 +1446,13 @@ namespace Control_Block
             };
             piston.PartCount = 2;
             piston.TrueMaxVELOCITY = 0.075f;
-            //piston.StretchSpeed = 0.025f;
-            //piston.CanModifyStretch = true;
-            piston.MINVALUELIMIT = 0;
             piston.TrueLimitVALUE = 2;
-            piston.MAXVALUELIMIT = 2;
-            //piston.StretchModifier = 3; piston.MaxStr = 3;
             piston.startblockpos = new IntVector3[0];
             piston.SFX = TechAudio.SFXType.GCTripleBore;
             piston.SFXVolume = 1f;
         }
         internal static void SetBFPiston(ModuleBlockMover piston)
         {
-            //piston.MaximumBlockPush = 65535;
             piston.usePosCurves = true;
             piston.posCurves = new AnimationCurve[]
             {
@@ -1484,11 +1462,7 @@ namespace Control_Block
             };
             piston.PartCount = 1;
             piston.TrueMaxVELOCITY = 0.15f;
-            //piston.StretchSpeed = 0.12f;
-            //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 1f;
-            piston.MINVALUELIMIT = 0f;
-            piston.MAXVALUELIMIT = 1f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
@@ -1530,11 +1504,7 @@ namespace Control_Block
             };
             piston.PartCount = 3;
             piston.TrueMaxVELOCITY = 0.12f;
-            //piston.StretchSpeed = 0.12f;
-            //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 2f;
-            piston.MINVALUELIMIT = 0f;
-            piston.MAXVALUELIMIT = 2f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
@@ -1542,9 +1512,28 @@ namespace Control_Block
             piston.SFX = TechAudio.SFXType.VENFlameThrower;
             piston.SFXVolume = 1f;
         }
+        internal static void SetRRFloatingPiston(ModuleBlockMover piston)
+        {
+            piston.usePosCurves = true;
+            piston.posCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f, 0f, 0f, 1f), new Keyframe(5f, 5f, 1f, 0f)), //block top
+                new AnimationCurve()
+            };
+            piston.PartCount = 1;
+            piston.TrueMaxVELOCITY = 0.06f;
+            piston.InvPointWeightRatio = 0.12f;
+            piston.TrueLimitVALUE = 5f;
+            piston.startblockpos = new IntVector3[]
+            {
+                new IntVector3(0,1,0)
+            };
+            piston.SFX = TechAudio.SFXType.GCBuzzSaw;
+            piston.SFXVolume = 0f;
+        }
         internal static void SetBFRailPiston(ModuleBMRail piston)
         {
-            //piston.MaximumBlockPush = 65535;
             piston.usePosCurves = true;
             piston.useRotCurves = true;
             piston.posCurves = new AnimationCurve[]
@@ -1553,15 +1542,11 @@ namespace Control_Block
             };
             piston.rotCurves = new AnimationCurve[]
             {
-                new AnimationCurve(), new AnimationCurve(), new AnimationCurve()
+                new AnimationCurve(), new AnimationCurve(), new AnimationCurve(), new AnimationCurve()
             };
             piston.PartCount = 1;
             piston.TrueMaxVELOCITY = 0.15f;
-            //piston.StretchSpeed = 0.12f;
-            //piston.CanModifyStretch = false;
             piston.TrueLimitVALUE = 64f;
-            piston.MINVALUELIMIT = 0f;
-            piston.MAXVALUELIMIT = 0.1f;
             piston.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,0,1) // Pickup-AP
@@ -1587,7 +1572,6 @@ namespace Control_Block
 
         internal static void SetMediumSwivel(ModuleBlockMover swivel)
         {
-            //swivel.MaximumBlockPush = 196;
             swivel.IsPlanarVALUE = true;
             swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
@@ -1597,14 +1581,8 @@ namespace Control_Block
                 new AnimationCurve()
             };
             swivel.PartCount = 1;
-            //swivel.CanModifySpeed = true;
-            //swivel.RotateSpeed = 5;
             swivel.TrueMaxVELOCITY = 9;
-            //swivel.MaxSpeed = 12f;
-            //swivel.MINVALUELIMIT = 0;
-            //swivel.MAXVALUELIMIT = 360;
             swivel.TrueLimitVALUE = 360;
-            //swivel.LockAngle = false;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
@@ -1613,12 +1591,10 @@ namespace Control_Block
                 new IntVector3(1,1,1)
             };
             swivel.SFX = TechAudio.SFXType.GCTripleBore;
-            swivel.SFXVolume = 0.05f;
+            swivel.SFXVolume = 0.1f;
         }
         internal static void SetInlineSwivel(ModuleBlockMover swivel)
         {
-            //swivel.BreakOnCab = true;
-            //swivel.MaximumBlockPush = 92;
             swivel.IsPlanarVALUE = true;
             swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
@@ -1628,13 +1604,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             swivel.PartCount = 1;
-            //swivel.CanModifySpeed = true;
-            //swivel.RotateSpeed = 7.5f;
             swivel.TrueMaxVELOCITY = 12;
-            //swivel.MaxSpeed = 15;
-            //swivel.LockAngle = false;
-            //swivel.MINVALUELIMIT = 0;
-            //swivel.MAXVALUELIMIT = 360;
             swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
@@ -1648,8 +1618,6 @@ namespace Control_Block
         }
         internal static void SetSmallSwivel(ModuleBlockMover swivel)
         {
-            //swivel.BreakOnCab = true;
-            //swivel.MaximumBlockPush = 128;
             swivel.IsPlanarVALUE = true;
             swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
@@ -1659,25 +1627,17 @@ namespace Control_Block
                 new AnimationCurve()
             };
             swivel.PartCount = 1;
-            //swivel.CanModifySpeed = true;
-            //swivel.RotateSpeed = 5f;
             swivel.TrueMaxVELOCITY = 6;
-            //swivel.MaxSpeed = 8;
-            //swivel.LockAngle = false;
-            //swivel.MINVALUELIMIT = 0;
-            //swivel.MAXVALUELIMIT = 360;
             swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0)
             };
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
-            swivel.SFXVolume = 0.13f;
+            swivel.SFXVolume = 0.2f;
         }
         internal static void SetDoubleSwivel(ModuleBlockMover swivel)
         {
-            //swivel.BreakOnCab = true;
-            //swivel.MaximumBlockPush = 92;
             swivel.IsPlanarVALUE = true;
             swivel.useRotCurves = true;
             swivel.rotCurves = new AnimationCurve[]
@@ -1687,21 +1647,15 @@ namespace Control_Block
                 new AnimationCurve()
             };
             swivel.PartCount = 1;
-            //swivel.CanModifySpeed = true;
-            //swivel.RotateSpeed = 7.5f;
             swivel.TrueMaxVELOCITY = 6;
-            //swivel.MaxSpeed = 15;
-            //swivel.LockAngle = false;
-            //swivel.MINVALUELIMIT = 0;
-            //swivel.MAXVALUELIMIT = 360;
             swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
                 new IntVector3(0,1,0),
                 new IntVector3(0,-1,0)
             };
-            swivel.SFX = TechAudio.SFXType.GSODrillLarge;
-            swivel.SFXVolume = 0.1f;
+            swivel.SFX = TechAudio.SFXType.GSODrillSmall;
+            swivel.SFXVolume = 1f;
         }
 
         #endregion
@@ -1711,12 +1665,12 @@ namespace Control_Block
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
             obj.strength = .5f;
-            obj.threshold = 1.5f;
+            obj.threshold = 1f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
             obj.strength = .76f;
-            obj.threshold = 3f;
+            obj.threshold = 2f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 

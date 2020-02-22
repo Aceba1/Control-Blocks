@@ -11,17 +11,24 @@ namespace Control_Block
         public static bool IsSettingKeybind;
         public static int IndexOfKeybinder;
         public static KeyCode SetKey;
-        static bool Changed;
         public static string Log;
         static ModuleBlockMover lastBlockMover;
         static Rect window;
 
-        public static bool DoWindow()
+        public static void DoWindow()
         {
-            if (lastBlockMover == null) return false;
-            Changed = false;
-            GUI.Window(978243, window, PresetsWindow, "Presets");
-            return Changed;
+            if (lastBlockMover == null) return;
+            window = GUI.Window(978243, window, PresetsWindow, "Presets");
+        }
+
+        static void Changed()
+        {
+            OptionMenuMover.SelectedIndex = -1;
+            var ui = OptionMenuMover.inst;
+            ui.Log = Log;
+            ui.Texts = null;
+            ui.ResetTextCache();
+            OptionMenuMover.showPresetsUI = false;
         }
 
         internal static void SetState(bool showUI, ModuleBlockMover blockMover, Rect refWindow)
@@ -43,13 +50,17 @@ namespace Control_Block
 
         static Popup<Preset> CreatePresetsPopup()
         {
-            string[] items = new string[] { "Legacy Swivel" };
+            string[] items = new string[] { "Primitives", "Legacy Piston", "Legacy Swivel" };
             var subItems = new List<string[]>();
             var subValues = new List<Preset[]>();
             //foreach (var list in PreConverter.PreOverhaulSwivels)
             //{
-                subItems.Add(PreConverter.PreOverhaulSwivels.Keys.ToArray());
-                subValues.Add(PreConverter.PreOverhaulSwivels.Values.ToArray());
+            subItems.Add(new string[0]);
+            subValues.Add(new Preset[0]);
+            subItems.Add(PreConverter.PreOverhaulPistons.Keys.ToArray());
+            subValues.Add(PreConverter.PreOverhaulPistons.Values.ToArray());
+            subItems.Add(PreConverter.PreOverhaulSwivels.Keys.ToArray());
+            subValues.Add(PreConverter.PreOverhaulSwivels.Values.ToArray());
             //}
             return new Popup<Preset>(items, subItems, subValues);
         }
@@ -73,12 +84,7 @@ namespace Control_Block
                 }
             }
 
-            GUILayout.BeginHorizontal();
-            {
-                PresetsPopup.Button();
-                GUILayout.Button("", GUIStyle.none);
-            }
-            GUILayout.EndHorizontal();
+            PresetsPopup.Button(GUILayout.MaxWidth(260));
             PresetsPopup.Show(0f, 0f);
 
             bool allowGUI = !PresetsPopup.isVisible;
@@ -102,7 +108,7 @@ namespace Control_Block
                             for (int i = 0; i < p.Variables.Count; i++)
                             {
                                 GUILayout.Space(8);
-                                p.Variables[i].DrawGUI(i);
+                                p.Variables[i].DrawGUI(ref i);
                             }
                         }
                         GUILayout.EndVertical();
@@ -112,8 +118,7 @@ namespace Control_Block
                     if (GUILayout.Button("Apply to Tech"))
                     {
                         Log = p.SetToBlockMover(lastBlockMover);
-                        OptionMenuMover.SelectedIndex = -1;
-                        Changed = true;
+                        Changed();
                     }
                 }
                 GUILayout.EndVertical();

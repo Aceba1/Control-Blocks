@@ -15,16 +15,17 @@ namespace Control_Block
             public bool StrengthIsToggle;
             public bool ClampStrength;
             public string UIName, UIDesc;
-            public bool SliderMin;
+            public bool SliderHasNegative;
             public float SliderMax;
             public bool SliderMaxIsMaxVel;
             public float SliderPosFraction;
             public bool SliderMinOnPlanar;
             public string ToggleComment;
             public float ToggleMultiplier;
+            public float DefaultValue;
             //public float SliderStep;
 
-            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false)
+            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, float defaultValue = 0f)
             {
                 LockInputTypes = lockInputTypes;
                 PermittedInputType = permittedInputType;
@@ -36,11 +37,12 @@ namespace Control_Block
                 SliderPosFraction = sliderFraction;
                 SliderMax = sliderMax;
                 SliderMaxIsMaxVel = sliderMaxIsMaxVel;
-                SliderMin = sliderHasNegative;
+                SliderHasNegative = sliderHasNegative;
                 ToggleComment = toggleComment;
                 ToggleMultiplier = toggleMultiplier;
                 //SliderStep = sliderStep;
                 SliderMinOnPlanar = sliderMinOnPlanar;
+                DefaultValue = defaultValue;
             }
         }
         public struct UIDispInput
@@ -53,9 +55,10 @@ namespace Control_Block
             public float SliderMax;
             public string ToggleComment;
             public float ToggleMultiplier;
+            public float DefaultValue;
             //public float SliderStep;
 
-            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false)
+            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, float defaultValue = 0f)
             {
                 HideInputKey = hideInputKey;
                 HideParam = hideParam;
@@ -67,6 +70,7 @@ namespace Control_Block
                 ToggleMultiplier = toggleMultiplier;
                 SliderMaxIsMaxVal = sliderMaxIsMaxVal;
                 SliderMaxIsMaxVel = sliderMaxIsMaxVel;
+                DefaultValue = defaultValue;
                 //SliderStep = sliderStep;
             }
         }
@@ -74,10 +78,10 @@ namespace Control_Block
 
         public static string[] OperationCategoryNames = new string[]
         {
-            "Position",
+            "Moving",
             "Pointing",
-            "Joint Type",
-            "Conditional",
+            //"Joint Type",
+            "Conditions",
             "More"
         };
         public static List<OperationType[]> OperationCategoryLists = new List<OperationType[]>
@@ -90,17 +94,17 @@ namespace Control_Block
             },
             new OperationType[] {
                 OperationType.ArrowPoint,
-                OperationType.GravityPoint,
+                OperationType.GroundPoint,
                 OperationType.TargetPoint,
                 OperationType.PlayerPoint,
                 OperationType.CursorPoint,
                 OperationType.CameraPoint
             },
-            new OperationType[] {
-                OperationType.SetLockJoint,
-                OperationType.SetBodyJoint,
-                OperationType.SetFreeJoint
-            },
+            //new OperationType[] {
+            //    OperationType.SetLockJoint,
+            //    OperationType.SetBodyJoint,
+            //    OperationType.SetFreeJoint
+            //},
             new OperationType[] {
                 OperationType.IfThen,
                 OperationType.OrThen,
@@ -115,9 +119,9 @@ namespace Control_Block
 
         public static string[] InputCategoryNames = new string[]
         {
-            "Keyboard",
-            "Sensor",
-            "Values",
+            "Input",
+            "Sensing",
+            "Variables",
             "More"
         };
         public static List<InputType[]> InputCategoryLists = new List<InputType[]>
@@ -149,45 +153,51 @@ namespace Control_Block
 
         public static Dictionary<OperationType, UIDispOperation> UIOperationPairs = new Dictionary<OperationType, UIDispOperation>
         {
-            {OperationType.ShiftPos, new UIDispOperation("Shift Position", "Move the position or angle by Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle to Strength", sliderFraction:1f, sliderMinOnPlanar:true) },
-            {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the velocity by Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.ArrowPoint, new UIDispOperation("Arrow Point", "Aim towards the velocity of the tech (multiplied by Strength)", clampStrength:true) },
-            {OperationType.GravityPoint, new UIDispOperation("Gravity Point", "Aim towards the direction of gravity (multiplied by Strength)", clampStrength:true) },
-            {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)", clampStrength:true) },
-            {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", clampStrength:true) },
-            {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", clampStrength:true) },
-            {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", clampStrength:true) },
-            {OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
-            {OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true) },
-            {OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
-            {OperationType.IfThen, new UIDispOperation("IF Condition", "Run everything up to EndIF (or ELSE), if the condition is met (for Strength amount of time)", sliderHasNegative:true, sliderMax:5f, toggleComment:"False after time") },
+            {OperationType.ShiftPos, new UIDispOperation("Shift Position", "Move the position or angle by Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle to Strength", defaultValue:0f, sliderFraction:1f, sliderMinOnPlanar:true) },
+            {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the velocity by Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
+            {OperationType.ArrowPoint, new UIDispOperation("Arrow Point", "Aim towards the velocity of the tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.GroundPoint, new UIDispOperation("Ground Point", "Aim towards the ground's surface (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.IfThen, new UIDispOperation("IF Condition", "Run everything up to EndIF or ELSE, if the condition is met (for Strength amount of time)", defaultValue:0f, sliderMax:5f, toggleComment:"False after time") },
             {OperationType.OrThen, new UIDispOperation("OR IF Condition", "Check this condition if the one above condition is not met", strengthIsToggle:true, toggleComment:"Use timer from top") },
             {OperationType.ElseThen, new UIDispOperation("ELSE", "Skip to EndIF if the condition above is met, or run to EndIF if it is not", lockInputTypes:true, hideStrength:true) },
             {OperationType.EndIf, new UIDispOperation("End IF", "Close the highest IF branch and proceed as normal", lockInputTypes:true, hideStrength:true) },
             {OperationType.Nothing, new UIDispOperation("Do Nothing", "No contribution to the block mover", hideStrength:true) },
 #warning Might want to fix Deny Firing at some point
             {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
+
+
+            //{OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
+            //{OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true) },
+            //{OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
+
+            {OperationType.SetLockJoint, new UIDispOperation("(Unavailable!) Lock-Joint", "(Unavailable!) Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
+            {OperationType.SetBodyJoint, new UIDispOperation("(Unavailable!) Dynamic-Joint", "(Unavailable!) Physics state. Set the block-mover to use kinematics", hideStrength:true) },
+            {OperationType.SetFreeJoint, new UIDispOperation("(Unavailable!) Free-Joint", "(Unavailable!) Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
         };
         public static Dictionary<InputType, UIDispInput> UIInputPairs = new Dictionary<InputType, UIDispInput>
         {
             {InputType.AlwaysOn, new UIDispInput("Unconditional", hideInputKey:true, hideParam:true) },
-            {InputType.OnPress, new UIDispInput("On Key Press", paramIsToggle:true) },
-            {InputType.WhileHeld, new UIDispInput("On Key Hold", paramIsToggle:true) },
-            {InputType.OnRelease, new UIDispInput("On Key Release", paramIsToggle:true) },
-            {InputType.Toggle, new UIDispInput("Toggle Key", paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
-            {InputType.EnemyTechIsNear, new UIDispInput("Enemy is Near", hideInputKey:true, sliderMax:64) },
-            {InputType.PlayerTechIsNear, new UIDispInput("Player is Near", hideInputKey:true, sliderMax:64) },
-            {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", hideInputKey:true, sliderMax:64) },
-            {InputType.AboveVelocity, new UIDispInput("Above Velocity", hideInputKey:true, sliderMax:60) },
+            {InputType.OnPress, new UIDispInput("On Key Press", defaultValue:1f, paramIsToggle:true) },
+            {InputType.WhileHeld, new UIDispInput("On Key Hold", defaultValue:1f, paramIsToggle:true) },
+            {InputType.OnRelease, new UIDispInput("On Key Release", defaultValue:1f, paramIsToggle:true) },
+            {InputType.Toggle, new UIDispInput("Toggle Key", defaultValue:-1f, paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
+            {InputType.EnemyTechIsNear, new UIDispInput("Enemy is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.PlayerTechIsNear, new UIDispInput("Player is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.AboveVelocity, new UIDispInput("Above Velocity", defaultValue:10f, hideInputKey:true, sliderMax:60) },
 
-            {InputType.IfPosAbove, new UIDispInput("If Position Above", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosBelow, new UIDispInput("If Position Below", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosEqual, new UIDispInput("If Position Equal", hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfPosAbove, new UIDispInput("If Position Above", defaultValue:0.5f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosBelow, new UIDispInput("If Position Below", defaultValue:0.5f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosEqual, new UIDispInput("If Position Equal", defaultValue:1f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
 
 
             //{InputType.IfSprStrengthAbove, new UIDispInput("If Spring strength Above", hideInputKey:true, paramIsTrueValue:true) },
@@ -207,7 +217,7 @@ namespace Control_Block
             ArrowPoint,
             TargetPoint,
             PlayerPoint,
-            GravityPoint,
+            GroundPoint,
             SetLockJoint,
             SetBodyJoint,
             SetFreeJoint,
@@ -260,14 +270,14 @@ namespace Control_Block
             }
         }
 
-        private static float PointAtTarget(Transform trans, Vector3 localTarget, bool ProjectOnPlane, float OriginalValue)
+        private static float PointAtTarget(Transform trans, Vector3 relativeTarget, bool ProjectOnPlane, float OriginalValue)
         {
             if (ProjectOnPlane)
             {
-                return (Vector3.SignedAngle(Vector3.forward, trans.InverseTransformDirection(localTarget).SetY(0f), Vector3.up) - OriginalValue + 540) % 360 - 180 + OriginalValue;
+                return (Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(relativeTarget, trans.up), trans.up) - OriginalValue + 900f) % 360f - 180f;
                 //return (Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(localTarget, trans.up), trans.up));
             }
-            return trans.InverseTransformDirection(localTarget).y - OriginalValue;
+            return trans.InverseTransformDirection(relativeTarget).y - OriginalValue;
         }
 
         public float m_InternalTimer = 0f;
@@ -315,7 +325,8 @@ namespace Control_Block
                         return true;
 
                     case OperationType.ArrowPoint:
-                        Value += PointAtTarget(block.trans, block.tank.rbody.GetPointVelocity(block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
+                        var vel = block.tank.rbody.GetPointVelocity(block.centreOfMassWorld);
+                        Value += PointAtTarget(block.trans, vel * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength * Mathf.Clamp01(vel.sqrMagnitude * 5f);// * Mathf.Abs(m_Strength);
                         return true;
 
                     case OperationType.TargetPoint:
@@ -332,8 +343,12 @@ namespace Control_Block
                         Value += PointAtTarget(block.trans, (playerTank.WorldCenterOfMass - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
                         return true;
 
-                    case OperationType.GravityPoint:
-                        Value += PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
+                    case OperationType.GroundPoint:
+                        var comw = block.centreOfMassWorld;
+                        ManWorld.inst.GetTerrainHeight(comw, out float outHeight);
+                        //return (comw.y > outHeight + m_InputParam);
+                        Value += PointAtTarget(block.trans, Vector3.up * (outHeight - comw.y) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;
+                        //Value += PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
                         return true;
 
                     case OperationType.SetFreeJoint:
@@ -371,7 +386,7 @@ namespace Control_Block
 
                         m_InternalTimer += Time.fixedDeltaTime;
                         // If time is satisfied and strength is positive, do not skip. Negative strength will only activate within that timeframe
-                        bool met = (m_InternalTimer >= m_Strength) == (m_Strength >= 0f);
+                        bool met = (m_InternalTimer >= Mathf.Abs(m_Strength)) == (m_Strength >= 0f);
                         Skip = met ? 0 : 1;
                         return met;
 
@@ -667,7 +682,7 @@ namespace Control_Block
                     string source = s;
                     count++;
                     int comment = source.IndexOf('#'); // Comment character
-                    if (comment != -1) source = source.Substring(comment);
+                    if (comment != -1) source = source.Substring(0, comment);
                     if (string.IsNullOrWhiteSpace(source)) continue;
                     list.Add(InputOperator.FromString(source));
                 }

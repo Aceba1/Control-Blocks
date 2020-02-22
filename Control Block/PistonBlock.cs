@@ -1,71 +1,68 @@
 ﻿using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Text;
 using UnityEngine;
-// using System.Reflection;
 
 namespace Control_Block
 {
-    class ModulePiston
+    class ModulePiston : ModuleBlockMover
     {
-        //                 if (IsToggle)
-        //                 {
-        //                     switch (InverseTrigger)
-        //                     {
-        //                         case 0: //Change toggle on down
-        //                             if (VInput && Input.GetKeyDown(trigger))
-        //                                 AlphaOpen = 1f - AlphaOpen;
-        //                             break;
-        //                         case 1: //Change toggle on up
-        //                             if (VInput && Input.GetKeyUp(trigger))
-        //                                 AlphaOpen = 1f - AlphaOpen;
-        //                             break;
-        //                         case 2: //Prefer extent
-        //                             if ((AlphaOpen == 0f && VInput && Input.GetKeyDown(trigger)) ||
-        //                                 (AlphaOpen == 1f && VInput && Input.GetKeyUp(trigger)))
-        //                                 if (ButtonIsValid)
-        //                                 {
-        //                                     ButtonIsValid = false;
-        //                                     AlphaOpen = 1f - AlphaOpen;
-        //                                 }
-        //                             break;
-        //                         case 3: //Prefer contract
-        //                             if ((AlphaOpen == 1f && VInput && Input.GetKeyDown(trigger)) ||
-        //                                 (AlphaOpen == 0f && VInput && Input.GetKeyUp(trigger)))
-        //                                 if (ButtonIsValid)
-        //                                 {
-        //                                     ButtonIsValid = false;
-        //                                     AlphaOpen = 1f - AlphaOpen;
-        //                                 }
-        //                             break;
-        //                     }
-        //                 }
-        //                 else // Not Toggle
-        //                 {
-        //                     if ((VInput && Input.GetKey(trigger)) != (InverseTrigger == 1)) // If pressed, * Invert
-        //                     {
-        //                         AlphaOpen = 1f; // Open 
-        //                     }
-        //                     else
-        //                     {
-        //                         AlphaOpen = 0f; // Close
-        //                     }
-        //                 }
+        public static void ConvertSerialToBlockMover(SerialData serialData, ModuleBlockMover blockMover)
+        {
+            string ProcessList;
+            blockMover.SetDirty();
+            blockMover.moverType = ModuleBlockMover.MoverType.Static;
+            blockMover.LockJointBackPush = true;
+            blockMover.LOCALINPUT = serialData.Local;
+            blockMover._CENTERLIMIT = serialData.Stretch / 2f;
+            blockMover._EXTENTLIMIT = blockMover._CENTERLIMIT;
+            blockMover.UseLIMIT = serialData.Stretch != blockMover.TrueLimitVALUE;
+            blockMover.VELOCITY = 0f;
+            blockMover.VALUE = serialData.IsOpen ? serialData.Stretch : 0f;
+            blockMover.PVALUE = blockMover.VALUE;
 
-        //InverseTrigger = (byte)((serialData2.Invert ? 1 : 0) + (serialData2.PreferState ? 2 : 0));
+            var mode = GetMode(serialData.Toggle, serialData.Invert, serialData.PreferState);
+            ProcessList = ModeToProcessFormat[(int)mode];
+            ProcessList = ProcessList.Replace("<Input>", serialData.Input.ToString());
+            ProcessList = ProcessList.Replace("<Extent>", serialData.Stretch.ToString());
+            ProcessList = ProcessList.Replace("<ToggleState>", serialData.IsOpen ? "1" : "-1");
+            InputOperator.StringArrayToProcessOperations(ProcessList, ref blockMover.ProcessOperations);
+        }
 
         public const string WhileHeldScript = @"# Toggle:false Invert:false Prefer:false
 OnPress(<Input>,0) DO SetPos(<Extent>)
-OnRelease(<Input>,0) DO SetPos(0)", // 
+OnRelease(<Input>,0) DO SetPos(0)",
+
             WhileNotHeldScript = @"# Toggle:false Invert:true Prefer:false
 OnPress(<Input>,0) DO SetPos(0)
-OnRelease(<Input>,0) DO SetPos(<Extent>)", //
+OnRelease(<Input>,0) DO SetPos(<Extent>)",
+
             Toggle = @"# Toggle:true Invert:false Prefer:false
-DO SetPos(0)
-Toggle(<Input>,0) DO SetPos(<Extent>)",
+OnPress(<Input>,1) DO SetPos(0)
+Toggle(<Input>,<ToggleState>) DO SetPos(<Extent>)",
+
             ToggleDelayed = @"# Toggle:true Invert:true Prefer:false
-Toggle(<Input>,0) DO ";
+IF (Toggle(<Input>,<ToggleState>),0)
+    OnRelease(<Input>,1) DO SetPos(<Extent>)
+ELSE
+    OnRelease(<Input>,1) DO SetPos(0)",
+
+            TogglePreferExtended = @"# Toggle:true Invert:false Prefer:true
+OnRelease(<Input>,1) DO SetPos(0)
+Toggle(<Input>,<ToggleState>) DO SetPos(<Extent>)",
+            
+            TogglePreferContracted = @"# Toggle:true Invert:true Prefer:true
+OnRelease(<Input>,1) DO SetPos(<Extent>)
+Toggle(<Input>,<ToggleState>) DO SetPos(0)";
+
+        public static string[] ModeToProcessFormat = new string[]
+        {
+            WhileHeldScript,
+            WhileNotHeldScript,
+            Toggle,
+            ToggleDelayed,
+            TogglePreferExtended,
+            TogglePreferContracted
+        };
+
         public enum Mode : byte
         {
             WhileHeld,

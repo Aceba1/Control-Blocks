@@ -88,9 +88,9 @@ namespace Control_Block
             }
         }
 
-        public void Button()
+        public void Button(params GUILayoutOption[] layoutOptions)
         {
-            if (GUILayout.Button(SelectedName))
+            if (GUILayout.Button(SelectedName, layoutOptions))
             {
                 // If the button was not clicked before, set the current instance to be the active instance
                 if (!isClicked)
@@ -147,12 +147,14 @@ namespace Control_Block
 
         private static int InputPopup(Rect box, bool listOnSide, int selectedItemIndex, string[] items, ref Vector2 scroll, out bool Changed)
         {
-            Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
+            float verticalSize = box.height * items.Length;
+            bool showScroll = verticalSize > MaxLength;
+            Rect listRect = new Rect(0, 0, showScroll ? box.width - 20 : box.width, verticalSize);
             Rect scrollRect = listOnSide ?
-                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength)) :
-                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength));
+                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(verticalSize, MaxLength)) :
+                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(verticalSize, MaxLength));
 
-            scroll = GUI.BeginScrollView(scrollRect, scroll, listRect, false, true, GUIStyle.none, GUIStyle.none);
+            scroll = GUI.BeginScrollView(scrollRect, scroll, listRect, false, showScroll, GUIStyle.none, GUIStyle.none);
 
             GUI.changed = false;
 
@@ -166,13 +168,15 @@ namespace Control_Block
 
         private static void DrawPopup(Rect box, bool listOnSide, int selectedItemIndex, string[] items, Vector2 scroll)
         {
-            Rect listRect = new Rect(0, 0, box.width - 20, box.height * items.Length);
+            float verticalSize = box.height * items.Length;
+            bool showScroll = verticalSize > MaxLength;
+            Rect listRect = new Rect(0, 0, showScroll ? box.width - 20 : box.width, verticalSize);
             Rect scrollRect = listOnSide ?
-                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength)) :
-                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(box.height * items.Length, MaxLength));
+                new Rect(box.x + box.width, box.y + box.height, box.width, Mathf.Min(verticalSize, MaxLength)) :
+                new Rect(box.x, box.y + box.height, box.width, Mathf.Min(verticalSize, MaxLength));
             GUI.Box(scrollRect, "");
 
-            GUI.BeginScrollView(scrollRect, scroll, listRect, false, true);
+            GUI.BeginScrollView(scrollRect, scroll, listRect, false, showScroll);
             
             GUI.SelectionGrid(listRect, selectedItemIndex, items, 1);
             

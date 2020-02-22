@@ -16,11 +16,12 @@ namespace Control_Block
                 new List<Preset.Variable> {
                     new Preset.StringConditionV() {
                         VarToReplace = "FuncForUseTimer", ValueName = "Use Start Delay", Description = "If there should be a delay between pressing a key and having the joint move",
-                        ReplacementIfTrue = "IF(WhileHeld(<KeyRight>,0),<Time>)\nDO ShiftPos(<Amount>)\nENDIF\nIF(WhileHeld(<KeyLeft>,0),<Time>)\nDO ShiftPos(<Amount>)\nENDIF",
-                        ReplacementIfFalse = "WhileHeld(<KeyRight>,0) DO ShiftPos(<Amount>)\nWhileHeld(<KeyLeft>,0) DO ShiftPos(-<Amount>)"
+                        ReplacementIfTrue = "IF(WhileHeld(<KeyRight>,0),<Time>)\nDO ShiftPos(<Amount>)\nENDIF\nIF(WhileHeld(<KeyLeft>,0),<Time>)\nDO ShiftPos(-<Amount>)\nENDIF",
+                        ReplacementIfFalse = "WhileHeld(<KeyRight>,0) DO ShiftPos(<Amount>)\nWhileHeld(<KeyLeft>,0) DO ShiftPos(-<Amount>)",
+                        KeysToHideIfFalse = 1
                     }, new Preset.FloatV() {
                         VarToReplace = "Time", ValueName = "Start Delay", Description = "(Only used if above is true) How long to wait before input is accepted",
-                        DefaultValue = 5f,
+                        DefaultValue = 1f,
                         MinValue = 0f,
                         MaxValue = 5f,
                         RestrictValue = false
@@ -45,7 +46,7 @@ namespace Control_Block
             //        })
             //}
         };
-        public static Dictionary<ModulePiston.Mode, Preset> PreOverhaulPistons = new Dictionary<ModulePiston.Mode, Preset>
+        public static Dictionary<string, Preset> PreOverhaulPistons = new Dictionary<string, Preset>
         {
 
         };
@@ -119,8 +120,8 @@ namespace Control_Block
         public string SetToBlockMover(ModuleBlockMover blockMover)
         {
             blockMover.SetDirty();
-            blockMover.SetMinLimit(minValueLimit.HasValue ? minValueLimit.Value : 0f);
-            blockMover.SetMaxLimit(maxValueLimit.HasValue ? maxValueLimit.Value : blockMover.TrueLimitVALUE);
+            blockMover.SetMinLimit(minValueLimit ?? 0f);
+            blockMover.SetMaxLimit(maxValueLimit ?? blockMover.TrueLimitVALUE);
             blockMover.MAXVELOCITY = maxVelocity.HasValue ? velocity.Value : blockMover.MAXVELOCITY;
             if (targetValue.HasValue) blockMover.VALUE = targetValue.Value;
             if (velocity.HasValue) blockMover.VELOCITY = velocity.Value;
@@ -140,7 +141,7 @@ namespace Control_Block
             public bool VisibleInGUI = true;
 
             public abstract void ResetValue(ModuleBlockMover block);
-            public abstract void DrawGUI(int index);
+            public abstract void DrawGUI(ref int index);
             [JsonIgnore] public abstract string Value { get; }
         }
         public class KeyCodeV : Variable
@@ -154,7 +155,7 @@ namespace Control_Block
             {
                 value = DefaultValue;
             }
-            public override void DrawGUI(int index)
+            public override void DrawGUI(ref int index)
             {
                 GUILayout.BeginVertical(ValueName, GUI.skin.window);
                 {
@@ -215,7 +216,7 @@ namespace Control_Block
                 }
                 value = Mathf.Clamp(value, MinValue, MaxValue);
             }
-            public override void DrawGUI(int index)
+            public override void DrawGUI(ref int index)
             {
                 GUILayout.BeginVertical(ValueName, GUI.skin.window);
                 {
@@ -232,6 +233,8 @@ namespace Control_Block
             public bool DefaultValue;
             public string ReplacementIfTrue;
             public string ReplacementIfFalse;
+            public int KeysToHideIfTrue;
+            public int KeysToHideIfFalse;
             [JsonIgnore]
             public bool value;
 
@@ -239,7 +242,7 @@ namespace Control_Block
             {
                 value = DefaultValue;
             }
-            public override void DrawGUI(int index)
+            public override void DrawGUI(ref int index)
             {
                 GUILayout.BeginVertical(ValueName, GUI.skin.window);
                 {
@@ -250,6 +253,8 @@ namespace Control_Block
                     }
                 }
                 GUILayout.EndVertical();
+                if (value) index += KeysToHideIfTrue;
+                else index += KeysToHideIfFalse;
             }
             public override string Value => value ? ReplacementIfTrue : ReplacementIfFalse;
         }

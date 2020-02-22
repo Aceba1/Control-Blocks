@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Control_Block
 {
     //     [RequireComponent(typeof(TargetAimer))]
-    internal class ModuleSwivel
+    internal class ModuleSwivel : ModuleBlockMover
     {
         //         public TargetAimer aimer;
         //         public GimbalAimer gimbal;

@@ -1289,6 +1289,66 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] rr_floating_piston {
+            get {
+                object obj = ResourceManager.GetObject("rr_floating_piston", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.81 (sub 16) OBJ File: &apos;RR_Floating_Piston-1.blend&apos;
+        ///# www.blender.org
+        ///mtllib rr floating piston base.mtl
+        ///o RR_Floating_Piston
+        ///v -0.440008 0.143466 -0.110678
+        ///v -0.450008 0.144690 -0.119976
+        ///v -0.450008 0.087815 -0.119976
+        ///v -0.440008 0.089039 -0.110678
+        ///v -0.440008 0.077114 0.098799
+        ///v -0.440008 0.078832 0.105210
+        ///v -0.440008 0.082628 0.109006
+        ///v -0.440008 0.089039 0.110724
+        ///v -0.440008 0.143466 0.110724
+        ///v -0.440008 0.149876 0.109006
+        ///v -0.440008 0.153673 0.105210
+        ///v -0.440008 0.155391 0.098799
+        ///v -0.44000 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string rr_floating_piston_base {
+            get {
+                return ResourceManager.GetString("rr_floating_piston_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.81 (sub 16) OBJ File: &apos;RR_Floating_Piston.blend&apos;
+        ///# www.blender.org
+        ///mtllib rr floating piston head.mtl
+        ///o RR_Floating_Piston.001
+        ///v 0.478540 0.440000 -0.419977
+        ///v 0.419976 0.440000 -0.478542
+        ///v 0.410893 0.397640 -0.462809
+        ///v 0.462808 0.397640 -0.410894
+        ///v 0.462808 0.482370 -0.410894
+        ///v 0.410893 0.482370 -0.462809
+        ///v 0.424825 0.499910 -0.388965
+        ///v 0.388964 0.499910 -0.424827
+        ///v 0.386843 0.482370 -0.367036
+        ///v 0.380394 0.482370 -0.373485
+        ///v 0.373484 0.482370 -0.380395
+        ///v 0.367035 0.482370 -0.386844
+        ///v 0.385292 0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string rr_floating_piston_head {
+            get {
+                return ResourceManager.GetString("rr_floating_piston_head", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;steering regulator.blend&apos;
         ///# www.blender.org
         ///mtllib sr.mtl

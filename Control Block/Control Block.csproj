@@ -321,6 +321,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="ClusterBody.cs" />
     <Compile Include="ClusterTechMover.cs" />
+    <Compile Include="ConnectingLineRenderer.cs" />
     <Compile Include="LegacyBlockMoverIMGUI.cs" />
     <Compile Include="ModuleBlockMover.cs" />
     <Compile Include="ModuleBlockMoverRail.cs" />
@@ -350,6 +351,9 @@
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_blocktop.obj" />
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_shaftbottom.obj" />
     <Resource Include="Blocks\Piston\GeoCorp\GEOp_shafttop.obj" />
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="Blocks\MTMags\mtmag ball collider large.obj" />
     <None Include="Blocks\MTMags\mtmag ball collider.obj" />
     <None Include="Blocks\MTMags\mtmag ball large.obj" />
@@ -391,6 +395,8 @@
     <None Include="Blocks\Piston\HE\Panel\HEps_shaft_3.obj" />
     <None Include="Blocks\Piston\HE\Panel\pistonblock he panel deco._png" />
     <None Include="Blocks\Piston\HE\Panel\pistonblock he panel._png" />
+    <None Include="Blocks\Piston\RR\rr floating piston base.obj" />
+    <None Include="Blocks\Piston\RR\rr floating piston head.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston base.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston head.obj" />
     <None Include="Blocks\Piston\VEN\ven twist piston shaft 1.obj" />
@@ -448,6 +454,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Blocks\Pads\friction pad gc big,_png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blocks\Piston\RR\rr floating piston._png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

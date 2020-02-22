@@ -23,6 +23,7 @@ namespace Control_Block
         /// </summary>
         public List<TankBlock> blocks;
         public List<ModuleWeapon> blockWeapons;
+        public List<ModuleDrill> blockDrills;
         public ModuleBlockMover moduleBlockMover;
         //public SphereCollider dragSphere;
         //! Can possibly be used for AP render manipulation
@@ -67,6 +68,8 @@ namespace Control_Block
         public bool ForceFireNextFrame;
         public bool ForceNoFireNextFrame;
 
+        private static System.Reflection.FieldInfo ModuleDrill_m_Spinning = typeof(ModuleDrill).GetField("m_Spinning", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+
         public void GetDriveControl(TankControl.ControlState state)
         {
             if (ForceFireNextFrame)
@@ -74,6 +77,10 @@ namespace Control_Block
                 foreach(var weapon in blockWeapons)
                 {
                     weapon.FireControl = true;
+                }
+                foreach (var drill in blockDrills)
+                {
+                    ModuleDrill_m_Spinning.SetValue(drill, true);
                 }
                 ForceFireNextFrame = false;
             }
@@ -100,7 +107,6 @@ namespace Control_Block
             Joint.autoConfigureConnectedAnchor = false; // Do NOT allow Unity to auto-configure anchor, or blocks will become "phantom"
             Joint.axis = blockRot * Vector3.up;
             Joint.secondaryAxis = blockRot * Vector3.forward;
-            Joint.enableCollision = false;
             Joint.connectedBody = rbody;
             Joint.anchor = anchor1;
             Joint.connectedAnchor = transform.parent.InverseTransformPoint(moduleBlockMover.HolderPart.position); // Fix bug caused by static holders
@@ -112,10 +118,12 @@ namespace Control_Block
             Joint.angularZMotion = ConfigurableJointMotion.Locked;
             Joint.enableCollision = false;
 
-            Joint.enablePreprocessing = true; //!CHANGED
-            Joint.projectionMode = JointProjectionMode.PositionAndRotation;
-            Joint.projectionDistance = 10f;
-            Joint.projectionAngle = 0f;
+            Joint.enablePreprocessing = false;//true;
+
+#warning Create own projection solution
+            //Joint.projectionMode = JointProjectionMode.PositionAndRotation;
+            //Joint.projectionDistance = 10f;
+            //Joint.projectionAngle = 0f;
 
             Joint.rotationDriveMode = RotationDriveMode.XYAndZ;
 
@@ -139,7 +147,7 @@ namespace Control_Block
 
         public void SetJointDrive(float positionDamper, float positionSpring)
         {
-            var drive = new JointDrive { mode = JointDriveMode.Position, positionDamper = positionDamper, positionSpring = positionSpring, maximumForce = MaxSpringForce };
+            var drive = new JointDrive { positionDamper = positionDamper, positionSpring = positionSpring, maximumForce = MaxSpringForce };
             Joint.angularXDrive = drive;
             Joint.angularYZDrive = drive;
             Joint.xDrive = drive;
@@ -369,6 +377,8 @@ namespace Control_Block
 
             ModuleWeapon weapon = block.GetComponent<ModuleWeapon>();
             if (weapon) blockWeapons.Add(weapon);
+            ModuleDrill drill = block.GetComponent<ModuleDrill>();
+            if (drill) blockDrills.Add(drill);
 
             return;
         }
@@ -379,6 +389,8 @@ namespace Control_Block
             {
                 var weapon = block.GetComponent<ModuleWeapon>();
                 if (weapon) blockWeapons.Remove(weapon);
+                var drill = block.GetComponent<ModuleDrill>();
+                if (drill) blockDrills.Remove(drill);
                 if (!Dynamics)
                 {
                     block.trans.position = transform.TransformPoint(coreTank.transform.InverseTransformPoint(block.trans.position));

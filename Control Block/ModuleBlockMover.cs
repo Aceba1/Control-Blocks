@@ -44,6 +44,10 @@ namespace Control_Block
         public AnimationCurve[] posCurves;
         public bool useRotCurves = false, usePosCurves = false;
         /// <summary>
+        /// 0:Euler (X, Y, Z), 1:Quaternion (X, Y, Z, W), 2:Axis (X, Y, Z, A)
+        /// </summary>
+        public byte rotType = 0;
+        /// <summary>
         /// Animation curves for determining rotation
         /// </summary>
         public AnimationCurve[] rotCurves;
@@ -149,7 +153,13 @@ namespace Control_Block
             }
         }
         internal float _CENTERLIMIT, _EXTENTLIMIT;
-        public bool UseLIMIT;
+        public bool UseLIMIT
+        {
+            get => HardLIMIT || _useLIMIT;
+            set => _useLIMIT = value;
+        }
+        bool _useLIMIT;
+        public bool HardLIMIT = false;
 
         public float MAXVELOCITY, TrueMaxVELOCITY = 1f, TrueLimitVALUE = 1f;
         public float HalfLimitVALUE => TrueLimitVALUE * 0.5f;
@@ -220,6 +230,8 @@ namespace Control_Block
         public float PVALUE;
         public float VELOCITY;
         public bool IsPlanarVALUE;
+        public float InvPointWeightRatio = 1f;
+        public float PointWeightRatio => 1 - InvPointWeightRatio;
         /// <summary>
         /// Back-push, Offset the parent rigidbody by lockjoint movement
         /// </summary>
@@ -236,7 +248,11 @@ namespace Control_Block
         }
         bool _cannotBeFreeJoint;
 
-        public bool CanOnlyBeLockJoint;
+        public bool CanOnlyBeLockJoint
+        {
+            get => true;
+            set { }
+        }
 
         public bool IsFreeJoint => moverType == MoverType.Physics;
         public bool IsBodyJoint => moverType == MoverType.Dynamic;
@@ -278,8 +294,13 @@ namespace Control_Block
 
         public void UpdateSFX(float Speed)
         {
+            if (IsFreeJoint) // No noise allowed on Freejoint
+            {
+                PlaySFX(false, 0f); 
+                return;
+            }
             Speed = Speed / TrueMaxVELOCITY * SFXVolume;
-            bool on = !(Speed).Approximately(0f, 0.05f);
+            bool on = !(Speed).Approximately(0f, 0.01f);
             PlaySFX(on, Mathf.Abs(Speed));
         }
 
@@ -303,8 +324,22 @@ namespace Control_Block
 
         public Quaternion GetRotCurve(int Index, float Position)
         {
-            int Mod = Index * 3;
-            return Quaternion.Euler(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position));
+            int Mod;
+            switch (rotType)
+            {
+                case 0:
+                    Mod = Index * 3;
+                    return Quaternion.Euler(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position));
+                case 1:
+                    Mod = Index * 4;
+                    return new Quaternion(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position), rotCurves[Mod + 3].Evaluate(Position));
+                case 2:
+                    Mod = Index * 4;
+                    return Quaternion.AngleAxis(rotCurves[Mod + 3].Evaluate(Position), new Vector3(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position)));
+                default:
+                    Invalidate();
+                    throw new Exception(name + ".ModuleBlockMover.GetRotCurve() : Field 'rotType' cannot be of value " + rotType + "!");
+            }
         }
 
         public Vector3 GetPosCurve(int Index, float Position)
@@ -427,6 +462,7 @@ namespace Control_Block
                 Holder.moduleBlockMover = this;
                 Holder.blocks = new List<TankBlock>();
                 Holder.blockWeapons = new List<ModuleWeapon>();
+                Holder.blockDrills = new List<ModuleDrill>();
                 Holder.gameObject.layer = block.tank.gameObject.layer;
                 Holder.transform.parent = block.trans.parent;
             }
@@ -492,7 +528,7 @@ namespace Control_Block
         {
             PVALUE = IsPlanarVALUE
                 ? (Vector3.SignedAngle(transform.parent.forward, Holder.transform.forward, transform.up) + 360) % 360
-                : Mathf.Clamp(Vector3.Project(Holder.transform.position - transform.parent.position, transform.up).magnitude, MINVALUELIMIT, MAXVALUELIMIT);
+                : Mathf.Clamp(Vector3.Dot(transform.up, Holder.transform.position - transform.parent.position), MINVALUELIMIT, MAXVALUELIMIT);
         }
 
         private void VerifyNetState(float Diff, bool Net)
@@ -605,9 +641,9 @@ namespace Control_Block
                     if (!IsFreeJoint)
                     {
                         if (UseLIMIT)
-                            PVALUE += Mathf.Clamp(ofst - pofst, -MAXVELOCITY, MAXVELOCITY); // Use ofst from before
+                            PVALUE += Mathf.Clamp((ofst - pofst) * InvPointWeightRatio, -MAXVELOCITY, MAXVELOCITY); // Use ofst from before
                         else
-                            PVALUE = Mathf.Clamp(VALUE, oldPVALUE - MAXVELOCITY, oldPVALUE + MAXVELOCITY);
+                            PVALUE = Mathf.Clamp(VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, oldPVALUE - MAXVELOCITY, oldPVALUE + MAXVELOCITY);
 
                         VerifyNetState(PVALUE - oldPVALUE, Net);
                     }
@@ -680,9 +716,9 @@ namespace Control_Block
                                 UpdateSpringForce();
                             }
                             if (IsPlanarVALUE)
-                                HolderJoint.targetRotation = block.cachedLocalRotation * GetRotCurve(PartCount - 1, VALUE);
+                                HolderJoint.targetRotation = GetRotCurve(PartCount - 1, VALUE) * Quaternion.FromToRotation(Vector3.up, HolderJoint.axis);
                             else
-                                HolderJoint.targetPosition = block.cachedLocalRotation * GetPosCurve(PartCount - 1, VALUE) - HolderJoint.anchor;
+                                HolderJoint.targetPosition = Quaternion.FromToRotation(Vector3.up, HolderJoint.axis) * GetPosCurve(PartCount - 1, VALUE + HalfLimitVALUE);
 
                             if (CheckIfOnStatic(orbody))
                             {
@@ -772,7 +808,7 @@ namespace Control_Block
         {
             var rot = Holder.transform.rotation;
 
-            Holder.transform.rotation = transform.parent.rotation * localRotationOffset;//HolderPart.localRotation;//Quaternion.Euler(transform.localRotation * Vector3.up * Angle);
+            Holder.transform.rotation = RotateRotationByRotatedRotation(transform.parent.rotation, localRotationOffset, transform.localRotation);//HolderPart.localRotation;//Quaternion.Euler(transform.localRotation * Vector3.up * Angle);
 
             HolderJoint.axis = transform.localRotation * Vector3.up;
             HolderJoint.secondaryAxis = transform.localRotation * Vector3.forward;
@@ -851,6 +887,7 @@ namespace Control_Block
                         if (psd != null)
                         {
                             Console.WriteLine("FOUND PRE-OVERHAUL PISTON");
+                            ModulePiston.ConvertSerialToBlockMover(psd, this);
                         }
                     }
                 }
@@ -885,9 +922,6 @@ namespace Control_Block
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.J, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 270 });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.K, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 180 });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.L, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 90 });
-
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.N, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetFreeJoint });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.N, m_InputType = InputOperator.InputType.OnRelease, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetLockJoint });
                 //TrueLimitVALUE = 360;
                 _CENTERLIMIT = 0f;
                 _EXTENTLIMIT = HalfLimitVALUE;
@@ -898,13 +932,10 @@ namespace Control_Block
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.Space, m_InputType = InputOperator.InputType.OnRelease, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 0 });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.UpArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = 0.05f });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.DownArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = -0.05f });
-
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.N, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetFreeJoint });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.N, m_InputType = InputOperator.InputType.OnRelease, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetLockJoint });
                 _CENTERLIMIT = HalfLimitVALUE;
                 _EXTENTLIMIT = HalfLimitVALUE;
+                UseLIMIT = false;
             }
-            UseLIMIT = false;
             moverType = MoverType.Static;
             oldMoverType = MoverType.Static;
             SPRSTR = 0;
@@ -1308,7 +1339,7 @@ namespace Control_Block
         public const TTMsgType NetMsgMoverID = (TTMsgType)32115;
         internal static bool IsNetworkingInitiated = false;
 
-#warning Disable "free-joint" when networked?
+//#warning Disable "free-joint" when networked?
         public static void InitiateNetworking()
         {
             if (IsNetworkingInitiated)

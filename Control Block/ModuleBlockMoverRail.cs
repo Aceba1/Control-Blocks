@@ -7,6 +7,11 @@ namespace Control_Block
 {
     public class ModuleBMRail : ModuleBlockMover
     {
+        public void PrePool()
+        {
+            rotType = 1;
+        }
+
         public AttachPoint starterAnim;
         public List<ModuleBMSegment> m_Segments;
         public BlockTypes m_thisHeadType;
@@ -21,9 +26,10 @@ namespace Control_Block
                 m.keys = new Keyframe[1] { new Keyframe(0f, 0f, 0f, 0f, 0f, 0f) };
 
             Quaternion TravelQuat = Quaternion.identity;
-            Vector3 TravelRot = Vector3.zero;
+            //Vector3 TravelRot = Vector3.zero;
             OrthoRotation OriginalRot = block.cachedLocalRotation;
-            float Length = starterAnim.AddToAnimCurves(OrthoRotation.identity, this, 0f, ref TravelQuat, ref TravelRot);
+            float Length = starterAnim.AddToAnimCurves(OrthoRotation.identity, this, 0f, ref TravelQuat, starterAnim, 0f);//, ref TravelQuat);//, ref TravelRot);
+            float prevTrueLimitVALUE = TrueLimitVALUE;
             TrueLimitVALUE = 0f;
 
             TankBlock LastBlock = block;
@@ -64,7 +70,7 @@ namespace Control_Block
                         LastBlock = _Segment;
                         LastAP = component.APs[1 - i];
 
-                        Length = component.APs[i].AddToAnimCurves(_Segment.cachedLocalRotation * Quaternion.Inverse(OriginalRot), this, Length, ref TravelQuat, ref TravelRot);
+                        Length = component.APs[i].AddToAnimCurves(Quaternion.Inverse(OriginalRot) * _Segment.cachedLocalRotation, this, Length, ref TravelQuat, LastAP, component.AnimWeight);//, ref TravelQuat);//, ref TravelRot);
                         Segment = LastAP.GetBlockAtPos(_Segment, blockMan); // Set the new segment, continue
 
                         Print("   Connected!");
@@ -84,6 +90,10 @@ namespace Control_Block
                 SetMaxLimit(TrueLimitVALUE);
                 if (PVALUE > TrueLimitVALUE) PVALUE = TrueLimitVALUE;
                 if (VALUE > TrueLimitVALUE) VALUE = TrueLimitVALUE;
+            }
+            else if (MAXVALUELIMIT == prevTrueLimitVALUE || !UseLIMIT)
+            {
+                SetMaxLimit(TrueLimitVALUE);
             }
 
             return true;
@@ -123,7 +133,7 @@ namespace Control_Block
             foreach (var s in m_Segments)
             {
                 s.UIPointer(this);
-                if (s.APs[0].AnimRotChange != Vector3.zero) usingRot = true; // Check only the first, because the second should resemble it anyways
+                if (s.APs[0].DisableFreeJoint) usingRot = true; // Check only the first, because the second should resemble it anyways
             }
         }
 
@@ -136,6 +146,10 @@ namespace Control_Block
 
     public class ModuleBMSegment : Module
     {
+        /// <summary>
+        /// The weight of the positional curve smoothing
+        /// </summary>
+        public float AnimWeight;
         /// <summary>
         /// An array of 2 APs
         /// </summary>
@@ -215,19 +229,19 @@ namespace Control_Block
     public class AttachPoint
     {
         /// <summary>
+        /// For if the animation involves curves
+        /// </summary>
+        public bool DisableFreeJoint;
+        /// <summary>
         /// The new position, moving from the apPos
         /// </summary>
         public Vector3 AnimPosChange;
-        /// <summary>
-        /// The new rotation after running through this block
-        /// </summary>
-        public Vector3 AnimRotChange;
         /// <summary>
         /// How long this block is, to the animation and to the max value
         /// </summary>
         public float AnimLength;
         /// <summary>
-        /// The final direction, for smoothing
+        /// The final direction, for curve smoothing
         /// </summary>
         public Vector3 Tangent;
         /// <summary>
@@ -277,17 +291,17 @@ namespace Control_Block
                 );
         }
 
-        const float c1 = 0.19f, c2 = 0.02f; // or c1 = 0.24f, c2 = 0f;
-
-        public float AddToAnimCurves(Quaternion cachedLocalRot, ModuleBMRail target, float length, ref Quaternion rotation, ref Vector3 vrot)//ref Quaternion rotation)
+        public float AddToAnimCurves(Quaternion cachedLocalRot, ModuleBMRail target, float length, ref Quaternion lastRot, AttachPoint otherAP, float weight)//, ref Vector4 vrot)//ref Quaternion rotation)
         {
             int Mod = target.PartCount * 3;
+            int rMod = target.PartCount * 4;
             var x = target.posCurves[Mod - 3];
             var y = target.posCurves[Mod - 2];
             var z = target.posCurves[Mod - 1];
-            var rx = target.rotCurves[Mod - 3];
-            var ry = target.rotCurves[Mod - 2];
-            var rz = target.rotCurves[Mod - 1];
+            var rx = target.rotCurves[rMod - 4];
+            var ry = target.rotCurves[rMod - 3];
+            var rz = target.rotCurves[rMod - 2];
+            var rw = target.rotCurves[rMod - 1];
             int Ind = x.length - 1;
             var xLast = x[Ind];
             var yLast = y[Ind];
@@ -297,23 +311,29 @@ namespace Control_Block
 
             var change = cachedLocalRot * AnimPosChange;
             var tangent = cachedLocalRot * Tangent;
-            if (AnimRotChange != Vector3.zero)
-            {
-                rotation = ModuleBlockMover.RotateRotationByRotatedRotation(rotation, Quaternion.Euler(AnimRotChange), cachedLocalRot);
-                vrot = CycleToNearestEuler(vrot, rotation.eulerAngles);
-            }
 
-            float weight = c1 + c2 * AnimLength;
             x.AddKey(new Keyframe(length, xLast.value + change.x, tangent.x, tangent.x, weight, weight));
             y.AddKey(new Keyframe(length, yLast.value + change.y, tangent.y, tangent.y, weight, weight));
             z.AddKey(new Keyframe(length, zLast.value + change.z, tangent.z, tangent.z, weight, weight));
-            //xLast.outWeight = weight;
-            //yLast.outWeight = weight;
-            //zLast.outWeight = weight;
+            //if (Input.GetKey(KeyCode.I))
+            //{
+                //xLast.outWeight = 0f;
+                //xLast.time += 0.01f;
+                x.AddKey(new Keyframe(xLast.time + 0.01f, xLast.value, xLast.outTangent, xLast.outTangent, weight, weight));
+                //yLast.outWeight = 0f;
+                //yLast.time += 0.01f;
+                y.AddKey(new Keyframe(yLast.time + 0.01f, yLast.value, yLast.outTangent, yLast.outTangent, weight, weight));
+                //zLast.outWeight = 0f;
+                //zLast.time += 0.01f;
+                z.AddKey(new Keyframe(zLast.time + 0.01f, zLast.value, zLast.outTangent, zLast.outTangent, weight, weight));
+            //}
 
-            rx.AddKey(new Keyframe(length, vrot.x, 0f, 0f, 0f, 0f));
-            ry.AddKey(new Keyframe(length, vrot.y, 0f, 0f, 0f, 0f));
-            rz.AddKey(new Keyframe(length, vrot.z, 0f, 0f, 0f, 0f));
+            lastRot = Quaternion.RotateTowards(lastRot, Quaternion.LookRotation(cachedLocalRot * otherAP.apDirUp, cachedLocalRot * otherAP.apDirForward), 90);
+
+            rx.AddKey(new Keyframe(length, lastRot.x, 0f, 0f, 0f, 0f));
+            ry.AddKey(new Keyframe(length, lastRot.y, 0f, 0f, 0f, 0f));
+            rz.AddKey(new Keyframe(length, lastRot.z, 0f, 0f, 0f, 0f));
+            rw.AddKey(new Keyframe(length, lastRot.w, 0f, 0f, 0f, 0f));
 
             return length;
         }
