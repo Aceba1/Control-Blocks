@@ -361,4 +361,13 @@
   <data name="rr_floating_piston_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Blocks\Piston\RR\rr floating piston head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="rr_inline_swivel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Swivel\Inline\rr_inline_swivel._png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="swivel_rr_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Swivel\Inline\swivel_rr_base.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="swivel_rr_head" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Blocks\Swivel\Inline\swivel_rr_head.obj;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Control_Block
 {
-    class ModulePiston : ModuleBlockMover
+    class ModulePiston
     {
         public static void ConvertSerialToBlockMover(SerialData serialData, ModuleBlockMover blockMover)
         {
@@ -12,9 +12,9 @@ namespace Control_Block
             blockMover.moverType = ModuleBlockMover.MoverType.Static;
             blockMover.LockJointBackPush = true;
             blockMover.LOCALINPUT = serialData.Local;
-            blockMover._CENTERLIMIT = serialData.Stretch / 2f;
+            blockMover._CENTERLIMIT = serialData.Stretch != 0 ? serialData.Stretch / 2f : blockMover.HalfLimitVALUE;
             blockMover._EXTENTLIMIT = blockMover._CENTERLIMIT;
-            blockMover.UseLIMIT = serialData.Stretch != blockMover.TrueLimitVALUE;
+            blockMover.UseLIMIT = serialData.Stretch != 0 && serialData.Stretch != blockMover.TrueLimitVALUE;
             blockMover.VELOCITY = 0f;
             blockMover.VALUE = serialData.IsOpen ? serialData.Stretch : 0f;
             blockMover.PVALUE = blockMover.VALUE;
@@ -22,7 +22,7 @@ namespace Control_Block
             var mode = GetMode(serialData.Toggle, serialData.Invert, serialData.PreferState);
             ProcessList = ModeToProcessFormat[(int)mode];
             ProcessList = ProcessList.Replace("<Input>", serialData.Input.ToString());
-            ProcessList = ProcessList.Replace("<Extent>", serialData.Stretch.ToString());
+            ProcessList = ProcessList.Replace("<Extent>", (serialData.Stretch == 0 ? blockMover.TrueLimitVALUE : serialData.Stretch).ToString());
             ProcessList = ProcessList.Replace("<ToggleState>", serialData.IsOpen ? "1" : "-1");
             InputOperator.StringArrayToProcessOperations(ProcessList, ref blockMover.ProcessOperations);
         }

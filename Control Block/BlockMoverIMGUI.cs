@@ -44,12 +44,11 @@ namespace Control_Block
         public static GUIOverseer inst;
         public static void CheckValid()
         {
-            inst.gameObject.SetActive(OptionMenuMover.inst.check_OnGUI() || /*OptionMenuSwivel.inst.check_OnGUI() || */OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
+            inst.gameObject.SetActive(OptionMenuMover.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
         }
         public void OnGUI()
         {
             OptionMenuMover.inst.stack_OnGUI();
-            //OptionMenuSwivel.inst.stack_OnGUI();
             OptionMenuSteeringRegulator.inst.stack_OnGUI();
             LogGUI.inst.stack_OnGUI();
         }
@@ -78,7 +77,7 @@ namespace Control_Block
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetKeyDown(KeyCode.Backslash))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 600f, 300f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 650f, 350f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block;
@@ -146,31 +145,73 @@ namespace Control_Block
             UIOperatorPopup = PopupBase.CreateFromOperatorCategories();
             inst = this;
         }
-        GUIStyle pvOn, pvOff, pvSelOn, pvSelOff, noWrap;
+        GUIStyle pvOn, pvOff, pvSelOn, pvSelOff, noWrap, bigLabel, paddedBigLabel;
 
         public static OptionMenuMover inst;
 
-        private readonly int ID = 7787;
+        private readonly int EditID = 7788, ListID = 7789;
 
-        private bool visible = false;
+        private bool visible = false, showTechList = false, showListTools;
 
         private ModuleBlockMover module;
 
         //private ModuleBMSegment segment;
 
-        private Rect win;
+        private Rect win, listwin;
 
         public bool queueResetTextCache;
 
         public void Update()
         {
+            if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.C))
+            {
+                listhighlight?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                listhighlight = null;
+                lastlisthighlight = -1;
+                showTechList = !showTechList;
+                if (showTechList)
+                {
+                    if (Singleton.playerTank == null)
+                        showTechList = false;
+                    else
+                    {
+                        Singleton.playerTank.GetComponentsInChildren<ModuleBlockMover>(cachedBlockList);
+                        if (cachedBlockList.Count == 0)
+                            showTechList = false;
+                        else
+                        {
+                            cachedBlockList.Sort((x, y) => String.Compare(x.UIName, y.UIName));
+                            lastBlockCount = Singleton.playerTank.blockman.blockCount;
+                            int X = Screen.width, Y = Screen.height;
+                            listwin = new Rect(X * 0.96f - 400f, Y * 0.2f, 400f, Mathf.Max(550, Y * 0.6f));
+                            Scrolls[2] = Vector2.zero;
+                            Scrolls[3] = Vector2.zero;
+                            showListTools = false;
+                            filterCache = "";
+                            toolsLogLocalInput = "";
+                            toolsLogSpeed = "";
+                            toolsLogPaste = "";
+                            speedPistonCache = null;
+                            speedSwivelCache = null;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var pair in cachedInputs) pair.Value.Clear();
+                    cachedInputs.Clear();
+                    foreach (var pair in cachedInputBlocks) pair.Value.Clear();
+                    cachedBlockList.Clear();
+                    ClearListLightUp();
+                }
+            }
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 700f, 400f);
+                ModuleBlockMover lastModule = module;
                 try
                 {
                     var block = Singleton.Manager<ManPointer>.inst.targetVisible.block;
-                    if (block != null)
+                    if (block != null && block.tank != null)
                     {
                         module = block.GetComponent<ModuleBlockMover>();
                         if (module == null)
@@ -188,17 +229,77 @@ namespace Control_Block
                     PresetsIMGUI.SetState(false, null, win);
                     showPresetsUI = false;
                 }
-                visible = module;
-                if (visible)
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 700f, 450f);
+                SetupEditWindow(module, lastModule);
+            }
+            if (queueResetTextCache) ResetTextCache();
+        }
+
+        void SetupEditWindow(ModuleBlockMover newModule, ModuleBlockMover lastModule)
+        {
+            module = newModule;
+            visible = newModule;
+            if (visible)
+            {
+                if (newModule != lastModule)
                 {
+                    lastModule?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
+                    newModule.block.visible.EnableOutlineGlow(true, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
                     SelectedIndex = -1;
                     ResetTextCache();
                     Log = "";
                     Texts = null;
+                    Scrolls[0] = Vector2.zero;
+                    Scrolls[1] = Vector2.zero;
+                    IsSettingKeybind = false;
+                    GUI.FocusWindow(EditID);
                 }
-                IsSettingKeybind = false;
             }
-            if (queueResetTextCache) ResetTextCache();
+            else lastModule?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
+        }
+
+        void VerifyListWindow()
+        {
+            Tank playerTank = Singleton.playerTank;
+            if (playerTank == null)
+            {
+                listhighlight?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                listhighlight = null;
+                lastlisthighlight = -1;
+                lastBlockCount = -1;
+                showTechList = false;
+                foreach (var pair in cachedInputs) pair.Value.Clear();
+                cachedInputs.Clear();
+                foreach (var pair in cachedInputBlocks) pair.Value.Clear();
+                cachedInputBlocks.Clear();
+                cachedBlockList.Clear();
+                ClearListLightUp();
+                return;
+            }
+            if (lastBlockCount != playerTank.blockman.blockCount)
+            {
+                cachedBlockList.Clear();
+                playerTank.GetComponentsInChildren<ModuleBlockMover>(cachedBlockList);
+                if (cachedBlockList.Count == 0)
+                {
+                    listhighlight?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                    listhighlight = null;
+                    lastlisthighlight = -1;
+                    lastBlockCount = -1;
+                    showTechList = false;
+                    foreach (var pair in cachedInputs) pair.Value.Clear();
+                    cachedInputs.Clear();
+                    foreach (var pair in cachedInputBlocks) pair.Value.Clear();
+                    cachedInputBlocks.Clear();
+                    cachedBlockList.Clear();
+                    ClearListLightUp();
+                    return;
+                }
+                cachedBlockList.Sort((x, y) => String.Compare(x.UIName, y.UIName));
+                lastBlockCount = playerTank.blockman.blockCount;
+                if (showListTools)
+                    RegenerateListKeyCodeCache();
+            }
         }
 
         internal void ResetTextCache()
@@ -207,39 +308,52 @@ namespace Control_Block
             maxCache = null; //module.MAXVALUELIMIT.ToString();
             minCache = null; //module.MINVALUELIMIT.ToString();
             maxVelCache = module.MAXVELOCITY.ToString();
-            springCache = module.SPRSTR.ToString();
-            dampCache = module.SPRDAM.ToString();
+            //springCache = module.SPRSTR.ToString();
+            //dampCache = module.SPRDAM.ToString();
             valueCache = module.VALUE.ToString();
             velocityCache = module.VELOCITY.ToString();
         }
 
         public bool check_OnGUI()
         {
-            return visible && module;
+            return showTechList || visible && module;
         }
 
         public void stack_OnGUI()
         {
-            if (!visible || !module)
+            if (showTechList)
             {
-                return;
+                try
+                {
+                    VerifyListWindow();
+                    if (showTechList)
+                        listwin = GUI.Window(ListID, listwin, DoListWindow, "Blockmover List : " +Singleton.playerTank?.name);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
-
-            if (module.IsControlledByNet)
+            if (visible && module)
             {
-                visible = false;
-                return;
-            }
-
-            try
-            {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), StringLookup.GetItemName(module.block.visible.m_ItemType));
-                if (showPresetsUI) 
-                    PresetsIMGUI.DoWindow();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
+                if (module.IsControlledByNet)
+                {
+                    visible = false;
+                    module?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
+                }
+                else
+                {
+                    try
+                    {
+                        win = GUI.Window(EditID, win, DoEditWindow, module.UIName + (module.Valid || module.startblockpos.Length == 0 ? "" : " [Stuck]"));
+                        if (showPresetsUI)
+                            PresetsIMGUI.DoWindow();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
             }
         }
 
@@ -248,9 +362,9 @@ namespace Control_Block
 
         private Popup<InputOperator.InputType> UIInputPopup;
         private Popup<InputOperator.OperationType> UIOperatorPopup;
-        private Vector2[] Scrolls = new Vector2[2];
+        private Vector2[] Scrolls = new Vector2[4];
         internal string[] Texts;
-        private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxVelCache, maxCache, springCache, dampCache;
+        private string paramCache, strengthCache, valueCache, velocityCache, minCache, maxVelCache, maxCache, filterCache, speedPistonCache, speedSwivelCache;
         internal string Log = "";
         internal static bool showPresetsUI;
 
@@ -292,16 +406,442 @@ namespace Control_Block
             noWrap = new GUIStyle(GUI.skin.label);
             noWrap.wordWrap = false;
             noWrap.fontStyle = FontStyle.Bold;
+
+            bigLabel = new GUIStyle(GUI.skin.label)
+            {
+                font = GUI.skin.button.font,
+                fontSize = GUI.skin.button.fontSize,
+                fontStyle = GUI.skin.button.fontStyle,
+            };
+            paddedBigLabel = new GUIStyle(bigLabel)
+            {
+                margin = new RectOffset(8, 4, 8, 4),
+                alignment = TextAnchor.MiddleLeft,
+            };
         }
 
         bool UpdateSelection;
 
-        private void DoWindow(int id)
+        private int lastBlockCount = -1;
+        private List<ModuleBlockMover> cachedBlockList = new List<ModuleBlockMover>();
+        private Dictionary<KeyCode, List<InputOperator>> cachedInputs = new Dictionary<KeyCode, List<InputOperator>>();
+        private Dictionary<KeyCode, List<Visible>> cachedInputBlocks = new Dictionary<KeyCode, List<Visible>>();
+        private List<Visible> listLightUpVisRef;
+        private List<ModuleBlockMover> listLightUpMBMRef;
+        private List<ModuleBlockMover> filteredBlockList = new List<ModuleBlockMover>();
+        private Visible listhighlight;
+        private int lastlisthighlight;
+        private bool IsListSettingKeybind;
+        private KeyCode ListSelectedIndex;
+        private bool CanHighlightList, CanHighlightTools;
+        private string toolsLogLocalInput = "", toolsLogSpeed = "", toolsLogPaste;
+        private float toolsPSH, toolsPSL, toolsPSM, toolsSSH, toolsSSL, toolsSSM;
+
+        void UpdateListLightUp(List<ModuleBlockMover> newList)
+        {
+            if (newList == listLightUpMBMRef) return;
+            ClearListLightUp();
+            listLightUpMBMRef = newList;
+            cakeslice.OutlineEffect.Instance.SetSkinPaintingColour(true);
+            foreach (ModuleBlockMover mover in newList)
+            {
+                mover.block.visible.EnableOutlineGlow(true, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+            }
+        }
+
+        void UpdateListLightUp(List<ModuleBlockMover> newList, bool IsPlanarValue)
+        {
+            if (newList == listLightUpMBMRef) return;
+            ClearListLightUp();
+            listLightUpMBMRef = newList;
+            cakeslice.OutlineEffect.Instance.SetSkinPaintingColour(true);
+            foreach (ModuleBlockMover mover in newList)
+            {
+                mover.block.visible.EnableOutlineGlow(mover.IsPlanarVALUE == IsPlanarValue, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+            }
+        }
+
+        void UpdateListLightUp(List<Visible> newList)
+        {
+            if (newList == listLightUpVisRef) return;
+            ClearListLightUp();
+            listLightUpVisRef = newList;
+            cakeslice.OutlineEffect.Instance.SetSkinPaintingColour(true);
+            foreach (Visible mover in newList)
+            {
+                mover.EnableOutlineGlow(true, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+            }
+        }
+
+        void ClearListLightUp()
+        {
+            if (listLightUpVisRef != null)
+            {
+                foreach (Visible mover in listLightUpVisRef)
+                {
+                    mover.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                }
+                listLightUpVisRef = null;
+            }
+            if (listLightUpMBMRef != null)
+            {
+                foreach (ModuleBlockMover mover in listLightUpMBMRef)
+                {
+                    mover.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                }
+                listLightUpMBMRef = null;
+            }
+        }
+
+
+        private void DoListWindow(int id)
+        {
+            try
+            {
+                if (IsListSettingKeybind)
+                {
+                    var e = Event.current;
+                    if (e.isKey)
+                    {
+                        var newkey = e.keyCode;
+                        if (newkey == KeyCode.Escape || newkey == KeyCode.Delete) newkey = KeyCode.None;
+                        foreach (var oper in cachedInputs[ListSelectedIndex])
+                            oper.m_InputKey = newkey;
+                        IsListSettingKeybind = false;
+                    }
+                }
+
+                GUILayout.BeginVertical();
+                {
+                    if (paddedBigLabel == null)
+                        CreateGUIStyles();
+
+                    GUILayout.BeginVertical();
+                    var BlockList = showListTools ? filteredBlockList : cachedBlockList;
+                    Scrolls[2] = GUILayout.BeginScrollView(Scrolls[2]);
+                    {
+                        GUILayout.BeginHorizontal();
+                        {
+                            GUILayout.Label("Search: ", bigLabel, GUILayout.MaxWidth(80));
+                            GUI.changed = false;
+                            filterCache = GUILayout.TextField(filterCache).ToLower();
+                            if (GUI.changed && showListTools) RegenerateListKeyCodeCache();
+                        }
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.Space(8);
+
+                        GUILayout.Label("Hover over an item to show where it is on the tech.\nClick on an item's name to rename the block.");
+                        //bool filterFlag = !string.IsNullOrEmpty(filterCache);
+                        for (int i = 0; i < BlockList.Count; i++)
+                        {
+                            ModuleBlockMover mover = BlockList[i];
+                            //if (filterFlag && !mover.UIName.ToLower().Contains(filterCache))
+                            //    continue;
+
+                            GUILayout.BeginHorizontal(GUI.skin.button);
+                            {
+                                mover.UIName = GUILayout.TextField(mover.UIName, paddedBigLabel);
+                                if (GUILayout.Button("Edit", GUILayout.MaxWidth(80)))
+                                {
+                                    win = new Rect(Screen.width * 0.5f - 450, Screen.height * 0.5f - 200f, 700f, 450f);
+                                    SetupEditWindow(mover, module);
+                                }
+                            }
+                            GUILayout.EndHorizontal();
+                            //if (GUILayoutUtility.GetLastRect().Contains(Input.mousePosition))
+                            if (CanHighlightList && Event.current.type == EventType.Repaint &&
+                                GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                            {
+                                if (i != lastlisthighlight)
+                                {
+                                    if (listhighlight) listhighlight.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                                    lastlisthighlight = i;
+                                    listhighlight = mover.block.visible;
+                                    cakeslice.OutlineEffect.Instance.SetSkinPaintingColour(mover.Valid || mover.startblockpos.Length == 0);
+                                    listhighlight.EnableOutlineGlow(true, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                                }
+                            }
+                            else if (i == lastlisthighlight)
+                            {
+                                if (listhighlight) listhighlight.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.CustomSkinHighlight);
+                                listhighlight = null;
+                                lastlisthighlight = -1;
+                            }
+                        }
+
+                        GUILayout.FlexibleSpace();
+                    }
+                    GUILayout.EndScrollView();
+                    GUILayout.EndVertical();
+                    if (Event.current.type == EventType.Repaint) CanHighlightList = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
+
+                    if (showListTools)
+                    {
+                        bool highlightFlag = false;
+                        GUILayout.BeginVertical("Tools", GUI.skin.window, GUILayout.MinHeight(250), GUILayout.MaxHeight(Mathf.Max(listwin.height * 0.4f, 300)));
+                        Scrolls[3] = GUILayout.BeginScrollView(Scrolls[3]);
+                        {
+                            GUILayout.Label("You might want to save your tech before you slip up.\nKeep in mind that these obey the Search filter above");
+
+                            GUILayout.Space(8);
+
+                            GUILayout.Label("LocalInput Rewriter", bigLabel);
+                            GUILayout.Label("  Set all the LocalInput toggles on the tech.");
+                            GUILayout.BeginHorizontal(/*"LocalInput Rewriter", GUI.skin.window*/);
+                            {
+                                if (GUILayout.Button("Set Local"))
+                                {
+                                    int counter = 0;
+                                    foreach (ModuleBlockMover mover in BlockList)
+                                    {
+                                        counter += mover.LOCALINPUT ? 0 : 1;
+                                        mover.LOCALINPUT = true;
+                                    }
+                                    toolsLogLocalInput = "    Set " + counter.ToString() + " block" + (counter != 1 ? "s" : "") + " to Local input" + (counter != BlockList.Count ? " (" + BlockList.Count + " total)" : "");
+                                }
+                                if (GUILayout.Button("Set Global"))
+                                {
+                                    int counter = 0;
+                                    foreach (ModuleBlockMover mover in BlockList)
+                                    {
+                                        counter += mover.LOCALINPUT ? 1 : 0;
+                                        mover.LOCALINPUT = false;
+                                    }
+                                    toolsLogLocalInput = "    Set " + counter.ToString() + " block" + (counter != 1 ? "s" : "") + " to Global input" + (counter != BlockList.Count ? " (" + BlockList.Count + " total)" : "");
+                                }
+
+                            }
+                            GUILayout.EndHorizontal();
+                            if (CanHighlightTools && Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                            {
+                                highlightFlag = true; UpdateListLightUp(filteredBlockList);
+                            }
+
+                            if (!string.IsNullOrEmpty(toolsLogLocalInput)) GUILayout.Label(toolsLogLocalInput);
+                            
+                            GUILayout.Space(8);
+
+                            GUILayout.Label("Velocity Rewriter", bigLabel);
+                            GUILayout.Label("  Set how fast all the movers should move things.\n  Use the search filter to avoid setting the wrong ones.");
+
+                            if (!float.IsNegativeInfinity(toolsPSM))
+                            {
+                                GUILayout.Space(4);
+
+                                GUILayout.Label(toolsPSL != toolsPSH ? "  (Lowest Piston speed: " + toolsPSL.ToString() + ")" : "");
+                                GUILayout.BeginVertical();
+                                if (GUIOverseer.TextSliderPair("  Max Piston speed: ", ref speedPistonCache, ref toolsPSH, 0f, toolsPSM, true, 0.005f))
+                                {
+                                    float newSpeed = toolsPSH;
+                                    toolsPSL = float.PositiveInfinity;
+                                    toolsPSH = float.NegativeInfinity;
+                                    int counter = 0;
+                                    foreach (ModuleBlockMover mover in BlockList)
+                                    {
+                                        if (mover.IsPlanarVALUE) continue;
+                                        counter++;
+                                        mover.MAXVELOCITY = Mathf.Min(newSpeed, mover.TrueMaxVELOCITY);
+                                        if (mover.MAXVELOCITY < toolsPSL) toolsPSL = mover.MAXVELOCITY;
+                                        if (mover.MAXVELOCITY > toolsPSH) toolsPSH = mover.MAXVELOCITY;
+                                    }
+                                    toolsLogSpeed = "    Set " + counter.ToString() + " piston" + (counter != 1 ? "s" : "") + " to speed: " + newSpeed.ToString() + (toolsPSL != toolsPSH ? "\n     - Some were clamped" : "");
+                                }
+                                GUILayout.EndVertical();
+                                if (CanHighlightTools && Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                                {
+                                    highlightFlag = true; UpdateListLightUp(filteredBlockList, false);
+                                }
+                            }
+                            if (!float.IsNegativeInfinity(toolsSSM))
+                            {
+                                GUILayout.Space(4);
+
+                                GUILayout.Label(toolsSSL != toolsSSH ? "  (Lowest Swivel speed: " + toolsSSL.ToString() + ")" : "");
+                                GUILayout.BeginVertical();
+                                if (GUIOverseer.TextSliderPair("  Max Swivel speed: ", ref speedSwivelCache, ref toolsSSH, 0f, toolsSSM, true, 0.005f))
+                                {
+                                    float newSpeed = toolsSSH;
+                                    toolsSSL = float.PositiveInfinity;
+                                    toolsSSH = float.NegativeInfinity;
+                                    int counter = 0;
+                                    foreach (ModuleBlockMover mover in BlockList)
+                                    {
+                                        if (!mover.IsPlanarVALUE) continue;
+                                        counter++;
+                                        mover.MAXVELOCITY = Mathf.Min(newSpeed, mover.TrueMaxVELOCITY);
+                                        if (mover.MAXVELOCITY < toolsSSL) toolsSSL = mover.MAXVELOCITY;
+                                        if (mover.MAXVELOCITY > toolsSSH) toolsSSH = mover.MAXVELOCITY;
+                                    }
+                                    toolsLogSpeed = "    Set " + counter.ToString() + " swivel" + (counter != 1 ? "s" : "") + " to speed: " + newSpeed.ToString() + (toolsPSL != toolsPSH ? "\n     - Some were clamped" : "");
+                                }
+                                GUILayout.EndVertical();
+                                if (CanHighlightTools && Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                                {
+                                    highlightFlag = true; UpdateListLightUp(filteredBlockList, true);
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(toolsLogSpeed)) GUILayout.Label(toolsLogSpeed);
+
+                            GUILayout.Space(8);
+
+                            GUILayout.Label("Keybinder", bigLabel);
+                            GUILayout.Label("  Very dangerous!\n  Input ESC or DEL to set to None.");
+                            if (cachedInputs.Count == 0)
+                            {
+                                GUILayout.Label("\n  Huh, there are no input keys...");
+                            }
+                            else
+                            {
+                                GUILayout.BeginVertical(/*"Keybind Rewriter", GUI.skin.window*/);
+                                foreach (var pair in cachedInputs)
+                                {
+                                    GUILayout.BeginHorizontal();
+                                    {
+                                        GUI.changed = false;
+                                        IsListSettingKeybind = GUILayout.Button((IsListSettingKeybind && pair.Key == ListSelectedIndex ? "Press a key" : pair.Value[0].m_InputKey.ToString()) + " (" + pair.Value.Count.ToString() + ")") != IsListSettingKeybind;
+                                        if (GUI.changed)
+                                            ListSelectedIndex = pair.Key;
+                                        if (pair.Value[0].m_InputKey == KeyCode.None && GUILayout.Button("Delete", GUILayout.MaxWidth(80)))
+                                        {
+                                            foreach (ModuleBlockMover mover in cachedBlockList)
+                                            {
+                                                int i = 0;
+                                                var operList = mover.ProcessOperations;
+                                                while (i < operList.Count)
+                                                {
+                                                    InputOperator oper = operList[i++];
+                                                    var uiInput = InputOperator.UIInputPairs[oper.m_InputType];
+                                                    if (uiInput.HideInputKey || oper.m_InputKey != pair.Value[0].m_InputKey) continue;
+
+                                                    if ((oper.m_InputParam > 0) == (oper.m_InputType == InputOperator.InputType.Toggle)) oper.m_InputType = InputOperator.InputType.AlwaysOn;
+                                                    else if (oper.m_OperationType == InputOperator.OperationType.IfThen
+                                                          || oper.m_OperationType == InputOperator.OperationType.OrThen) oper.m_InputKey = KeyCode.None;
+                                                    else operList.RemoveAt(--i);
+                                                }
+                                            }
+
+                                            cachedInputs.Remove(pair.Key);
+                                            GUILayout.EndHorizontal();
+                                            break;
+                                        }
+                                    }
+                                    GUILayout.EndHorizontal();
+                                    if (CanHighlightTools && Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                                    {
+                                        highlightFlag = true; UpdateListLightUp(cachedInputBlocks[pair.Key]);
+                                    }
+                                }
+                                GUILayout.EndVertical();
+                            }
+
+                            GUILayout.Space(12);
+
+                            GUILayout.Label("Paste Text Over All", bigLabel);
+                            GUILayout.Label("  DO NOT POKE UNLESS YOU KNOW THE RISKs!\n  Copy a block's values in their GUI, and press this\n  to overwrite the values on all the other blocks");
+                            if (GUILayout.Button("Paste Text on " + BlockList.Count + " block" + (BlockList.Count != 1 ? "s" : "")))
+                            {
+                                bool flag = true;
+                                foreach(var module in BlockList)
+                                {
+                                    string buffer = GUIUtility.systemCopyBuffer;
+                                    module.SetValuesFromCommentedString(buffer);
+                                    if (flag)
+                                    {
+                                        flag = false;
+                                        toolsLogPaste = InputOperator.StringArrayToProcessOperations(buffer, ref module.ProcessOperations);
+                                    }
+                                    else InputOperator.StringArrayToProcessOperations(buffer, ref module.ProcessOperations);
+                                }
+                                RegenerateListKeyCodeCache();
+                            }
+                            if (CanHighlightTools && Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                            {
+                                highlightFlag = true; UpdateListLightUp(BlockList);
+                            }
+                            GUILayout.Label(toolsLogPaste);
+                        }
+                        GUILayout.EndScrollView();
+                        GUILayout.EndVertical();
+                        if (Event.current.type == EventType.Repaint)
+                            if (!(CanHighlightTools = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition)) || !highlightFlag)
+                                ClearListLightUp();
+                    }
+                    else if (showListTools = GUILayout.Button("Show Tools"))
+                    {
+                        RegenerateListKeyCodeCache();
+                    }
+                }
+                GUILayout.EndVertical();
+                GUI.DragWindow();
+            }
+            catch { } // Weird GUI bugs
+        }
+
+        private void RegenerateListKeyCodeCache()
+        {
+            ClearListLightUp();
+            foreach (var pair in cachedInputs) pair.Value.Clear();
+            cachedInputs.Clear();
+            foreach (var pair in cachedInputBlocks) pair.Value.Clear();
+            cachedInputBlocks.Clear();
+            bool filterFlag = !string.IsNullOrEmpty(filterCache);
+            toolsPSL = float.PositiveInfinity;
+            toolsSSL = float.PositiveInfinity;
+            toolsPSH = float.NegativeInfinity;
+            toolsSSH = float.NegativeInfinity;
+            toolsPSM = float.NegativeInfinity;
+            toolsSSM = float.NegativeInfinity;
+            int movercount = 0;
+            filteredBlockList.Clear();
+            speedPistonCache = null;
+            speedSwivelCache = null;
+            foreach (ModuleBlockMover mover in cachedBlockList)
+            {
+                if (filterFlag && !mover.UIName.ToLower().Contains(filterCache))
+                    continue;
+
+                filteredBlockList.Add(mover);
+                movercount++;
+
+                if (mover.IsPlanarVALUE)
+                {
+                    if (mover.MAXVELOCITY < toolsSSL) toolsSSL = mover.MAXVELOCITY;
+                    if (mover.MAXVELOCITY > toolsSSH) toolsSSH = mover.MAXVELOCITY;
+                    if (mover.TrueMaxVELOCITY > toolsSSM) toolsSSM = mover.TrueMaxVELOCITY;
+                }
+                else
+                {
+                    if (mover.MAXVELOCITY < toolsPSL) toolsPSL = mover.MAXVELOCITY;
+                    if (mover.MAXVELOCITY > toolsPSH) toolsPSH = mover.MAXVELOCITY;
+                    if (mover.TrueMaxVELOCITY > toolsPSM) toolsPSM = mover.TrueMaxVELOCITY;
+                }
+
+                foreach (var oper in mover.ProcessOperations)
+                {
+                    if (InputOperator.UIInputPairs[oper.m_InputType].HideInputKey) continue;
+                    if (cachedInputs.TryGetValue(oper.m_InputKey, out List<InputOperator> list))
+                        list.Add(oper);
+                    else
+                        cachedInputs.Add(oper.m_InputKey, new List<InputOperator>() { oper });
+
+                    if (cachedInputBlocks.TryGetValue(oper.m_InputKey, out List<Visible> list2))
+                        list2.Add(mover.block.visible);
+                    else
+                        cachedInputBlocks.Add(oper.m_InputKey, new List<Visible>() { mover.block.visible });
+                }
+            }
+        }
+
+        private static float ConditionalRound(float value, bool round, float step) => round && step != 0f ? Mathf.Round(value / step) * step : value;
+
+        private void DoEditWindow(int id)
         {
             try
             {
                 if (module == null || module.block.tank == null)
                 {
+                    module?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
                     module = null;
                     visible = false;
                     return;
@@ -316,8 +856,10 @@ namespace Control_Block
                         var e = Event.current;
                         if (e.isKey)
                         {
+                            var newkey = e.keyCode;
+                            if (newkey == KeyCode.Escape || newkey == KeyCode.Delete) newkey = KeyCode.None;
                             var io = module.ProcessOperations[SelectedIndex];
-                            io.m_InputKey = e.keyCode;
+                            io.m_InputKey = newkey;
                             Texts = null;
                             IsSettingKeybind = false;
                         }
@@ -325,9 +867,7 @@ namespace Control_Block
                 }
 
                 if (pvOn == null)
-                {
                     CreateGUIStyles();
-                }
 
                 GUILayout.BeginHorizontal();
                 { // Splitter
@@ -361,7 +901,6 @@ namespace Control_Block
                                 {
                                     GUILayout.BeginVertical("Condition " + uii.UIName, GUI.skin.window);
                                     {
-                                        //GUILayout.Space(8);
                                         UIInputPopup.Button();
                                         GUILayout.Label(uii.UIName);
                                         GUILayout.BeginHorizontal();
@@ -406,17 +945,23 @@ namespace Control_Block
                                                         {
                                                             if (uii.SliderMaxIsMaxVal)
                                                             {
-                                                                temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), 0, module.TrueLimitVALUE) * Mathf.Sign(temp);
+                                                                if (module.IsPlanarVALUE)
+                                                                    temp = GUILayout.HorizontalSlider(temp, -module.HalfLimitVALUE, module.HalfLimitVALUE);
+                                                                else
+                                                                    temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), 0, module.TrueLimitVALUE) * Mathf.Sign(temp);
+                                                                temp = ConditionalRound(temp, GUI.changed, module.IsPlanarVALUE ? 2.5f : 0.25f);
                                                             }
                                                             else if (uii.SliderMaxIsMaxVel)
                                                             {
                                                                 temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY) * Mathf.Sign(temp);
+                                                                temp = ConditionalRound(temp, GUI.changed, module.IsPlanarVALUE ? 0.25f : 0.1f);
                                                             }
                                                             else
                                                             {
                                                                 if (uii.SliderMax != 0)
                                                                 {
                                                                     temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), 0, uii.SliderMax) * Mathf.Sign(temp);
+                                                                    temp = ConditionalRound(temp, GUI.changed, 0.5f);
                                                                 }
                                                                 temp = GUILayout.Toggle(temp < 0, "Invert") ? -Mathf.Abs(temp) : Mathf.Abs(temp);
                                                             }
@@ -433,6 +978,7 @@ namespace Control_Block
                                             }
                                         }
                                         GUILayout.EndHorizontal();
+
                                         GUILayout.Space(8);
                                     }
                                     GUILayout.EndVertical();
@@ -440,7 +986,6 @@ namespace Control_Block
 
                                 GUILayout.BeginVertical("Operator " + uio.UIName, GUI.skin.window);
                                 {
-                                    //GUILayout.Space(8);
                                     UIOperatorPopup.Button();
                                     GUILayout.Label(uio.UIDesc);
                                     if (!uio.HideStrength)
@@ -465,16 +1010,19 @@ namespace Control_Block
                                         else if (uio.ClampStrength)
                                         {
                                             temp = GUILayout.HorizontalSlider(temp, -1f, 1f);
+                                            temp = ConditionalRound(temp, GUI.changed, 0.05f);
                                         }
                                         else if (uio.SliderMaxIsMaxVel)
                                         {
                                             float vel = module.TrueMaxVELOCITY;
                                             temp = GUILayout.HorizontalSlider(temp, uio.SliderHasNegative ? -vel : 0f, vel);
+                                            temp = ConditionalRound(temp, GUI.changed, module.IsPlanarVALUE ? 0.25f : 0.1f);
                                         }
                                         else if (uio.SliderPosFraction != 0f)
                                         {
                                             float frac = module.MAXVALUELIMIT * uio.SliderPosFraction;
                                             temp = GUILayout.HorizontalSlider(temp, (uio.SliderHasNegative || uio.SliderMinOnPlanar && module.IsPlanarVALUE) ? -frac : 0f, frac);
+                                            temp = ConditionalRound(temp, GUI.changed, frac * 0.05f);
                                         }
                                         else if (uio.SliderMax != 0f)
                                         {
@@ -482,11 +1030,11 @@ namespace Control_Block
                                                 temp = GUILayout.HorizontalSlider(temp, -uio.SliderMax, uio.SliderMax);
                                             else
                                                 temp = GUILayout.HorizontalSlider(Mathf.Abs(temp), 0f, uio.SliderMax) * Mathf.Sign(temp);
+                                            temp = ConditionalRound(temp, GUI.changed, 0.1f);
                                             if (!string.IsNullOrEmpty(uio.ToggleComment))
                                             {
                                                 temp = (GUILayout.Toggle(temp < 0, uio.ToggleComment) ? -1f : 1f) * Mathf.Abs(temp);
                                             }
-
                                         }
                                         if (GUI.changed)
                                         {
@@ -495,15 +1043,19 @@ namespace Control_Block
                                             Texts = null;
                                         }
                                     }
+
                                     GUILayout.Space(8);
                                 }
                                 GUILayout.EndVertical();
                                 GUILayout.Space(16);
                             }
 
-                            GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
+                            if (SelectedIndex != -1)
+                            {
+                                GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
 
-                            GUILayout.Space(16);
+                                GUILayout.Space(16);
+                            }
 
                             GUILayout.BeginVertical("Properties", GUI.skin.window);
                             {
@@ -511,34 +1063,46 @@ namespace Control_Block
 
                                 GUILayout.Space(12);
                                 
-                                GUILayout.Label($"Current Value: {module.PVALUE}");
+                                GUILayout.Label($"Current Value: {((module.PVALUE + 180f) % 360f) - 180f}");
                                 //GUILayout.Label($"Target Value: {module.VALUE}");
 
                                 float round = module.IsPlanarVALUE ? 2.5f : 0.25f;
-
+                                float min, max;
                                 float value = module.VALUE;
                                 if (module.IsPlanarVALUE)
                                 {
-                                    value = ((value + 180) % 360) - 180;
-                                    if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, -180f, 180f, true, round))
-                                        module.VALUE = (value + 360) % 360;
+                                    min = ((module.MINVALUELIMIT + 181f) % 360f) - 181f;
+                                    max = ((module.MAXVALUELIMIT + 179f) % 360f) - 179f;
+                                    value = ((value + 180f) % 360.001f) - 180f;
+                                    if (module.UseLIMIT)
+                                    {
+                                        if (GUIOverseer.TextSliderPair("Target Value (position): ", ref valueCache, ref value, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round))
+                                            module.VALUE = (value + 360) % 360;
+                                    }
+                                    else
+                                    {
+                                        if (GUIOverseer.TextSliderPair("Target Value (position): ", ref valueCache, ref value, -180f, 180f, true, round))
+                                            module.VALUE = (value + 360) % 360;
+                                    }
                                 }
                                 else
                                 {
+                                    min = module.MINVALUELIMIT;
+                                    max = module.MAXVALUELIMIT;
                                     if (module.UseLIMIT)
                                     {
-                                        if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, module.MINVALUELIMIT, module.MAXVALUELIMIT, true, round))
+                                        if (GUIOverseer.TextSliderPair("Target Value (position): ", ref valueCache, ref value, min, max, true, round))
                                             module.VALUE = value;
                                     }
                                     else
                                     {
-                                        if (GUIOverseer.TextSliderPair("Target Value: ", ref valueCache, ref value, 0f, module.TrueLimitVALUE, true, round))
+                                        if (GUIOverseer.TextSliderPair("Target Value (position): ", ref valueCache, ref value, 0f, module.TrueLimitVALUE, true, round))
                                             module.VALUE = value;
                                     }
                                 }
 
-                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.TrueMaxVELOCITY, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 20f);
-                                GUIOverseer.TextSliderPair("Max Velocity: ", ref maxVelCache, ref module.MAXVELOCITY, 0f, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 10f);
+                                GUIOverseer.TextSliderPair("Current Velocity: ", ref velocityCache, ref module.VELOCITY, -module.MAXVELOCITY, module.MAXVELOCITY, true, module.TrueMaxVELOCITY / 20f);
+                                GUIOverseer.TextSliderPair("Max Velocity (change rate): ", ref maxVelCache, ref module.MAXVELOCITY, 0f, module.TrueMaxVELOCITY, true, module.TrueMaxVELOCITY / 10f);
 
                                 GUILayout.Space(12);
 
@@ -546,10 +1110,10 @@ namespace Control_Block
                                 {
                                     GUI.changed = false;
                                     module.UseLIMIT = GUILayout.Toggle(module.UseLIMIT, "Use limits");
-                                    if (GUI.changed && module.IsFreeJoint)
+                                    /* if (GUI.changed && module.IsFreeJoint)
                                     {
                                         module.SetupFreeJoint();
-                                    }
+                                    } */
                                 }
 
                                 GUILayout.BeginHorizontal();
@@ -559,14 +1123,12 @@ namespace Control_Block
                                     {
                                         if (module.IsPlanarVALUE)
                                         {
-                                            float min = ((module.MINVALUELIMIT + 180f) % 450f) - 180f;
-                                            float max = ((module.MAXVALUELIMIT + 180f) % 450f) - 180f;
                                             GUILayout.Label("Min Value Limit: " + min);
                                             GUILayout.Label("Max Value Limit: " + max);
                                             float cen = module._CENTERLIMIT, ext = module._EXTENTLIMIT;
-                                            GUILayout.Label("Note, CENTER & EXTENT are used here for percision");
-                                            if (GUIOverseer.TextSliderPair("Center of Limit: ", ref minCache, ref cen, 0f, module.TrueLimitVALUE, true, round)
-                                                | GUIOverseer.TextSliderPair("Extent of Limit: ", ref maxCache, ref ext, 0f, module.TrueLimitVALUE / 0.5f, true, round)) // | instead of ||, so it doesn't skip
+                                            GUILayout.Label("\nNote, Center & Extent are used for swivels");
+                                            if (GUIOverseer.TextSliderPair("Center of Limit: ", ref minCache, ref cen, 0f, module.TrueLimitVALUE, true, round) |
+                                                GUIOverseer.TextSliderPair("Extent of Limit: ", ref maxCache, ref ext, 0f, module.HalfLimitVALUE, true, round)) // | instead of ||, so it doesn't skip drawing both
                                             {
                                                 module._CENTERLIMIT = cen;
                                                 module._EXTENTLIMIT = ext;
@@ -577,13 +1139,11 @@ namespace Control_Block
                                         }
                                         else
                                         {
-                                            float min = module.MINVALUELIMIT;
                                             if (GUIOverseer.TextSliderPair("Min Value Limit: ", ref minCache, ref min, 0f, module.TrueLimitVALUE, true, round))
                                             {
                                                 module.SetMinLimit(min);
                                                 queueResetTextCache = true;
                                             }
-                                            float max = module.MAXVALUELIMIT;
                                             if (GUIOverseer.TextSliderPair("Max Value Limit: ", ref maxCache, ref max, 0f, module.TrueLimitVALUE, true, round))
                                             {
                                                 module.SetMaxLimit(max);
@@ -595,7 +1155,15 @@ namespace Control_Block
                                 }
                                 GUILayout.EndHorizontal();
 
-                                if (!module.CanOnlyBeLockJoint)
+                                /* if (module.CanOnlyBeLockJoint)
+                                { */
+                                if (module.startblockpos.Length != 0)
+                                {
+                                    GUILayout.Space(12);
+                                    module.LockJointBackPush = GUILayout.Toggle(module.LockJointBackPush, "Back-push movement");
+                                }
+                                /* }
+                                else
                                 {
                                     GUILayout.Space(12);
 
@@ -647,8 +1215,22 @@ namespace Control_Block
                                     }
                                     GUILayout.EndVertical();
                                 }
+                                */
+
+                                GUILayout.Space(12f);
+
+                                GUILayout.BeginHorizontal();
+                                {
+                                    GUILayout.Label("Name");
+                                    module.UIName = GUILayout.TextField(module.UIName, GUILayout.MaxWidth(240), GUILayout.MaxWidth(240));
+                                }
+                                GUILayout.EndVertical();
                             }
                             GUILayout.EndVertical();
+
+                            GUILayout.Space(16);
+
+                            GUILayout.Label("Tip: Pressing ALT C will open up a list of all blockmovers on this tech");
 
                             GUILayout.Space(16);
 
@@ -664,6 +1246,7 @@ namespace Control_Block
                             }
                             GUILayout.Label($"Tank mass: {module.block.tank.rbody.mass}");
                             GUILayout.Label($"Tank CoM: {module.block.tank.rbody.centerOfMass}");
+                            GUILayout.Label($"Tank Gravity: {module.block.tank.GetGravityScale()}");
 
                             //GUILayout.Space(16);
 
@@ -675,7 +1258,9 @@ namespace Control_Block
                             //}
 
                             GUILayout.Space(16);
+
                             GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
+
                             GUILayout.Space(16);
 
                             GUILayout.Label("EXPERIMENTAL SOUND TEST, BEWARE");
@@ -685,16 +1270,6 @@ namespace Control_Block
                             string v = module.SFXVolume.ToString();
                             GUIOverseer.TextSliderPair("Volume: ", ref v, ref module.SFXVolume, 0f, 2f, false, 0.1f);
                             module.SFXParam = GUILayout.TextField(module.SFXParam);
-
-                            //if (segment)
-                            //{
-                            //    GUILayout.Space(16);
-                            //    GUILayout.Label("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", noWrap);
-                            //    GUILayout.Space(16);
-                            //    GUILayout.Label("Rail Segment Weights");
-                            //    string c = segment.AnimWeight.ToString();
-                            //    GUIOverseer.TextSliderPair("This Weight: ", ref c, ref segment.AnimWeight, 0f, 0.25f, false, 0.01f);
-                            //}
                         }
                         GUILayout.EndScrollView();
 
@@ -709,6 +1284,7 @@ namespace Control_Block
                     {
                         Scrolls[0] = GUILayout.BeginScrollView(Scrolls[0]);
                         {
+
                             if (Texts == null)
                             {
                                 Texts = InputOperator.ProcessOperationsToStringArray(module.ProcessOperations, true);
@@ -724,18 +1300,18 @@ namespace Control_Block
                                 if (GUILayout.Button(Texts[index], SelectedIndex == index ? (state ? pvSelOn : pvSelOff) : (state ? pvOn : pvOff)))
                                 {
                                     SelectedIndex = index;
+                                    Scrolls[1] = Vector2.zero;
                                 }
                             }
 
                             UpdateSelection = GUI.changed;
 
-                            GUILayout.FlexibleSpace(); // Inflate scrollview hopefully
+                            GUILayout.FlexibleSpace(); // Inflate scrollview
                         }
                         GUILayout.EndScrollView();
 
                         GUILayout.BeginVertical("Edit", GUI.skin.window);
                         {
-                            //GUILayout.Space(8);
                             GUILayout.BeginHorizontal();
                             {
                                 if (GUILayout.Button("Insert"))
@@ -780,24 +1356,34 @@ namespace Control_Block
                                     GUIUtility.systemCopyBuffer = string.Join("\n", InputOperator.ProcessOperationsToStringArray(module.ProcessOperations));
                                     Log = "Copied";
                                 }
+                                if (GUILayout.Button("Copy all"))
+                                {
+                                    GUIUtility.systemCopyBuffer = module.GetValuesAsCommentedString() + "\n\n" + string.Join("\n", InputOperator.ProcessOperationsToStringArray(module.ProcessOperations));
+                                    Log = "Copied w/ Property values";
+                                }
                                 if (GUILayout.Button("Paste text"))
                                 {
-                                    Log = InputOperator.StringArrayToProcessOperations(GUIUtility.systemCopyBuffer, ref module.ProcessOperations);
+                                    string buffer = GUIUtility.systemCopyBuffer;
+                                    module.SetValuesFromCommentedString(buffer);
+                                    Log = InputOperator.StringArrayToProcessOperations(buffer, ref module.ProcessOperations);
+                                    UpdateSelection = true;
                                     Texts = null;
+                                    queueResetTextCache = true;
                                 }
                                 // Copy as Text, Paste from Text
                             }
                             GUILayout.EndHorizontal();
+
                             if (!string.IsNullOrEmpty(Log))
                                 GUILayout.Label(Log);
                         }
                         GUILayout.EndVertical();
-                        bool _showPresetsUI = GUILayout.Toggle(showPresetsUI, "Function Presets", GUI.skin.button);
-                        if (_showPresetsUI != showPresetsUI)
-                        {
-                            PresetsIMGUI.SetState(_showPresetsUI, module, win);
-                            showPresetsUI = _showPresetsUI;
-                        }
+                        //bool _showPresetsUI = GUILayout.Toggle(showPresetsUI, "Function Presets", GUI.skin.button);
+                        //if (_showPresetsUI != showPresetsUI)
+                        //{
+                        //    PresetsIMGUI.SetState(_showPresetsUI, module, win);
+                        //    showPresetsUI = _showPresetsUI;
+                        //}
                     }
                     GUILayout.EndVertical(); // Processes for <block>
 
@@ -817,6 +1403,7 @@ namespace Control_Block
                             io.m_InputParam = InputOperator.UIInputPairs[InputType].DefaultValue;
                             Texts = null;
                             ResetTextCache();
+                            paramCache = io.m_InputParam.ToString();
                         }
                         var OperationType = UIOperatorPopup.SelectedValue;
                         if (OperationType != io.m_OperationType)
@@ -828,6 +1415,7 @@ namespace Control_Block
                             io.m_InternalTimer = 0f;
                             Texts = null;
                             ResetTextCache();
+                            strengthCache = io.m_Strength.ToString();
                         }
                     }
                     else
@@ -844,6 +1432,7 @@ namespace Control_Block
             {
                 Console.WriteLine(E);
                 visible = false;
+                module?.block.visible.EnableOutlineGlow(false, cakeslice.Outline.OutlineEnableReason.ScriptHighlight);
                 module = null;
                 PresetsIMGUI.SetState(false, null, win);
                 showPresetsUI = false;
@@ -875,7 +1464,7 @@ namespace Control_Block
         }
         public static OptionMenuSteeringRegulator inst;
 
-        private readonly int ID = 7788;
+        private readonly int ID = 7787;
 
         private bool visible = false;
 
@@ -883,14 +1472,20 @@ namespace Control_Block
 
         private Rect win;
 
+        private string c0, c1, c2, c3;
+
         public void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 200f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 100f, 200f, 250f);
                 try
                 {
                     module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleSteeringRegulator>();
+                    c0 = null;
+                    c1 = null;
+                    c2 = null;
+                    c3 = null;
                 }
                 catch
                 {
@@ -930,14 +1525,13 @@ namespace Control_Block
                 visible = false;
                 return;
             }
-            GUILayout.Label("Sensitivity RADIUS : " + module.MaxDist.ToString());
-            module.MaxDist = Mathf.Round(GUILayout.HorizontalSlider(module.MaxDist * 4, 0f, 20f)) * .25f;
-            GUILayout.Label("Hover PiD Effect");
-            module.HoverMod = Mathf.Round(GUILayout.HorizontalSlider(module.HoverMod * 2f, 0f, 15f)) * .5f;
-            GUILayout.Label("Steering Jet PiD Effect");
-            module.JetMod = Mathf.Round(GUILayout.HorizontalSlider(module.JetMod, 0f, 15f));
-            GUILayout.Label("Turbine PiD Effect");
-            module.TurbineMod = Mathf.Round(GUILayout.HorizontalSlider(module.TurbineMod * 2f, 0f, 15f)) * .5f;
+            GUIOverseer.TextSliderPair("Sensitivity RADIUS: ", ref c0, ref module.MaxDist, 0f, 20f, false, 0.25f);
+            GUIOverseer.TextSliderPair("Drive PiD: ", ref c1, ref module.DriveMod, 0f, 1f, false, 0.1f);
+            GUIOverseer.TextSliderPair("Throttle PiD: ", ref c2, ref module.ThrottleMod, 0f, 1f, false, 0.1f);
+            GUIOverseer.TextSliderPair("Velcoity Dampen: ", ref c3, ref module.VelocityDampen, 0.1f, 1f, false, 0.05f);
+
+            GUILayout.Space(16);
+
             if (GUILayout.Button("Close"))
             {
                 visible = false;

@@ -91,7 +91,7 @@ namespace Control_Block
                 if (PVALUE > TrueLimitVALUE) PVALUE = TrueLimitVALUE;
                 if (VALUE > TrueLimitVALUE) VALUE = TrueLimitVALUE;
             }
-            else if (MAXVALUELIMIT == prevTrueLimitVALUE || !UseLIMIT)
+            else if (prevTrueLimitVALUE == 0f || MAXVALUELIMIT == prevTrueLimitVALUE || !UseLIMIT)
             {
                 SetMaxLimit(TrueLimitVALUE);
             }
@@ -312,21 +312,13 @@ namespace Control_Block
             var change = cachedLocalRot * AnimPosChange;
             var tangent = cachedLocalRot * Tangent;
 
+            x.AddKey(new Keyframe(xLast.time + 0.01f, xLast.value, xLast.outTangent, xLast.outTangent, weight, weight));
+            y.AddKey(new Keyframe(yLast.time + 0.01f, yLast.value, yLast.outTangent, yLast.outTangent, weight, weight));
+            z.AddKey(new Keyframe(zLast.time + 0.01f, zLast.value, zLast.outTangent, zLast.outTangent, weight, weight));
+
             x.AddKey(new Keyframe(length, xLast.value + change.x, tangent.x, tangent.x, weight, weight));
             y.AddKey(new Keyframe(length, yLast.value + change.y, tangent.y, tangent.y, weight, weight));
             z.AddKey(new Keyframe(length, zLast.value + change.z, tangent.z, tangent.z, weight, weight));
-            //if (Input.GetKey(KeyCode.I))
-            //{
-                //xLast.outWeight = 0f;
-                //xLast.time += 0.01f;
-                x.AddKey(new Keyframe(xLast.time + 0.01f, xLast.value, xLast.outTangent, xLast.outTangent, weight, weight));
-                //yLast.outWeight = 0f;
-                //yLast.time += 0.01f;
-                y.AddKey(new Keyframe(yLast.time + 0.01f, yLast.value, yLast.outTangent, yLast.outTangent, weight, weight));
-                //zLast.outWeight = 0f;
-                //zLast.time += 0.01f;
-                z.AddKey(new Keyframe(zLast.time + 0.01f, zLast.value, zLast.outTangent, zLast.outTangent, weight, weight));
-            //}
 
             lastRot = Quaternion.RotateTowards(lastRot, Quaternion.LookRotation(cachedLocalRot * otherAP.apDirUp, cachedLocalRot * otherAP.apDirForward), 90);
 

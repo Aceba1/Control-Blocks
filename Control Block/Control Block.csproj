@@ -407,7 +407,10 @@
     <None Include="Blocks\Swivel\Double\swivelblock he._png" />
     <None Include="Blocks\Swivel\Double\swivel_double_base.obj" />
     <None Include="Blocks\Swivel\Double\swivel_double_head.obj" />
+    <None Include="Blocks\Swivel\Inline\rr_inline_swivel._png" />
     <None Include="Blocks\Swivel\Inline\Swivel ven.blend" />
+    <None Include="Blocks\Swivel\Inline\swivel_rr_base.obj" />
+    <None Include="Blocks\Swivel\Inline\swivel_rr_head.obj" />
     <None Include="Blocks\Swivel\Inline\swivel_ven_base.obj" />
     <None Include="Blocks\Swivel\Inline\swivel_ven_head.obj" />
     <None Include="Blocks\Swivel\Medium\swivel.blend" />

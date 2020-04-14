@@ -12,72 +12,106 @@ namespace Control_Block
             public ModuleBlockMover parent;
         }
 
+        public string UIName;
+
         public TechAudio.SFXType SFX;
+
         /// <summary>
         /// Body for holding blocks
         /// </summary>
+        [NonSerialized]
         internal ClusterBody Holder;
+
         /// <summary>
         /// Joint of which binds the two techs together
         /// </summary>
-        public UnityEngine.ConfigurableJoint HolderJoint => Holder ? Holder.Joint : null;
+        public UnityEngine.ConfigurableJoint HolderJoint => /* Holder ? Holder.Joint : */ null;
+
         /// <summary>
         /// Preset number for quantity of animation parts on block
         /// </summary>
         public int PartCount = 1;
+
         /// <summary>
         /// Models on block for animation purposes
         /// </summary>
+        [NonSerialized]
         public Transform[] parts;
+
         /// <summary>
         /// The part who'se transform is responsible for the dummy tank's positioning
         /// </summary>
         public Transform HolderPart => parts[PartCount - 1];
+
+        [NonSerialized]
         public Vector3 relativeCenter;
+
         /// <summary>
         /// WorldTreadmill interference security measure
         /// </summary>
+        [NonSerialized]
         public bool Heart;
+
         /// <summary>
         /// Animation curves for determining position
         /// </summary>
         public AnimationCurve[] posCurves;
+
         public bool useRotCurves = false, usePosCurves = false;
+
         /// <summary>
         /// 0:Euler (X, Y, Z), 1:Quaternion (X, Y, Z, W), 2:Axis (X, Y, Z, A)
         /// </summary>
         public byte rotType = 0;
+
         /// <summary>
         /// Animation curves for determining rotation
         /// </summary>
         public AnimationCurve[] rotCurves;
+
         /// <summary>
         /// Relative location of where blocks should be if attached to the head of this block
         /// </summary>
         public IntVector3[] startblockpos;
+
         //public int MaximumBlockPush = 64;
         /// <summary>
         /// Trigger reevaluation of block
         /// </summary>
+        [NonSerialized]
         public bool Dirty = true;
+
+        [NonSerialized]
         public bool Valid = true;
+
         /// <summary>
         /// Block-cache for blocks found after re-evaluation
         /// </summary>
+        [NonSerialized]
         public List<TankBlock> GrabbedBlocks;
+
+        [NonSerialized]
         public List<ModuleBlockMover> GrabbedBlockMovers;
+
+        [NonSerialized]
         public List<TankBlock> StarterBlocks;
+
+        [NonSerialized]
         public List<TankBlock> IgnoredBlocks;
+
         /// <summary>
         /// Event-cache for attaching and detaching to a tank
         /// </summary>
+        [NonSerialized]
         public Action<TankBlock, Tank> tankAttachBlockAction, tankDetachBlockAction;
+
         //public Action tankResetPhysicsAction;
 
         /// <summary>
         /// Get the immediate rigidbody of the parent of this block. Tank if root, Cluster if grabbed.
         /// </summary>
         public Rigidbody ownerBody => transform.parent.GetComponentInParent<Rigidbody>();
+
         public bool IsControlledByNet => ManGameMode.inst.IsCurrentModeMultiplayer() && block.tank != ManNetwork.inst.MyPlayer.CurTech.tech;
 
         internal float MINVALUELIMIT
@@ -86,8 +120,8 @@ namespace Control_Block
             {
                 //if (IsPlanarVALUE)
                 //    return (_CENTERLIMIT - _EXTENTLIMIT + 720) % 360;
-                //else 
-                    return _CENTERLIMIT - _EXTENTLIMIT;
+                //else
+                return _CENTERLIMIT - _EXTENTLIMIT;
             }
             set
             {
@@ -116,14 +150,15 @@ namespace Control_Block
                 }
             }
         }
+
         internal float MAXVALUELIMIT
         {
             get
             {
                 //if (IsPlanarVALUE)
                 //    return (_CENTERLIMIT + _EXTENTLIMIT + 720) % 360;
-                //else 
-                    return _CENTERLIMIT + _EXTENTLIMIT;
+                //else
+                return _CENTERLIMIT + _EXTENTLIMIT;
             }
             set
             {
@@ -152,23 +187,31 @@ namespace Control_Block
                 }
             }
         }
+
         internal float _CENTERLIMIT, _EXTENTLIMIT;
+
         public bool UseLIMIT
         {
             get => HardLIMIT || _useLIMIT;
             set => _useLIMIT = value;
         }
-        bool _useLIMIT;
+
+        [NonSerialized]
+        private bool _useLIMIT = false;
+
         public bool HardLIMIT = false;
 
         public float MAXVELOCITY, TrueMaxVELOCITY = 1f, TrueLimitVALUE = 1f;
         public float HalfLimitVALUE => TrueLimitVALUE * 0.5f;
-        public bool LOCALINPUT = false;
+
+        [NonSerialized]
+        public bool LOCALINPUT = true;
+
         public void SetMinLimit(float value, bool ChangeValue = true)
         {
             if (ChangeValue)
                 MINVALUELIMIT = value;
-            if (IsFreeJoint && HolderJoint != null)
+            /* if (IsFreeJoint && HolderJoint != null)
             {
                 if (IsPlanarVALUE)
                 {
@@ -178,13 +221,14 @@ namespace Control_Block
                 }
                 else
                     SetLinearLimit();
-            }
+            } */
         }
+
         public void SetMaxLimit(float value, bool ChangeValue = true)
         {
             if (ChangeValue)
                 MAXVALUELIMIT = value;
-            if (IsFreeJoint && HolderJoint != null)
+            /* if (IsFreeJoint && HolderJoint != null)
             {
                 if (IsPlanarVALUE)
                 {
@@ -194,8 +238,10 @@ namespace Control_Block
                 }
                 else
                     SetLinearLimit();
-            }
+            } */
         }
+
+        /*
         public void SetLinearLimit()
         {
             Vector3 min = GetPosCurve(PartCount - 1, MINVALUELIMIT), max = GetPosCurve(PartCount - 1, MAXVALUELIMIT), cen = (min + max) * 0.5f; // Do not use _CENTERLIMIT, because some animations will have different centers at different positions
@@ -204,39 +250,60 @@ namespace Control_Block
             ll.limit = _EXTENTLIMIT; // Could use (max - min).magnitude * 0.5f instead...
             HolderJoint.linearLimit = ll;
         }
+        */
 
         /// <summary>
         /// Target value
         /// </summary>
         public float VALUE;
+
         /// <summary>
         /// Spring Strength
         /// </summary>
+        [NonSerialized]
         public float SPRSTR;
+
         /// <summary>
         /// Spring Dampening
         /// </summary>
+        [NonSerialized]
         public float SPRDAM;
+
         public void UpdateSpringForce()
         {
+            /*
             if (HolderJoint != null)
             {
                 Holder.SetJointDrive(SPRDAM, SPRSTR);
             }
+            */
         }
+
         /// <summary>
         /// Current value
         /// </summary>
+        [NonSerialized]
         public float PVALUE;
+
+        [NonSerialized]
         public float VELOCITY;
+
+        /// <summary>
+        /// The big question; Is it a piston, or is it a swivel?
+        /// </summary>
         public bool IsPlanarVALUE;
+
         public float InvPointWeightRatio = 1f;
         public float PointWeightRatio => 1 - InvPointWeightRatio;
+
         /// <summary>
         /// Back-push, Offset the parent rigidbody by lockjoint movement
         /// </summary>
         public bool LockJointBackPush;
+
+        [NonSerialized]
         public MoverType moverType, oldMoverType;
+
         public bool CannotBeFreeJoint
         {
             get => _cannotBeFreeJoint;
@@ -246,7 +313,8 @@ namespace Control_Block
                 if (value && IsFreeJoint) moverType = MoverType.Dynamic;
             }
         }
-        bool _cannotBeFreeJoint;
+
+        private bool _cannotBeFreeJoint;
 
         public bool CanOnlyBeLockJoint
         {
@@ -254,12 +322,12 @@ namespace Control_Block
             set { }
         }
 
-        public bool IsFreeJoint => moverType == MoverType.Physics;
-        public bool IsBodyJoint => moverType == MoverType.Dynamic;
-        public bool IsLockJoint => moverType == MoverType.Static;
-        public bool WasFreeJoint => oldMoverType == MoverType.Physics;
-        public bool WasBodyJoint => oldMoverType == MoverType.Dynamic;
-        public bool WasLockJoint => oldMoverType == MoverType.Static;
+        public bool IsFreeJoint => false;//moverType == MoverType.Physics;
+        public bool IsBodyJoint => false;//moverType == MoverType.Dynamic;
+        public bool IsLockJoint => true;//moverType == MoverType.Static;
+        public bool WasFreeJoint => false;//oldMoverType == MoverType.Physics;
+        public bool WasBodyJoint => false;//oldMoverType == MoverType.Dynamic;
+        public bool WasLockJoint => true;//oldMoverType == MoverType.Static;
 
         public enum MoverType : byte
         {
@@ -267,16 +335,19 @@ namespace Control_Block
             /// Lock-Joint, moves blocks using transform manipulation. The old method
             /// </summary>
             Static,
+
             /// <summary>
             /// Moves blocks under a separate physics body, restricted to the joint.
             /// </summary>
             Dynamic,
+
             /// <summary>
             /// Free-Joint, like Dynamic, but is allowed to move freely according to limits and spring forces
             /// </summary>
             Physics
         }
 
+        [NonSerialized]
         public List<InputOperator> ProcessOperations;
 
         public TechAudio.SFXType SFXType
@@ -296,7 +367,7 @@ namespace Control_Block
         {
             if (IsFreeJoint) // No noise allowed on Freejoint
             {
-                PlaySFX(false, 0f); 
+                PlaySFX(false, 0f);
                 return;
             }
             Speed = Speed / TrueMaxVELOCITY * SFXVolume;
@@ -330,12 +401,15 @@ namespace Control_Block
                 case 0:
                     Mod = Index * 3;
                     return Quaternion.Euler(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position));
+
                 case 1:
                     Mod = Index * 4;
                     return new Quaternion(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position), rotCurves[Mod + 3].Evaluate(Position));
+
                 case 2:
                     Mod = Index * 4;
                     return Quaternion.AngleAxis(rotCurves[Mod + 3].Evaluate(Position), new Vector3(rotCurves[Mod].Evaluate(Position), rotCurves[Mod + 1].Evaluate(Position), rotCurves[Mod + 2].Evaluate(Position)));
+
                 default:
                     Invalidate();
                     throw new Exception(name + ".ModuleBlockMover.GetRotCurve() : Field 'rotType' cannot be of value " + rotType + "!");
@@ -348,7 +422,7 @@ namespace Control_Block
             return new Vector3(posCurves[Mod].Evaluate(Position), posCurves[Mod + 1].Evaluate(Position), posCurves[Mod + 2].Evaluate(Position));
         }
 
-        private void OnPool() //Creation
+        internal void OnPool() //Creation
         {
             GrabbedBlocks = new List<TankBlock>();
             GrabbedBlockMovers = new List<ModuleBlockMover>();
@@ -371,7 +445,6 @@ namespace Control_Block
             tankDetachBlockAction = new Action<TankBlock, Tank>(this.BlockRemoved);
             block.AttachEvent.Subscribe(Attach);
             block.DetachEvent.Subscribe(Detatch);
-
             m_TargetAimer = gameObject.AddComponent<TargetAimer>();
             m_TargetAimer.Init(base.block, 0.5f, null);
         }
@@ -387,19 +460,24 @@ namespace Control_Block
             }
             return m_TargetAimer.Target;
         }
-        bool UpdatedTargetAimer = false;
 
-        Vector3 cacheLinVel, cacheAngVel;
-        bool HoldingVelocities = false;
+        private bool UpdatedTargetAimer = false;
+
+        /* Vector3 cacheLinVel, cacheAngVel;
+        bool HoldingVelocities = false; */
+
         private void CacheHolderTr()
         {
+            /*
             if (!IsLockJoint && Holder.rbody != null)
             {
                 HoldingVelocities = true;
                 cacheLinVel = Holder.rbody.velocity;
                 cacheAngVel = Holder.rbody.angularVelocity;
             }
+            */
         }
+
         private void DefaultHolderTr(bool QueueRestore)
         {
             if (Holder != null)
@@ -411,8 +489,8 @@ namespace Control_Block
             }
         }
 
-        internal static Quaternion RotateRotationByRotatedRotation(Quaternion Target, 
-                                                                   Quaternion Rotation, 
+        internal static Quaternion RotateRotationByRotatedRotation(Quaternion Target,
+                                                                   Quaternion Rotation,
                                                                    Quaternion RotationTweak)
         {
             Target *= RotationTweak;
@@ -445,12 +523,14 @@ namespace Control_Block
                 }
                 Holder.transform.position += HolderPart.position - Holder.transform.TransformPoint(block.cachedLocalPosition + block.cachedLocalRotation * relativeCenter); // Restore position relative to holder part
 
+                /*
                 if (HoldingVelocities && Holder.rbody != null) // Will not activate if lock joint, from the check above
                 {
                     Holder.rbody.velocity = cacheLinVel;
                     Holder.rbody.angularVelocity = cacheAngVel;
                     HoldingVelocities = false;
                 }
+                */
             }
         }
 
@@ -460,21 +540,20 @@ namespace Control_Block
             {
                 Holder = new GameObject("ClusterBody Holder").AddComponent<ClusterBody>();
                 Holder.moduleBlockMover = this;
-                Holder.blocks = new List<TankBlock>();
-                Holder.blockWeapons = new List<ModuleWeapon>();
-                Holder.blockDrills = new List<ModuleDrill>();
                 Holder.gameObject.layer = block.tank.gameObject.layer;
                 Holder.transform.parent = block.trans.parent;
+                //Holder.ClusterAPBitField;
+                Holder.InitializeAPCache();
             }
             block.tank.control.driveControlEvent.Subscribe(Holder.GetDriveControl);
             Holder.transform.position = transform.parent.position;
             Holder.transform.rotation = transform.parent.rotation;
             Holder.coreTank = block.tank;
-            Holder.Dynamics = !IsLockJoint;
+            /* Holder.Dynamics = !IsLockJoint; */
             //ClusterTech.VerifyJoin(block.tank, Holder);
         }
 
-        private void Update()
+        internal void Update()
         {
             if (UpdatedTargetAimer) UpdatedTargetAimer = false;
             if (GrabbedBlocks.Count != 0) GrabbedBlocks.Clear();
@@ -484,17 +563,17 @@ namespace Control_Block
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ownerBody">this.ownerBody</param>
-        /// <returns></returns>
-        private bool CheckIfOnStatic(Rigidbody ownerBody)
-        {
-            return ownerBody.transform != transform.parent;
-        }
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <param name="ownerBody">this.ownerBody</param>
+        ///// <returns></returns>
+        //private bool CheckIfOnStatic(Rigidbody ownerBody)
+        //{
+        //    return ownerBody.transform != transform.parent;
+        //}
 
-        private void LateUpdate()
+        internal void LateUpdate()
         {
             if (Dirty)
             {
@@ -513,7 +592,7 @@ namespace Control_Block
                     UpdatePartTransforms();
                     RestoreHolderTr();
                 }
-                if (IsFreeJoint && HolderJoint != null)
+                /* if (IsFreeJoint && HolderJoint != null)
                 {
                     float oldPVALUE = PVALUE;
                     PValueFromFreeJoint();
@@ -521,28 +600,40 @@ namespace Control_Block
 
                     VerifyNetState(PVALUE - oldPVALUE, ManGameMode.inst.IsCurrentModeMultiplayer());
                 }
+                else */
+                if (PokedByParent)
+                {
+                    LockJointUpdateCOM();
+                    PokedByParent = false;
+                }
             }
         }
 
-        private void PValueFromFreeJoint()
+        /* private void PValueFromFreeJoint()
         {
             PVALUE = IsPlanarVALUE
                 ? (Vector3.SignedAngle(transform.parent.forward, Holder.transform.forward, transform.up) + 360) % 360
                 : Mathf.Clamp(Vector3.Dot(transform.up, Holder.transform.position - transform.parent.position), MINVALUELIMIT, MAXVALUELIMIT);
-        }
+        } */
+
+        [NonSerialized]
+        private byte playerSyncByte;
+
+        private static byte GlobalPlayerSyncByte;
 
         private void VerifyNetState(float Diff, bool Net)
         {
             if (IsPlanarVALUE) Diff = ((Diff + 540f) % 360f) - 180f;
-            if (!LastSentVELOCITY.Approximately(Diff, 0.005f))
+            if (!LastSentVELOCITY.Approximately(Diff, 0.005f) || playerSyncByte != GlobalPlayerSyncByte)
             {
+                playerSyncByte = GlobalPlayerSyncByte;
                 LastSentVELOCITY = Diff;
                 if (Net)
                     SendMoverChange(new BlockMoverMessage(block, PVALUE, Diff));
             }
         }
 
-        private void FixedUpdate()
+        internal void FixedUpdate()
         {
             if (Heart != Class1.PistonHeart)
             {
@@ -578,7 +669,7 @@ namespace Control_Block
                                         if (Processor.m_Strength < 0) // Use timer from topIfOperator
                                         {
                                             topIfOperator.m_ResetTimer = false; // Tell operator not to clear
-                                            bool met = (topIfOperator.m_InternalTimer >= topIfOperator.m_Strength) != (topIfOperator.m_Strength < 0); // Check if should skip
+                                            bool met = (topIfOperator.m_InternalTimer >= Mathf.Abs(topIfOperator.m_Strength)) != (topIfOperator.m_Strength < 0); // Check if should skip
                                             SKIP = met ? 0 : 1;
                                         }
                                         else
@@ -638,15 +729,15 @@ namespace Control_Block
                         }
                     }
 
-                    if (!IsFreeJoint)
-                    {
-                        if (UseLIMIT)
-                            PVALUE += Mathf.Clamp((ofst - pofst) * InvPointWeightRatio, -MAXVELOCITY, MAXVELOCITY); // Use ofst from before
-                        else
-                            PVALUE = Mathf.Clamp(VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, oldPVALUE - MAXVELOCITY, oldPVALUE + MAXVELOCITY);
+                    /*if (!IsFreeJoint)
+                    { */
+                    if (UseLIMIT)
+                        PVALUE += Mathf.Clamp((ofst - pofst) * InvPointWeightRatio, -MAXVELOCITY, MAXVELOCITY); // Use ofst from before
+                    else
+                        PVALUE = Mathf.MoveTowardsAngle(PVALUE, VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, MAXVELOCITY); //Mathf.Clamp(VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, oldPVALUE - MAXVELOCITY, oldPVALUE + MAXVELOCITY);
 
-                        VerifyNetState(PVALUE - oldPVALUE, Net);
-                    }
+                    VerifyNetState(PVALUE - oldPVALUE, Net);
+                    /* } */
                 }
                 else // Is controlled by NET
                 {
@@ -661,42 +752,26 @@ namespace Control_Block
                 }
                 bool HolderExists = Holder != null;
 
-                if (!IsFreeJoint)
-                    UpdatePartTransforms();
-
-                if (IsLockJoint)
+                /* if (!IsFreeJoint) */
+                UpdatePartTransforms();
+                /* if (IsLockJoint)
+                { */
+                if (HolderExists)
                 {
-                    if (HolderExists)
+                    /* if (!WasLockJoint)
                     {
-                        if (!WasLockJoint)
-                        {
-                            RestoreHolderTr();
-                            Holder.SetDynamics(false);
-                        }
-                        else if (LastSentVELOCITY != 0f)
-                        {
-                            var orbody = ownerBody;
-                            float massChangeRatio = (Holder.rbody_mass / orbody.mass) * LastSentVELOCITY;
-                            var pCOM = orbody.worldCenterOfMass;
-                            Holder.RemoveCOMFromRigidbody(orbody);
-                            RestoreHolderTr();
-                            Holder.FixMaskedCOM(orbody.transform);
-                            Holder.ReturnCOMToRigidbody(orbody);
-
-                            if (LockJointBackPush && !block.tank.Anchors.Fixed) // Is not a fixated anchor
-                            {
-                                if (IsPlanarVALUE)
-                                {
-                                    orbody.rotation *= Quaternion.Euler(transform.localRotation * Vector3.up * -massChangeRatio);
-                                    orbody.position -= orbody.worldCenterOfMass - pCOM;
-                                }
-                                else
-                                {
-                                    orbody.position -= transform.rotation * Vector3.up * massChangeRatio;
-                                }
-                            }
-                        }
+                        RestoreHolderTr();
+                        Holder.SetDynamics(false);
                     }
+                    else */
+                    if (LastSentVELOCITY != 0f)
+                    {
+                        LockJointUpdateCOM();
+                        for (int i = 0; i < GrabbedBlockMovers.Count; i++) GrabbedBlockMovers[i].PokedByParent = true;
+                        PokedByParent = false;
+                    }
+                }
+                /*
                 }
                 else // Not LockJoint
                 {
@@ -736,7 +811,6 @@ namespace Control_Block
 
                             //if (CheckIfOnStatic(orbody))
                             //{
-
                             //    if (IsPlanarVALUE)
                             //        UpdateRotateAnchor(PVALUE);
                             //    else
@@ -755,6 +829,7 @@ namespace Control_Block
                         }
                     }
                 }
+                */
             }
             catch (Exception E)
             {
@@ -771,6 +846,33 @@ namespace Control_Block
             oldMoverType = moverType;
         }
 
+        private bool PokedByParent;
+
+        private void LockJointUpdateCOM()
+        {
+            var orbody = ownerBody;
+            float massChangeRatio = (Holder.rbody_mass / orbody.mass) * LastSentVELOCITY;
+            var pCOM = orbody.worldCenterOfMass;
+            Holder.RemoveCOMFromRigidbody(orbody);
+            RestoreHolderTr();
+            Holder.FixMaskedCOM(orbody.transform);
+            Holder.ReturnCOMToRigidbody(orbody);
+
+            if (LockJointBackPush && !block.tank.Anchors.Fixed) // Is not a fixated anchor
+            {
+                if (IsPlanarVALUE)
+                {
+                    orbody.rotation *= Quaternion.Euler(transform.localRotation * Vector3.up * -massChangeRatio);
+                    orbody.position -= orbody.worldCenterOfMass - pCOM;
+                }
+                else
+                {
+                    orbody.position -= transform.rotation * Vector3.up * massChangeRatio;
+                }
+            }
+        }
+
+        /*
         internal void SetupFreeJoint()
         {
             if (IsPlanarVALUE)
@@ -786,9 +888,9 @@ namespace Control_Block
                 //ClusterTech.SetOffset(block.tank, block.trans.up);
                 SetLinearLimit();
             }
-        }
+        } */
 
-        void UpdatePartTransforms()
+        private void UpdatePartTransforms()
         {
             for (int i = 0; i < parts.Length; i++)
             {
@@ -804,7 +906,7 @@ namespace Control_Block
         /// <para>Quaternion.Euler(transform.localRotation * Vector3.up * Angle)</para>
         /// </summary>
         /// <param name="localRotationOffset"></param>
-        void UpdateRotateAnchor(Quaternion localRotationOffset)//float Angle)
+        private void UpdateRotateAnchor(Quaternion localRotationOffset)//float Angle)
         {
             var rot = Holder.transform.rotation;
 
@@ -815,7 +917,7 @@ namespace Control_Block
             Holder.transform.rotation = rot;
         }
 
-        bool queueRestoreHolderTr;
+        private bool queueRestoreHolderTr;
 
         internal void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
         {
@@ -829,6 +931,7 @@ namespace Control_Block
                 //Print("Serializing " + transform.localPosition);
                 SerialData serialData = new SerialData()
                 {
+                    name = UIName,
                     currentValue = PVALUE,
                     targetValue = VALUE,
                     velocity = VELOCITY,
@@ -851,6 +954,8 @@ namespace Control_Block
                 if (sd != null)
                 {
                     SetDirty();
+                    if (!string.IsNullOrWhiteSpace(sd.name))
+                        UIName = sd.name;
                     PVALUE = sd.currentValue;
                     VALUE = sd.targetValue;
                     VELOCITY = sd.velocity;
@@ -878,7 +983,8 @@ namespace Control_Block
                         var ssd = SerialData<ModuleSwivel.SerialData>.Retrieve(blockSpec.saveState);
                         if (ssd != null)
                         {
-                            Console.WriteLine("FOUND PRE-OVERHAUL SWIVEL");
+                            //Console.WriteLine("FOUND PRE-OVERHAUL SWIVEL");
+                            ModuleSwivel.ConvertSerialToBlockMover(ssd, this);
                         }
                     }
                     else
@@ -886,7 +992,7 @@ namespace Control_Block
                         var psd = SerialData<ModulePiston.SerialData>.Retrieve(blockSpec.saveState);
                         if (psd != null)
                         {
-                            Console.WriteLine("FOUND PRE-OVERHAUL PISTON");
+                            //Console.WriteLine("FOUND PRE-OVERHAUL PISTON");
                             ModulePiston.ConvertSerialToBlockMover(psd, this);
                         }
                     }
@@ -894,21 +1000,21 @@ namespace Control_Block
             }
         }
 
-
         [Serializable]
         public class SerialData : Module.SerialData<ModuleBlockMover.SerialData>
         {
             public float limitCenter, limitExtent, currentValue, targetValue, velocity, jointStrength, jointDampen;
             public MoverType moverType;
             public bool lockOffsetParent, onlyLocalInput, useLimits;
-            public string processList;
+            public string processList, name;
             public float maxVelocity;
         }
 
-        bool Deserialized = false;
+        private bool Deserialized = false;
 
         private void OnSpawn() //Pull from Object Pool
         {
+            playerSyncByte = GlobalPlayerSyncByte;
             Heart = Control_Block.Class1.PistonHeart;
             Dirty = true;
             if (Deserialized) return;
@@ -918,10 +1024,6 @@ namespace Control_Block
             {
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.RightArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = 1 });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.LeftArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = -1 });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.I, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 0 });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.J, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 270 });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.K, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 180 });
-                ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.L, m_InputType = InputOperator.InputType.OnPress, m_InputParam = 0, m_OperationType = InputOperator.OperationType.SetPos, m_Strength = 90 });
                 //TrueLimitVALUE = 360;
                 _CENTERLIMIT = 0f;
                 _EXTENTLIMIT = HalfLimitVALUE;
@@ -945,8 +1047,12 @@ namespace Control_Block
             VELOCITY = 0;
             MAXVELOCITY = TrueMaxVELOCITY;
             LockJointBackPush = true;
+            LOCALINPUT = true;
+            ResetUIName();
             //restored = true;
         }
+
+        public string ResetUIName() => UIName = StringLookup.GetItemName(block.visible.m_ItemType);
 
         private void OnRecycle() //Put back to Object Pool
         {
@@ -1021,7 +1127,7 @@ namespace Control_Block
             if (Holder != null)
             {
                 Print("RESET_POST : Cleaning holder rbody");
-                Holder.Dynamics = !IsLockJoint;
+                /* Holder.Dynamics = !IsLockJoint; */
                 Holder.ResetPhysics();
 
                 Rigidbody orbody = null;
@@ -1035,11 +1141,11 @@ namespace Control_Block
                 RestoreHolderTr();
                 queueRestoreHolderTr = false;
 
-                if (IsLockJoint)
-                {
-                    Holder.FixMaskedCOM(orbody.transform);
-                    Holder.ReturnCOMToRigidbody(orbody);
-                }
+                /* if (IsLockJoint)
+                { */
+                Holder.FixMaskedCOM(orbody.transform);
+                Holder.ReturnCOMToRigidbody(orbody);
+                /* }
                 else if (HolderJoint != null)
                 {
                     UpdateSpringForce();
@@ -1060,12 +1166,13 @@ namespace Control_Block
                         UpdateRotateAnchor(HolderPart.localRotation);
                         HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
                     }
-                }
+                } */
             }
         }
+
         private string lastdatetime = "";
 
-        static System.Globalization.CultureInfo enUS = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+        private static System.Globalization.CultureInfo enUS = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
 
         private string GetDateTime(string Before, string After)
         {
@@ -1110,6 +1217,7 @@ namespace Control_Block
                     if (Holder != null)
                     {
                         Holder.Clear(true);
+                        Holder.InitializeAPCache();
                         //! Holder = Holder.Destroy();
                         Print("> Cleaned holder, there were no blocks");
                     }
@@ -1122,6 +1230,7 @@ namespace Control_Block
                         Print("> Clearing holder's blocks: " + (Holder.Dirty ? "mover was marked changed" : $"grabbed {GrabbedBlocks.Count} blocks, but holder had {Holder.blocks.Count}"));
                         CacheHolderTr();
                         Holder.Clear(false);
+                        Holder.InitializeAPCache();
                     }
                     DefaultPart();
                     CreateHolder();
@@ -1150,6 +1259,7 @@ namespace Control_Block
             if (Holder != null)
             {
                 Holder.Clear(true);
+                Holder.InitializeAPCache();
                 //! Holder = Holder.Destroy();
             }
             PVALUE = 0f;
@@ -1292,20 +1402,20 @@ namespace Control_Block
             return true;
         }
 
-        bool CheckIfValid(TankBlock b, List<ModuleBlockMover> WatchDog)
+        private bool CheckIfValid(TankBlock b, List<ModuleBlockMover> WatchDog)
         {
             ModuleBlockMover bm = b.GetComponent<ModuleBlockMover>();
             if (bm != null)
             {
-                if (WatchDog != null && WatchDog.Contains(bm)) // If this block is actually a parent, take their knees and leave the scene
+                if (WatchDog != null && WatchDog.Contains(bm)) // If this block is actually a parent, take their knees and leave
                 {
                     //Print("Parent encountered! Escaping blockgrab (Impossible structure)");
-                    for (int p = WatchDog.IndexOf(bm); p < WatchDog.Count; p++)
+                    for (int p = WatchDog.IndexOf(bm) + 1; p < WatchDog.Count; p++) // Add 1 to the index, and let the encountered parent decide if it could move
                         WatchDog[p].StarterBlocks.Clear();
                     return false;
                 }
 
-                if (bm.Dirty && bm.GrabbedBlocks.Count == 0) // If they didn't do their thing yet guide them to watch out for parents
+                if (bm.Dirty && bm.GrabbedBlocks.Count == 0) // If they didn't do their thing yet, guide them to watch out for parents
                 {
                     //Print("Triggering new blockgrab for child");
                     List<ModuleBlockMover> nWD = new List<ModuleBlockMover>();
@@ -1313,7 +1423,7 @@ namespace Control_Block
                     nWD.Add(this);
                     bm.Valid = bm.StartGetBlocks(nWD);
                     nWD.Clear();
-                    if (StarterBlocks.Count == 0)
+                    if (StarterBlocks.Count == 0) // Did they take our knees
                     {
                         //Print("Impossible structure! Escaping blockgrab");
                         GrabbedBlockMovers.Clear();
@@ -1321,7 +1431,7 @@ namespace Control_Block
                     }
                 }
 
-                if (bm.Valid) // If that block did a good job leave its harvest alone
+                if (bm.Valid) // If that block got blocks, leave it alone
                 {
                     //Print("Child is valid, ignore blocks of");
                     GrabbedBlockMovers.Add(bm);
@@ -1330,16 +1440,99 @@ namespace Control_Block
             }
             if (block.tank.blockman.IsRootBlock(b))
             {
-                //Print("Encountered cab! Escaping blockgrab (false)");
+                Print("Encountered cab! Escaping blockgrab (false)");
                 return false;
             }
             return true;
         }
 
+        public string GetValuesAsCommentedString()
+        {
+            string result =
+                $"#SET POSITION {PVALUE}\n" +
+                $"#SET TARGET {VALUE}\n" +
+                $"#SET VELOCITY {VELOCITY}\n" +
+                $"#SET MAXVELOCITY {MAXVELOCITY}\n" +
+                $"#SET LOCALINPUT {LOCALINPUT}\n" +
+                $"#SET BACKPUSH {LockJointBackPush}\n" +
+                $"#SET USELIMITS {UseLIMIT}\n" +
+                $"#SET CENTERLIMIT {_CENTERLIMIT}\n" +
+                $"#SET EXTENTLIMIT {_EXTENTLIMIT}";
+            if (!CanOnlyBeLockJoint)
+            {
+                result += $"\n#SET TYPEMOVER {moverType}";
+                if (!CannotBeFreeJoint)
+                {
+                    result +=
+                    $"\n#SET STRENGTHSPRING {SPRSTR}" +
+                    $"\n#SET DAMPENSPRING {SPRDAM}";
+                }
+            }
+            return result;
+        }
+
+        public void SetValuesFromCommentedString(string values)
+        {
+            foreach (string s in values.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)) // Split by separator
+            {
+                if (s[0] != '#') continue;
+
+                string line = s.ToUpper();
+                if (!line.StartsWith("#SET ")) continue;
+
+                int index = line.IndexOf(' ', 8) + 1;
+                if (index == 0) continue;
+
+                string value;
+                int index2 = line.IndexOf(' ', index);
+                if (index2 == -1)
+                    value = line.Substring(index);
+                else
+                    value = line.Substring(index, index2 - index);
+
+                try
+                {
+                    switch (s.Substring(5, 3))
+                    {
+                        //    POSITION
+                        case "POS": PVALUE = float.Parse(value); break;
+                        //    TARGET
+                        case "TAR": VALUE = float.Parse(value); break;
+                        //    VELOCITY
+                        case "VEL": VELOCITY = float.Parse(value); break;
+                        //    MAXVELOCITY
+                        case "MAX": MAXVELOCITY = float.Parse(value); break;
+                        //    STRENGTHSPRING
+                        case "STR": SPRSTR = float.Parse(value); break;
+                        //    DAMPENSPRING
+                        case "DAM": SPRDAM = float.Parse(value); break;
+                        //    LOCALINPUT
+                        case "LOC": LOCALINPUT = bool.Parse(value); break;
+                        //    TYPE
+                        case "TYP": moverType = (MoverType)Enum.Parse(typeof(MoverType), value, true); break;
+                        //    BACKPUSH
+                        case "BAC": LockJointBackPush = bool.Parse(value); break;
+                        //    USELIMIT
+                        case "USE": _useLIMIT = bool.Parse(value); break;
+                        //    CENTERLIMIT
+                        case "CEN": _CENTERLIMIT = float.Parse(value); break;
+                        //    EXTENTLIMIT
+                        case "EXT": _EXTENTLIMIT = float.Parse(value); break;
+
+                        default: Console.WriteLine("SetValuesFromCommentedString : Unknown line " + s); break;
+                    }
+                }
+                catch (Exception E)
+                {
+                    Console.WriteLine("SetValuesFromCommentedString : Failed to parse line " + s + " (" + value + ")\n" + E.Message);
+                }
+            }
+            SetDirty();
+        }
+
         public const TTMsgType NetMsgMoverID = (TTMsgType)32115;
         internal static bool IsNetworkingInitiated = false;
 
-//#warning Disable "free-joint" when networked?
         public static void InitiateNetworking()
         {
             if (IsNetworkingInitiated)
@@ -1353,10 +1546,27 @@ namespace Control_Block
 
         private static void SyncPlayer(NetPlayer player)
         {
-            if (ManNetwork.IsHost)
-                foreach (var tech in ManTechs.inst.IterateTechs())
-                    foreach (var mover in tech.GetComponentsInChildren<ModuleBlockMover>())
-                        Nuterra.NetHandler.BroadcastMessageToClient(NetMsgMoverID, new BlockMoverMessage(mover.block, mover.PVALUE, mover.LastSentVELOCITY), player.connectionToServer.connectionId);
+            Console.WriteLine("A PLAYER HAS JOINED : " + player.name + "\nIncrementing GlobalSyncByte");
+            GlobalPlayerSyncByte++;
+            //if (ManNetwork.IsHost)
+            //{
+            //    Console.WriteLine("A PLAYER HAS JOINED : " + player.name);
+            //    var NetTechs = ManNetwork.inst.GetAllPlayerTechs();
+            //    foreach (Tank netTech in NetTechs)
+            //    {
+            //        try
+            //        {
+            //            if (netTech == null) continue;
+            //            Console.WriteLine("Iterating through tech " + netTech.name);
+            //            foreach (var mover in netTech.GetComponentsInChildren<ModuleBlockMover>())
+            //            {
+            //                Console.WriteLine("Sending " + mover.name + mover.transform.localPosition.ToString());
+            //                Nuterra.NetHandler.BroadcastMessageToClient(NetMsgMoverID, new BlockMoverMessage(mover.block, mover.PVALUE, mover.LastSentVELOCITY), player.connectionToClient.connectionId);
+            //            }
+            //        }
+            //        catch { }
+            //    }
+            //}
         }
 
         public static void SendMoverChange(BlockMoverMessage message)
@@ -1377,7 +1587,7 @@ namespace Control_Block
 
         private static void ReceiveMoverChange(BlockMoverMessage obj, NetworkMessage netmsg) => obj.block.GetComponent<ModuleBlockMover>().ReceiveFromNet(obj);
 
-        float LastSentVELOCITY = 0f;
+        private float LastSentVELOCITY = 0f;
 
         public void ReceiveFromNet(BlockMoverMessage data)
         {

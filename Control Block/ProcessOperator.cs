@@ -23,9 +23,10 @@ namespace Control_Block
             public string ToggleComment;
             public float ToggleMultiplier;
             public float DefaultValue;
+            public bool DummyNegative;
             //public float SliderStep;
 
-            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, float defaultValue = 0f)
+            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, float defaultValue = 0f, bool dummyNegative = false)
             {
                 LockInputTypes = lockInputTypes;
                 PermittedInputType = permittedInputType;
@@ -43,6 +44,7 @@ namespace Control_Block
                 //SliderStep = sliderStep;
                 SliderMinOnPlanar = sliderMinOnPlanar;
                 DefaultValue = defaultValue;
+                DummyNegative = dummyNegative;
             }
         }
         public struct UIDispInput
@@ -56,9 +58,10 @@ namespace Control_Block
             public string ToggleComment;
             public float ToggleMultiplier;
             public float DefaultValue;
+            public bool DummyNegative;
             //public float SliderStep;
 
-            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, float defaultValue = 0f)
+            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, float defaultValue = 0f, bool dummyNegative = true)
             {
                 HideInputKey = hideInputKey;
                 HideParam = hideParam;
@@ -71,6 +74,7 @@ namespace Control_Block
                 SliderMaxIsMaxVal = sliderMaxIsMaxVal;
                 SliderMaxIsMaxVel = sliderMaxIsMaxVel;
                 DefaultValue = defaultValue;
+                DummyNegative = dummyNegative;
                 //SliderStep = sliderStep;
             }
         }
@@ -157,9 +161,9 @@ namespace Control_Block
             {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle to Strength", defaultValue:0f, sliderFraction:1f, sliderMinOnPlanar:true) },
             {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the velocity by Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
             {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.ArrowPoint, new UIDispOperation("Arrow Point", "Aim towards the velocity of the tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.ArrowPoint, new UIDispOperation("Velocity Point", "Aim towards the velocity of the tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.GroundPoint, new UIDispOperation("Ground Point", "Aim towards the ground's surface (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
-            {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)\nThis will recenter if enemy is lost while running", defaultValue:1f, clampStrength:true) },
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
@@ -169,13 +173,12 @@ namespace Control_Block
             {OperationType.EndIf, new UIDispOperation("End IF", "Close the highest IF branch and proceed as normal", lockInputTypes:true, hideStrength:true) },
             {OperationType.Nothing, new UIDispOperation("Do Nothing", "No contribution to the block mover", hideStrength:true) },
 #warning Might want to fix Deny Firing at some point
-            {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
+            {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", dummyNegative:true, strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
 
 
             //{OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
             //{OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true) },
             //{OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
-
             {OperationType.SetLockJoint, new UIDispOperation("(Unavailable!) Lock-Joint", "(Unavailable!) Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
             {OperationType.SetBodyJoint, new UIDispOperation("(Unavailable!) Dynamic-Joint", "(Unavailable!) Physics state. Set the block-mover to use kinematics", hideStrength:true) },
             {OperationType.SetFreeJoint, new UIDispOperation("(Unavailable!) Free-Joint", "(Unavailable!) Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
@@ -186,18 +189,18 @@ namespace Control_Block
             {InputType.OnPress, new UIDispInput("On Key Press", defaultValue:1f, paramIsToggle:true) },
             {InputType.WhileHeld, new UIDispInput("On Key Hold", defaultValue:1f, paramIsToggle:true) },
             {InputType.OnRelease, new UIDispInput("On Key Release", defaultValue:1f, paramIsToggle:true) },
-            {InputType.Toggle, new UIDispInput("Toggle Key", defaultValue:-1f, paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
+            {InputType.Toggle, new UIDispInput("Toggle Key", dummyNegative:false, defaultValue:-1f, paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
             {InputType.EnemyTechIsNear, new UIDispInput("Enemy is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
             {InputType.PlayerTechIsNear, new UIDispInput("Player is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
             {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", defaultValue:10f, hideInputKey:true, sliderMax:64) },
             {InputType.AboveVelocity, new UIDispInput("Above Velocity", defaultValue:10f, hideInputKey:true, sliderMax:60) },
 
-            {InputType.IfPosAbove, new UIDispInput("If Position Above", defaultValue:0.5f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosBelow, new UIDispInput("If Position Below", defaultValue:0.5f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosEqual, new UIDispInput("If Position Equal", defaultValue:1f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfPosAbove, new UIDispInput("If Position Above", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosBelow, new UIDispInput("If Position Below", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosEqual, new UIDispInput("If Position Equal", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
 
 
             //{InputType.IfSprStrengthAbove, new UIDispInput("If Spring strength Above", hideInputKey:true, paramIsTrueValue:true) },
@@ -253,7 +256,7 @@ namespace Control_Block
         public KeyCode m_InputKey = KeyCode.Space;
 
         public float m_InputParam; // Negative to invert condition
-        public float m_Strength = 1;
+        public float m_Strength = 0;
 
         float timeSinceLastState;
         public bool LASTSTATE {
@@ -270,11 +273,15 @@ namespace Control_Block
             }
         }
 
+        private static float SafePlanarPointAngle(Transform trans, Vector3 projectedVector, float originalValue) =>
+                (Vector3.SignedAngle(trans.forward, projectedVector, trans.up) - originalValue + 900f) % 360f - 180f;
+
         private static float PointAtTarget(Transform trans, Vector3 relativeTarget, bool ProjectOnPlane, float OriginalValue)
         {
             if (ProjectOnPlane)
             {
-                return (Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(relativeTarget, trans.up), trans.up) - OriginalValue + 900f) % 360f - 180f;
+                var planar = Vector3.ProjectOnPlane(relativeTarget, trans.up);
+                return SafePlanarPointAngle(trans, planar, OriginalValue);
                 //return (Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(localTarget, trans.up), trans.up));
             }
             return trans.InverseTransformDirection(relativeTarget).y - OriginalValue;
@@ -326,13 +333,27 @@ namespace Control_Block
 
                     case OperationType.ArrowPoint:
                         var vel = block.tank.rbody.GetPointVelocity(block.centreOfMassWorld);
-                        Value += PointAtTarget(block.trans, vel * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength * Mathf.Clamp01(vel.sqrMagnitude * 5f);// * Mathf.Abs(m_Strength);
+                        if (blockMover.IsPlanarVALUE)
+                        {
+                            var planar = Vector3.ProjectOnPlane(vel * Mathf.Sign(m_Strength), block.trans.up);
+                            Value += SafePlanarPointAngle(block.trans, planar, Value) * Mathf.Clamp01(m_Strength * m_Strength * planar.magnitude);
+                            return true;
+                        }
+                        Value += (block.trans.InverseTransformDirection(vel * Mathf.Sign(m_Strength)).y - Value) * Mathf.Clamp01(m_Strength * m_Strength);
                         return true;
 
                     case OperationType.TargetPoint:
                         Visible target = blockMover.GetTarget();
                         if (target == null)
+                        {
+                            if (m_ResetTimer)
+                            {
+                                Value = blockMover.UseLIMIT ? blockMover._CENTERLIMIT : 0f;
+                                m_ResetTimer = false;
+                            }
                             return false;
+                        }
+                        m_ResetTimer = true;
                         Value += PointAtTarget(block.trans, (target.centrePosition - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
                         return true;
 
@@ -347,7 +368,9 @@ namespace Control_Block
                         var comw = block.centreOfMassWorld;
                         ManWorld.inst.GetTerrainHeight(comw, out float outHeight);
                         //return (comw.y > outHeight + m_InputParam);
-                        Value += PointAtTarget(block.trans, Vector3.up * (outHeight - comw.y) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;
+                        float reducer = Mathf.Abs(Vector3.Dot(block.trans.up, Vector3.up));
+                        if (blockMover.IsPlanarVALUE) reducer = 1f - reducer;
+                        Value += PointAtTarget(block.trans, Vector3.up * (outHeight - comw.y) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength * reducer;
                         //Value += PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
                         return true;
 
@@ -473,7 +496,7 @@ namespace Control_Block
 
                 case InputType.WhileHeld:
                     m_InputParam = Mathf.Sign(m_InputParam);
-                    return (KeyState(CanInput(block, localInput)) == 2) != Invert;
+                    return (KeyState(CanInput(block, localInput)) != 0) != Invert;
 
                 case InputType.Toggle:
                     m_InputParam = Mathf.Sign(m_InputParam - 0.001f);
@@ -500,12 +523,18 @@ namespace Control_Block
                     return (block.block.tank.rbody.GetPointVelocity(block.block.centreOfMassWorld).sqrMagnitude > m_InputParam * m_InputParam) != Invert;
 
                 case InputType.IfPosAbove:
+                    if (block.IsPlanarVALUE)
+                        return ((m_Val + 900) % 360) - 180 > m_InputParam;
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
                     return m_Val > m_InputParam;
                 case InputType.IfPosBelow:
+                    if (block.IsPlanarVALUE)
+                        return ((m_Val + 900) % 360) - 180 < m_InputParam;
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
                     return m_Val < m_InputParam;
                 case InputType.IfPosEqual:
+                    if (block.IsPlanarVALUE)
+                        return m_InputParam.Approximately(((m_Val + 900) % 360) - 180);
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
                     return m_Val.Approximately(m_InputParam);
 
@@ -523,17 +552,17 @@ namespace Control_Block
 
         public override string ToString() => ToString(false);
 
-        string GetConditionString(bool dummyMode)
+        string GetConditionString(bool dummyMode) => GetConditionString(dummyMode, UIInputPairs[m_InputType]);
+        string GetConditionString(bool dummyMode, UIDispInput iT)
         {
-            var iT = UIInputPairs[m_InputType];
             if (m_InputType == InputType.AlwaysOn) return "";
             if (dummyMode)
             {
                 if (iT.HideInputKey)
-                    return (m_InputType != InputType.Toggle && m_InputParam < 0f ? "-" : "")
+                    return (iT.DummyNegative && m_InputParam < 0f ? "-" : "")
                         + m_InputType.ToString() + " ";
                 else
-                    return (m_InputType != InputType.Toggle && m_InputParam < 0f ? "-" : "")
+                    return (iT.DummyNegative && m_InputParam < 0f ? "-" : "")
                         + m_InputType.ToString() + " " + m_InputKey.ToString() + " ";
             }
             return m_InputType.ToString() + " ( " +  // Condition and parenthesis
@@ -548,7 +577,7 @@ namespace Control_Block
         string GetActionString(bool dummyMode)
         {
             var oT = UIOperationPairs[m_OperationType];
-            return "DO " + m_OperationType.ToString() + (dummyMode ? " " : " ( ") + (oT.HideStrength ? "" : m_Strength.ToString()) + (dummyMode ? "" : " )"); // 'Dummy mode' removes the parenthesis only
+            return "DO " + (oT.DummyNegative && m_Strength < 0f ? "-" : "") + m_OperationType.ToString() + (dummyMode ? " " : " ( ") + (oT.HideStrength ? "" : m_Strength.ToString()) + (dummyMode ? "" : " )"); // 'Dummy mode' removes the parenthesis only
         }
 
         public string ToString(bool dummyMode)
@@ -656,16 +685,29 @@ namespace Control_Block
             }
         }
 
-        public static string[] ProcessOperationsToStringArray(List<InputOperator> ProcessOperations, bool dummyMode = false)
+        public static string[] ProcessOperationsToStringArray(List<InputOperator> ProcessOperations, bool dummyMode = false, string[] StartingArray = null)
         {
-            var result = new string[ProcessOperations.Count];
+            int startIndex;
+            string[] result;
+            if (StartingArray != null && StartingArray.Length != 0)
+            {
+                startIndex = StartingArray.Length;
+                result = new string[ProcessOperations.Count + startIndex];
+                StartingArray.CopyTo(result, 0);
+            }
+            else
+            {
+                startIndex = 0;
+                result = new string[ProcessOperations.Count];
+            }
             int c = 0;
             for (int i = 0; i < ProcessOperations.Count; i++)
             {
                 var P = ProcessOperations[i];
                 if (P.m_OperationType == OperationType.EndIf) c = Math.Max(c - 1, 0);
-                result[i] = "".PadRight(P.m_OperationType == OperationType.OrThen || P.m_OperationType == OperationType.ElseThen ? Math.Max(c - 1, 0) * 4 : c * 4) // Unpad or statements
-                            + P.ToString(dummyMode);
+                result[i + startIndex] = "".PadRight(P.m_OperationType == OperationType.OrThen || P.m_OperationType == OperationType.ElseThen ? 
+                    Math.Max(c - 1, 0) * 4 : c * 4) // Unpad or/else statements
+                    + P.ToString(dummyMode);
                 if (P.m_OperationType == OperationType.IfThen) c++;
             }
             return result;
@@ -676,7 +718,7 @@ namespace Control_Block
             try
             {
                 var list = new List<InputOperator>(); // Make a new one, for in case there is an error
-                foreach (string s in systemCopyBuffer.Replace("--", "")  // Remove double negatives (or just long lines of --)
+                foreach (string s in systemCopyBuffer.Replace("--", "")  // Remove double negatives (or just long even lines of --)
                     .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)) // Split by separator, keep empty entries for incrementing count only
                 {
                     string source = s;

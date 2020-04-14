@@ -11,7 +11,7 @@ namespace Control_Block
         #region Legacy Presets
         public static Dictionary<string, Preset> PreOverhaulSwivels = new Dictionary<string, Preset>
         {
-            { "Swivel_Positional", new Preset(true, "Legacy_Positional", "Converter for old swivel Positional mode",
+            { "Positional", new Preset(true, "Legacy_Positional", "Converter for old swivel Positional mode",
                 "<FuncForUseTimer>",
                 new List<Preset.Variable> {
                     new Preset.StringConditionV() {

@@ -1349,6 +1349,16 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] rr_inline_swivel {
+            get {
+                object obj = ResourceManager.GetObject("rr_inline_swivel", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # Blender v2.79 (sub 0) OBJ File: &apos;steering regulator.blend&apos;
         ///# www.blender.org
         ///mtllib sr.mtl
@@ -1490,6 +1500,56 @@ namespace Control_Block.Properties {
             get {
                 object obj = ResourceManager.GetObject("swivel_png", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.81 (sub 16) OBJ File: &apos;RR_Inline_Swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_rr_base.mtl
+        ///o Cylinder
+        ///v 0.813299 0.260000 -0.256370
+        ///v 0.827194 0.300000 -0.289917
+        ///v 0.813299 0.500000 -0.256370
+        ///v 0.827194 0.460000 -0.289917
+        ///v 0.998387 0.260000 -0.149510
+        ///v 1.020491 0.300000 -0.178317
+        ///v 0.998387 0.500000 -0.149510
+        ///v 1.020491 0.460000 -0.178317
+        ///v 1.149510 0.260000 0.001614
+        ///v 1.178317 0.300000 -0.020491
+        ///v 1.149510 0.500000 0.001614
+        ///v 1.178317 0.460000 -0.020491
+        ///v 1.256370 0.260000 0.186701
+        ///v 1.289917 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_rr_base {
+            get {
+                return ResourceManager.GetString("swivel_rr_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Blender v2.81 (sub 16) OBJ File: &apos;RR_Inline_Swivel.blend&apos;
+        ///# www.blender.org
+        ///mtllib swivel_rr_head.mtl
+        ///o RR_Inline_Swivel.003_RR_Inline_Swivel.006
+        ///v -0.081528 -0.240000 0.619270
+        ///v -0.070423 -0.250000 0.610730
+        ///v -0.157880 -0.259999 0.589210
+        ///v -0.163056 -0.239999 0.608530
+        ///v -0.315000 -0.240000 0.545600
+        ///v -0.589215 -0.260000 0.157879
+        ///v -0.608533 -0.240000 0.163056
+        ///v -0.861285 -0.230001 0.861280
+        ///v -0.855214 -0.207006 0.795810
+        ///v -0.856171 -0.163013 0.772170
+        ///v -0.860599 -0.110397 0.860600
+        ///v -0.863379 -0.123761 0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string swivel_rr_head {
+            get {
+                return ResourceManager.GetString("swivel_rr_head", resourceCulture);
             }
         }
         

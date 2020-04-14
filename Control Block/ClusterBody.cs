@@ -6,8 +6,10 @@ using UnityEngine;
 
 namespace Control_Block
 {
-    class ClusterBody : MonoBehaviour, IWorldTreadmill
+#warning Could try to fake dynamic bodies later
+    class ClusterBody : MonoBehaviour /*, IWorldTreadmill */
     {
+        /* 
         public const float MaxSpringForce = 2000f;
 
         public void OnMoveWorldOrigin(IntVector3 amountToMove)
@@ -17,20 +19,33 @@ namespace Control_Block
         }
 
         public Rigidbody rbody;
-        public ConfigurableJoint Joint;
-        /// <summary>
-        /// Isolate COM from coreTank and move the cluster with physics
-        /// </summary>
-        public List<TankBlock> blocks;
-        public List<ModuleWeapon> blockWeapons;
-        public List<ModuleDrill> blockDrills;
+        public ConfigurableJoint Joint; 
+        
+        void Update()
+        {
+            if (Dynamics && rbody != null)
+            {
+                rbody.drag = coreTank.rbody.drag;
+                rbody.angularDrag = coreTank.rbody.angularDrag;
+            }
+        }
+        
+        public ClusterBody()
+        {
+            ManWorldTreadmill.inst.AddListener(this);
+        } 
+        */
+
+        public List<TankBlock> blocks = new List<TankBlock>();
+        public Dictionary<IntVector3, byte> ClusterAPBitField = new Dictionary<IntVector3, byte>();
+        public List<ModuleWeapon> blockWeapons = new List<ModuleWeapon>();
+        public List<ModuleDrill> blockDrills = new List<ModuleDrill>();
+
         public ModuleBlockMover moduleBlockMover;
-        //public SphereCollider dragSphere;
-        //! Can possibly be used for AP render manipulation
         public Tank coreTank;
         public Rigidbody parentBody;
         public bool Dirty;
-        public bool Dynamics;
+        /*public bool Dynamics;*/
 
         //Vector3 CoG;
         public float rbody_mass;
@@ -42,26 +57,12 @@ namespace Control_Block
         /// </summary>
         public Vector3 rbody_centerOfMass_mask;
 
-        void Update()
-        {
-            if (Dynamics && rbody != null)
-            {
-                rbody.drag = coreTank.rbody.drag;
-                rbody.angularDrag = coreTank.rbody.angularDrag;
-            }
-        }
-
-        public ClusterBody()
-        {
-            ManWorldTreadmill.inst.AddListener(this);
-        }
-
         public ClusterBody Destroy()
         {
             moduleBlockMover.block.tank.control.driveControlEvent.Unsubscribe(GetDriveControl);
             Clear(true);
             Destroy(gameObject);
-            ManWorldTreadmill.inst.RemoveListener(this);
+            /* ManWorldTreadmill.inst.RemoveListener(this); */
             return null;
         }
 
@@ -74,26 +75,24 @@ namespace Control_Block
         {
             if (ForceFireNextFrame)
             {
-                foreach(var weapon in blockWeapons)
-                {
+                foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon on
                     weapon.FireControl = true;
-                }
+
                 foreach (var drill in blockDrills)
-                {
-                    ModuleDrill_m_Spinning.SetValue(drill, true);
-                }
+                    ModuleDrill_m_Spinning.SetValue(drill, true); // why is this value private
+
                 ForceFireNextFrame = false;
             }
             if (ForceNoFireNextFrame)
             {
-                foreach (var weapon in blockWeapons)
-                {
+                foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon off
                     weapon.FireControl = false;
-                }
+
                 ForceNoFireNextFrame = false;
             }
         }
 
+        /*
         private void CreateCustomJoint()
         {
             RemoveJoint();
@@ -154,14 +153,16 @@ namespace Control_Block
             Joint.yDrive = drive;
             Joint.zDrive = drive;
         }
-
+        */
         public void RemoveJoint()
         {
+            /*
             if (Joint != null)
             {
                 //if (Joint.gameObject == parentBody.gameObject && Joint.connectedBody == rbody) return;
                 DestroyImmediate(Joint);
             }
+            */
         }
 
         public bool IsAnchored()
@@ -196,7 +197,7 @@ namespace Control_Block
                     CoM += tankBlock.CurrentMass * localCoM;
                     //float num2 = tankBlock.CurrentMass * coreTank.massScaleFactor * tankBlock.AverageGravityScaleFactor;
                     a += currentInertiaTensor + tankBlock.CurrentMass * new Vector3(localCoM.y * localCoM.y + localCoM.z * localCoM.z, localCoM.z * localCoM.z + localCoM.x * localCoM.x, localCoM.x * localCoM.x + localCoM.y * localCoM.y);
-                    
+
                     //Vector3 a2 = tankBlock.cachedLocalPosition + tankBlock.cachedLocalRotation * tankBlock.CentreOfGravity;
                     //CoG += num2 * a2;
                 }
@@ -219,7 +220,7 @@ namespace Control_Block
                 rbody_inertiaTensor = a * coreTank.massScaleFactor * coreTank.inertiaTensorScaleFactor;
             }
             rbody_centerOfMass_mask = rbody_centerOfMass;
-            if (Dynamics)
+            /* if (Dynamics)
             {
                 if (rbody_mass != 0f)
                 {
@@ -239,14 +240,14 @@ namespace Control_Block
                     PurgeComponents();
                 }
             }
-            else
+            else */
             {
                 var paRBody = transform.GetComponentInParent<Rigidbody>();
                 if (paRBody != coreTank.rbody) // If the parent is another cluster and NOT the tank
                 {
                     ReturnCOMToRigidbody(paRBody);
                 }
-                PurgeComponents();
+                /* PurgeComponents(); */
             }
 
             #region TankBlock slip-in
@@ -278,12 +279,13 @@ namespace Control_Block
         //static System.Reflection.PropertyInfo CurrentMass = typeof(TankBlock).GetProperty("CurrentMass", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         //static System.Reflection.FieldInfo m_CentreOfMass = typeof(TankBlock).GetField("m_CentreOfMass", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         //static System.Reflection.PropertyInfo CurrentInertiaTensor = typeof(TankBlock).GetProperty("CurrentInertiaTensor", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        static System.Reflection.FieldInfo m_TotalWeightScale = typeof(Tank).GetField("m_TotalWeightScale", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        //static System.Reflection.FieldInfo m_TotalWeightScale = typeof(Tank).GetField("m_TotalWeightScale", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         //static System.Reflection.FieldInfo m_CogPos = typeof(Tank).GetField("m_CogPos", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
         // COM = (com1 * m1 + com2 * m2) / (m1 + m2)
         // com1 = ((COM * m1) + (COM * m2) - (com2 * m2)) / m1
 
+        /*
         private void SyncRigidbody()
         {
             rbody.mass = rbody_mass;
@@ -298,8 +300,10 @@ namespace Control_Block
                 Component.DestroyImmediate(rbody);
             if (Joint != null)
                 Component.DestroyImmediate(Joint);
-        }
+        } 
+        */
 
+        /*
         public void SetDynamics(bool state, bool FixCOM = true)
         {
             if (state != Dynamics)
@@ -308,14 +312,15 @@ namespace Control_Block
             }
             Dynamics = state;
         }
+        */
 
         private void ReturnCOMToTank()
         {
-            var TWR = coreTank.GetGravityScale();
+            //var TWR = coreTank.GetGravityScale();
 
             ReturnCOMToRigidbody(coreTank.rbody);
 
-            m_TotalWeightScale.SetValue(coreTank, TWR * coreTank.rbody.mass);
+            //m_TotalWeightScale.SetValue(coreTank, Mathf.Clamp01(TWR) * coreTank.rbody.mass);
         }
 
         public void FixMaskedCOM(Transform other)
@@ -326,32 +331,33 @@ namespace Control_Block
         public void ReturnCOMToRigidbody(Rigidbody other)
         {
             Vector3 com1 = other.centerOfMass, com2 = rbody_centerOfMass_mask;
-            float m2 = rbody_mass, m1 = other.mass;
+            float m2 = rbody_mass, m1 = other.mass - rbody_mass; // other.mass will have all mass in lockjoint only
 
             other.centerOfMass = ((com1 * m1) + (com2 * m2)) / (m1 + m2);
-            other.mass = m1 + m2;
+            //other.mass = m1 + m2; // other.mass will have all mass in lockjoint only
         }
 
         private void RemoveCOMFromTank()
         {
-            var TWR = coreTank.GetGravityScale();
+            //var TWR = coreTank.GetGravityScale();
 
             RemoveCOMFromRigidbody(coreTank.rbody);
 
-            m_TotalWeightScale.SetValue(coreTank, TWR * coreTank.rbody.mass);
+            //m_TotalWeightScale.SetValue(coreTank, Mathf.Clamp01(TWR) * coreTank.rbody.mass);
         }
 
         public void RemoveCOMFromRigidbody(Rigidbody other)
         {
             Vector3 COM = other.centerOfMass, com2 = rbody_centerOfMass_mask;
-            float m2 = rbody_mass, m1 = other.mass - rbody_mass;
+            float m2 = rbody_mass, m1 = other.mass - rbody_mass; // other.mass will have all mass in lockjoint only
 
-            other.mass = m1;
+            //other.mass = m1; // other.mass will have all mass in lockjoint only
             other.centerOfMass = ((COM * m1) + (COM * m2) - (com2 * m2)) / m1;
         }
 
         private void OnCollisionEnter(Collision collision)
         {
+            Console.WriteLine("Collision entered! " + coreTank.name + " & " + collision.gameObject.name);
             coreTank.HandleCollision(collision, false);
         }
         private void OnCollisionStay(Collision collision)
@@ -367,7 +373,7 @@ namespace Control_Block
             coreTank.TriggerEvent.Send(otherCollider, 2);
         }
 
-        public void AddBlock(TankBlock block, Vector3 pos, Quaternion rot)
+        public void AddBlock(TankBlock block, IntVector3 pos, OrthoRotation rot)
         {
             blocks.Add(block);
             block.trans.parent = transform;
@@ -375,10 +381,23 @@ namespace Control_Block
             block.trans.localRotation = rot;
             Dirty = true;
 
+            for (int ap = 0; ap < block.attachPoints.Length; ap++)
+            {
+                IntVector3 filledCellForAPIndex = block.GetFilledCellForAPIndex(ap);
+                IntVector3 v3 = block.attachPoints[ap] * 2f - filledCellForAPIndex - filledCellForAPIndex;
+                IntVector3 index = pos + rot * filledCellForAPIndex;
+                byte b = (rot * v3).APHalfBits();
+                ClusterAPBitField.TryGetValue(index, out byte ptr);
+                ptr |= b;
+                ClusterAPBitField[index] = ptr;
+            }
+
             ModuleWeapon weapon = block.GetComponent<ModuleWeapon>();
             if (weapon) blockWeapons.Add(weapon);
             ModuleDrill drill = block.GetComponent<ModuleDrill>();
             if (drill) blockDrills.Add(drill);
+
+
 
             return;
         }
@@ -387,14 +406,15 @@ namespace Control_Block
         {
             if (blocks.Remove(block))
             {
+                ClusterAPBitField.Remove(block.cachedLocalPosition);
+
                 var weapon = block.GetComponent<ModuleWeapon>();
                 if (weapon) blockWeapons.Remove(weapon);
                 var drill = block.GetComponent<ModuleDrill>();
                 if (drill) blockDrills.Remove(drill);
-                if (!Dynamics)
-                {
-                    block.trans.position = transform.TransformPoint(coreTank.transform.InverseTransformPoint(block.trans.position));
-                }
+
+                //block.trans.position += transform.TransformPoint(block.cachedLocalPosition) - coreTank.transform.TransformPoint(block.cachedLocalPosition);
+
                 Dirty = true;
                 return true;
             }
@@ -403,7 +423,7 @@ namespace Control_Block
 
         internal void Clear(bool FixPositions)
         {
-            PurgeComponents();
+            /* PurgeComponents(); */
             //if (masks.Count != 0)
             //{
             //    for (int i = 0; i < masks.Count; i++)
@@ -436,6 +456,30 @@ namespace Control_Block
             }
             Dirty = true;
             blocks.Clear();
+            ClusterAPBitField.Clear();
+        }
+
+        public void InitializeAPCache()
+        {
+            var block = moduleBlockMover.block;
+            for (int ap = 0; ap < block.attachPoints.Length; ap++)
+            {
+                foreach (var stp in moduleBlockMover.startblockpos)
+                {
+                    var atp = block.attachPoints[ap];
+                    if (atp.Approximately(stp, 0.6f))
+                    {
+                        IntVector3 filledCellForAPIndex = block.GetFilledCellForAPIndex(ap);
+                        IntVector3 v3 = atp * 2f - filledCellForAPIndex - filledCellForAPIndex;
+                        IntVector3 index = block.cachedLocalPosition + block.cachedLocalRotation * filledCellForAPIndex;
+                        byte b = (block.cachedLocalRotation * v3).APHalfBits();
+                        ClusterAPBitField.TryGetValue(index, out byte ptr);
+                        ptr |= b;
+                        ClusterAPBitField[index] = ptr;
+                        break;
+                    }
+                }
+            }
         }
     }
 }

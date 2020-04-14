@@ -109,7 +109,7 @@ namespace Control_Block
                             .SetFaction(FactionSubTypes.HE)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(2)
-                            .SetPrice(7323)
+                            .SetPrice(6993)
                             .SetHP(2250)
                             .SetMass(5f)
                             .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.HEp_icon_png)));
@@ -132,8 +132,7 @@ namespace Control_Block
                     new Vector3(0f,.5f, 0f),
                     new Vector3(0f, 0f,.5f),
                 }).AddComponent<ModuleBlockMover>(SetHawkeyePiston)
-                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                                       ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.TitanicAlloy, ChunkTypes.PlubonicAlloy, ChunkTypes.PlubonicAlloy)
                             .RegisterLater();
                     }
 
@@ -145,7 +144,7 @@ namespace Control_Block
                             .SetFaction(FactionSubTypes.HE)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(2)
-                            .SetPrice(7323)
+                            .SetPrice(5283)
                             .SetHP(2250)
                             .SetMass(2f)
                             .SetCenterOfMass(new Vector3(0f, 0.5f, -0.4f))
@@ -167,8 +166,7 @@ namespace Control_Block
                     new Vector3(0f,0f,-.5f),
                     new Vector3(0f,1f,-.5f),
                 }).AddComponent<ModuleBlockMover>(SetHawkeyePanelPiston)
-                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                                       ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.TitanicAlloy)
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy, ChunkTypes.TitanicAlloy)
                             .RegisterLater();
                     }
                     #endregion Hawkeye Piston
@@ -182,7 +180,7 @@ namespace Control_Block
                             .SetFaction(FactionSubTypes.BF)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(0)
-                            .SetPrice(6213)
+                            .SetPrice(7587)
                             .SetHP(2000)
                             .SetMass(3f)
                             .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BFp_png)));
@@ -190,14 +188,14 @@ namespace Control_Block
                         var mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
                         var par = ControlBlock.Prefab.transform;
 
-                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blockbottom);
-                        AddMeshToBlockMover(mat, new Vector3(.95f, .95f, .95f), Vector3.zero, par, Properties.Resources.BFp_blocktop);
+                        AddMeshToBlockMover(mat, new Vector3(.95f, .9f, .95f), Vector3.down * 0.05f, par, Properties.Resources.BFp_blockbottom);
+                        AddMeshToBlockMover(mat, new Vector3(1f, .9f, 1f), Vector3.up * 0.05f, par, Properties.Resources.BFp_blocktop);
 
                         ControlBlock.SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                     Vector3.up * 0.5f,
                     Vector3.down * 0.5f })
                             .AddComponent<ModuleBlockMover>(SetBFPiston)
-                            .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
+                            .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.FuelInjector, ChunkTypes.HeatCoil, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy)
                             .RegisterLater();
                     }
                     #endregion BetterFuture Piston
@@ -243,7 +241,7 @@ namespace Control_Block
                             .SetFaction(FactionSubTypes.EXP)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(0)
-                            .SetPrice(1000000000) // Fix later
+                            .SetPrice(10000) // Fix later
                             .SetRarity(BlockRarity.Rare)
                             .SetHP(600)
                             .SetMass(4f)
@@ -280,11 +278,12 @@ namespace Control_Block
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(20000)
-                                .SetHP(400)
+                                .SetPrice(6984)
+                                .SetHP(600)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(1.5f)
-                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_piston)));
+                                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_piston)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.FuelInjector, ChunkTypes.HardLightDrive, ChunkTypes.SensoryTransmitter);
 
                             var par = ControlBlock.Prefab.transform;
 
@@ -299,16 +298,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail segment")
-                                .SetDescription("(Travel length: 1) A segment for the Better Future Rail Piston, add it to the end of the line to make it go farther")
+                                .SetDescription("(Travel length: 1) A segment for the Better Future Rail Piston, add it to the end of the line to make it go farther.")
                                 .SetBlockID(1293836)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(2000)
-                                .SetHP(400)
+                                .SetPrice(2106)
+                                .SetHP(500)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(1.5f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
                                     Vector3.up * 0.5f,
                                     Vector3.down * 0.5f,
@@ -352,16 +352,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail long segment")
-                                .SetDescription("(Trevel length: 2) A longer segment for the Better Future Rail Piston, add it to the end of the line to make it go even farther")
+                                .SetDescription("(Trevel length: 2) A longer segment for the Better Future Rail Piston, add it to the end of the line to make it go even farther.")
                                 .SetBlockID(1393800)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(4000)
+                                .SetPrice(3879)
                                 .SetHP(800)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(3f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_long)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSize(new IntVector3(1, 2, 1))
                                 .SetAPsManual(new Vector3[] {
                                     Vector3.up * 1.5f,
@@ -409,16 +410,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail wedge segment")
-                                .SetDescription("(Travel length: 2) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetDescription("(Travel length: 2) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend!")
                                 .SetBlockID(1393801)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(4000)
+                                .SetPrice(2826)
                                 .SetHP(800)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(1f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSize(new IntVector3(1, 1, 1))
                                 .SetAPsManual(new Vector3[]{
                                     Vector3.down * 0.5f,
@@ -465,16 +467,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail large wedge segment")
-                                .SetDescription("(Travel length: 4) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetDescription("(Travel length: 4) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend!")
                                 .SetBlockID(1393802)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(4000)
+                                .SetPrice(4212)
                                 .SetHP(1200)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(4.5f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_streamline_large)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSize(new IntVector3(1, 2, 2))
                                 .SetAPsManual(new Vector3[]{
                                     new Vector3(0f, -0.5f, 0f), new Vector3(0f, -0.5f, 1f),
@@ -521,16 +524,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail corner segment")
-                                .SetDescription("(Travel length: 1) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it twist, but at the cost of Free-Joint...")
+                                .SetDescription("(Travel length: 1) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it twist!")
                                 .SetBlockID(1393803)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(4000)
+                                .SetPrice(2106)
                                 .SetHP(400)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(1.5f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSize(new IntVector3(1, 1, 1))
                                 .SetAPsManual(new Vector3[]{
                                     Vector3.down * 0.5f,
@@ -579,16 +583,17 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
                                 .SetName("Better Future Rail large corner segment")
-                                .SetDescription("(Travel length: 3) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it bend, but at the cost of Free-Joint...")
+                                .SetDescription("(Travel length: 3) A curved segment for the Better Future Rail Piston, add it to the end of the line to make it twist!")
                                 .SetBlockID(1393804)//, "f63931ef3e14ba8e")
                                 .SetFaction(FactionSubTypes.BF)
                                 .SetCategory(BlockCategories.Base)
                                 .SetGrade(0)
-                                .SetPrice(4000)
+                                .SetPrice(3879)
                                 .SetHP(1200)
                                 .SetDetachFragility(0.5f)
                                 .SetMass(4.5f)
                                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.bf_rail_segment_corner_large)))
+                                .SetRecipe(ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.HardenedTitanic, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal, ChunkTypes.CelestianCrystal)
                                 .SetSize(new IntVector3(2, 2, 1))
                                 .SetAPsManual(new Vector3[]{
                                     new Vector3(0f, -0.5f, 0f), new Vector3(1f, -0.5f, 0f), // bottom
@@ -638,13 +643,13 @@ namespace Control_Block
                         {
                             var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_ArmouredBlock_10_111)
                                 .SetName("Hawkeye Armoured Panel Gate")
-                                .SetDescription("A conveniently compactable set of extendable panels for armoring whatever you want to hide behind a series of whatever conditions are most convenient. Armour? What region is this?" + FakeMoverText)
+                                .SetDescription("A conveniently compactable set of extendable panels for armoring whatever you want to hide behind a series of whatever conditions are most convenient. There's not much else to it" + FakeMoverText)
                                 .SetBlockID(6194711)
                                 .SetFaction(FactionSubTypes.HE)
                                 .SetCategory(BlockCategories.Accessories)
                                 .SetGrade(2)
-                                .SetPrice(4263)
-                                .SetHP(2250)
+                                .SetPrice(3513)
+                                .SetHP(3500)
                                 .SetMass(2f)
                                 .SetCenterOfMass(new Vector3(0f, 0f, -0.4f))
                                 .SetDamageableType(ManDamage.DamageableType.Armour)
@@ -662,8 +667,7 @@ namespace Control_Block
                                 }, new Vector3[]{
                                     new Vector3(0f,0f,-.5f)
                                 }).AddComponent<ModuleBlockMover>(SetHawkeyePanelDecoPiston)
-                                .SetRecipe(ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy,
-                                           ChunkTypes.TitanicAlloy)
+                                .SetRecipe(ChunkTypes.RubberBrick, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicGreebles, ChunkTypes.HardenedTitanic)
                                 .RegisterLater();
                         }
                         #endregion
@@ -677,8 +681,8 @@ namespace Control_Block
                     #region GSO Medium Swivel
                     {
                         var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
-                            .SetName("Medium Embedded Swivel")
-                            .SetDescription("A configurable swivel that can rotate blocks on a tech." + MoverText)
+                            .SetName("GSO Medium Embedded Swivel")
+                            .SetDescription("A cheap & light configurable swivel that can rotate blocks on a tech. It's like the small embedded swivel, but medium. The head for this one rests on the top, safely inside the base." + MoverText)
                             .SetBlockID(1393838)
                             .SetFaction(FactionSubTypes.GSO)
                             .SetCategory(BlockCategories.Base)
@@ -717,16 +721,17 @@ namespace Control_Block
                     #region VEN Inline Swivel
                     {
                         var ControlBlock = new BlockPrefabBuilder(BlockTypes.VENBlock_111)
-                            .SetName("Inline Embedded Swivel")
-                            .SetDescription("An inline swivel, which's center disk rotates blocks. And it's fast, too" + MoverText)
+                            .SetName("Venture Inline Swivel")
+                            .SetDescription("A swivel which's center disk rotates blocks, while it is held by the top or bottom. And it's fast, too. That's because it's packed full of dense planetary motors, that have the incredible capability of breaking all known laws of thermodynamics" + MoverText)
                             .SetBlockID(1393837)
                             .SetFaction(FactionSubTypes.VEN)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(2)
-                            .SetPrice(4470)
+                            .SetPrice(6237)
                             .SetHP(2000)
-                            .SetMass(1f)
-                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)));
+                            .SetMass(3f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_ven_png)))
+                            .SetRecipe(ChunkTypes.FuelInjector, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter, ChunkTypes.PlubonicAlloy, ChunkTypes.PlubonicAlloy);
 
                         var mat = GameObjectJSON.GetObjectFromGameResources<Material>("VEN_Main");
                         var par = ControlBlock.Prefab.transform;
@@ -745,34 +750,23 @@ namespace Control_Block
                         ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
                             .AddComponent<ModuleBlockMover>(SetInlineSwivel)
                             .RegisterLater();
-
-                        CustomRecipe.RegisterRecipe(
-                            new CustomRecipe.RecipeInput[]
-                            {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                            },
-                            new CustomRecipe.RecipeOutput[]
-                            {
-                    new CustomRecipe.RecipeOutput(1393837)
-                            }, NameOfFabricator: "venfab");
                     }
                     #endregion VEN Inline Swivel
 
                     #region GSO Small Swivel
                     {
                         var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
-                            .SetName("Small Embedded Swivel")
-                            .SetDescription("A smaller swivel. Rapidly-produced, but operational." + MoverText)
+                            .SetName("GSO Small Embedded Swivel")
+                            .SetDescription("It's like the medium embedded swivel, but smaller. Look at how small it is, it's like a macaroon cheeseburger cupcake! Good thing it isn't, or there'd be food all over." + MoverText)
                             .SetBlockID(1393836)
                             .SetFaction(FactionSubTypes.GSO)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(2)
-                            .SetPrice(4470)
+                            .SetPrice(4455)
                             .SetHP(2000)
                             .SetMass(1.5f)
-                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_small_png)));
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivel_small_png)))
+                            .SetRecipe(ChunkTypes.PlubonicGreebles, ChunkTypes.PlubonicGreebles, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter);
 
                         var mat = GameObjectJSON.GetObjectFromGameResources<Material>("GSO_Main");
                         var par = ControlBlock.Prefab.transform;
@@ -786,34 +780,23 @@ namespace Control_Block
                             new Vector3[] { Vector3.down * .5f, Vector3.up * .5f })
                             .AddComponent<ModuleBlockMover>(SetSmallSwivel)
                             .RegisterLater();
-
-                        CustomRecipe.RegisterRecipe(
-                            new CustomRecipe.RecipeInput[]
-                            {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                            },
-                            new CustomRecipe.RecipeOutput[]
-                            {
-                    new CustomRecipe.RecipeOutput(1293838)
-                            });
                     }
                     #endregion GSO Small Swivel
 
                     #region HE Double Swivel
                     {
                         var ControlBlock = new BlockPrefabBuilder(BlockTypes.HE_StdBlock_Alt_1_02_111)
-                            .SetName("Dual Rotor Swivel")
-                            .SetDescription("A swivel with two heads at the top and bottom. Designed by Rafs!" + MoverText)
+                            .SetName("Hawkeye Dual Rotor Swivel")
+                            .SetDescription("A swivel with two heads at the top and bottom. They, uh, don't move separately, they're on the same axle. If one gets stuck, you will smell burning rubber.\n(Designed by Rafs!)" + MoverText)
                             .SetBlockID(1393835)//, "f74931ef3e14ba8e")
                             .SetFaction(FactionSubTypes.HE)
                             .SetCategory(BlockCategories.Base)
                             .SetGrade(2)
-                            .SetPrice(4470)
+                            .SetPrice(5526)
                             .SetHP(2000)
                             .SetMass(2f)
-                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivelblock_he)));
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.swivelblock_he)))
+                            .SetRecipe(ChunkTypes.PlubonicAlloy, ChunkTypes.PlubonicAlloy, ChunkTypes.FuelInjector, ChunkTypes.SensoryTransmitter);
 
                         var mat = GameObjectJSON.GetObjectFromGameResources<Material>("HE_Main");
                         var par = ControlBlock.Prefab.transform;
@@ -826,18 +809,34 @@ namespace Control_Block
                         ControlBlock.SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
                             .AddComponent<ModuleBlockMover>(SetDoubleSwivel)
                             .RegisterLater();
+                    }
+                    #endregion GSO Medium Swivel
 
-                        CustomRecipe.RegisterRecipe(
-                            new CustomRecipe.RecipeInput[]
-                            {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.FuelInjector, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.SensoryTransmitter, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.PlubonicAlloy, 1),
-                            },
-                            new CustomRecipe.RecipeOutput[]
-                            {
-                    new CustomRecipe.RecipeOutput(1393836)
-                            });
+                    #region RR Medium Inline Swivel
+                    {
+                        var ControlBlock = new BlockPrefabBuilder(BlockTypes.GSOBlock_111)
+                            .SetName("R.R. Medium Inline Swivel")
+                            .SetDescription("Instead of a massive stepper motor, we lined the inside of this swivel with hovers. No one really knows why it works, but it's an incredible breakthrough nonetheless.\n(Designed by Rafs!)" + MoverText)
+                            .SetBlockID(29571436)
+                            .SetFaction(FactionSubTypes.EXP)
+                            .SetCategory(BlockCategories.Base)
+                            .SetGrade(0)
+                            .SetPrice(10000)
+                            .SetHP(2000)
+                            .SetMass(4f)
+                            .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.rr_inline_swivel)));
+
+                        var mat = GameObjectJSON.GetObjectFromGameResources<Material>("RR_Main");
+                        var par = ControlBlock.Prefab.transform;
+
+                        AddMeshToBlockMover(mat, new Vector3(1.5f, 1f, 1.5f), new Vector3(.5f, 0f, .5f), par, Properties.Resources.swivel_rr_base);
+                        AddMeshToBlockMover(mat, new Vector3(2f, .5f, 2f), new Vector3(0f, 0f, 0f), par, Properties.Resources.swivel_rr_head, new Vector3(.5f, 0f, .5f));
+                        //gimbal.aimClampMaxPercent = 360;
+                        //gimbal.rotationAxis = GimbalAimer.AxisConstraint.Y;
+
+                        ControlBlock.SetSize(new IntVector3(2, 1, 2), BlockPrefabBuilder.AttachmentPoints.All)
+                            .AddComponent<ModuleBlockMover>(SetMediumInlineSwivel)
+                            .RegisterLater();
                     }
                     #endregion GSO Medium Swivel
                 }
@@ -846,12 +845,12 @@ namespace Control_Block
                 #region Steering Regulator
                 {
                     var SteeringRegulator = new BlockPrefabBuilder(BlockTypes.BF_Block_111)
-                        .SetName("Stabilizer PiD S.Regulator Accessory")
-                        .SetDescription("The PiD technology has been discontinued due to BF Stabilization Computer contracting holes. Please refer to the BF Stabilization Computer guidelines")
+                        .SetName("Inverse Drive Regulator")
+                        .SetDescription("This block got tired of being pushed around by the fancy new BF stabilizer computer, so it decided to 'take the wheel' in a more literal sense...")
                         .SetBlockID(1293839)
                         .SetFaction(FactionSubTypes.BF)
                         .SetCategory(BlockCategories.Accessories)
-                        //.AddComponent<ModuleSteeringRegulator>()
+                        .AddComponent<ModuleSteeringRegulator>()
                         .SetGrade(0)
                         .SetPrice(3467)
                         .SetHP(200)
@@ -1336,7 +1335,7 @@ namespace Control_Block
             {
                 new IntVector3(0,1,0)
             };
-            piston.SFX = TechAudio.SFXType.GSODrillLarge;
+            piston.SFX = TechAudio.SFXType.GSODrillSmall;
             piston.SFXVolume = 1f;
         }
         internal static void SetGeoCorpPiston(ModuleBlockMover piston)
@@ -1522,7 +1521,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             piston.PartCount = 1;
-            piston.TrueMaxVELOCITY = 0.06f;
+            piston.TrueMaxVELOCITY = 0.07f;
             piston.InvPointWeightRatio = 0.12f;
             piston.TrueLimitVALUE = 5f;
             piston.startblockpos = new IntVector3[]
@@ -1545,7 +1544,7 @@ namespace Control_Block
                 new AnimationCurve(), new AnimationCurve(), new AnimationCurve(), new AnimationCurve()
             };
             piston.PartCount = 1;
-            piston.TrueMaxVELOCITY = 0.15f;
+            piston.TrueMaxVELOCITY = 0.3f;
             piston.TrueLimitVALUE = 64f;
             piston.startblockpos = new IntVector3[]
             {
@@ -1616,6 +1615,34 @@ namespace Control_Block
             swivel.SFX = TechAudio.SFXType.GSODrillSmall;
             swivel.SFXVolume = 0.1f;
         }
+        internal static void SetMediumInlineSwivel(ModuleBlockMover swivel)
+        {
+            swivel.IsPlanarVALUE = true;
+            swivel.useRotCurves = true;
+            swivel.rotCurves = new AnimationCurve[]
+            {
+                new AnimationCurve(),
+                new AnimationCurve(new Keyframe(0f,0f,0f,1f), new Keyframe(360f,360f,1f,0f)),
+                new AnimationCurve()
+            };
+            swivel.PartCount = 1;
+            swivel.TrueMaxVELOCITY = 6;
+            swivel.TrueLimitVALUE = 360;
+            swivel.InvPointWeightRatio = 0.12f;
+            swivel.startblockpos = new IntVector3[]
+            {
+                new IntVector3(-1,0,0),
+                new IntVector3(-1,0,1),
+                new IntVector3(0,0,-1),
+                new IntVector3(1,0,-1),
+                new IntVector3(2,0,0),
+                new IntVector3(2,0,1),
+                new IntVector3(0,0,2),
+                new IntVector3(1,0,2),
+            };
+            swivel.SFX = TechAudio.SFXType.GCBuzzSaw;
+            swivel.SFXVolume = 0f;
+        }
         internal static void SetSmallSwivel(ModuleBlockMover swivel)
         {
             swivel.IsPlanarVALUE = true;
@@ -1647,7 +1674,7 @@ namespace Control_Block
                 new AnimationCurve()
             };
             swivel.PartCount = 1;
-            swivel.TrueMaxVELOCITY = 6;
+            swivel.TrueMaxVELOCITY = 9;
             swivel.TrueLimitVALUE = 360;
             swivel.startblockpos = new IntVector3[]
             {
@@ -1664,13 +1691,13 @@ namespace Control_Block
 
         private static void SetGCSmallPad(ModuleFrictionPad obj)
         {
-            obj.strength = .5f;
-            obj.threshold = 1f;
+            obj.strength = 0f;//.75f;
+            obj.threshold = 40f;
         }
         private static void SetGCBigPad(ModuleFrictionPad obj)
         {
-            obj.strength = .76f;
-            obj.threshold = 2f;
+            obj.strength = 1f;
+            obj.threshold = 200f;
             obj.effector = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
@@ -1706,6 +1733,7 @@ namespace Control_Block
         public static Vector3 PointerPos;
         static readonly int PointerLayerMask = Globals.inst.layerTank.mask | Globals.inst.layerTankIgnoreTerrain.mask | Globals.inst.layerScenery.mask | Globals.inst.layerPickup.mask | Globals.inst.layerTerrain.mask;
         const float PointerDistance = 512f;
+        private int lastBlockCount = -1;
 
         void LateUpdate()
         {
@@ -1734,7 +1762,7 @@ namespace Control_Block
                             num = distance;
                             ClusterBody component = hit.collider.GetComponent<ModuleBlockMover.ModuleBMPart>()?.parent.Holder;
                             if (component == null) component = hit.collider.GetComponentInParent<ClusterBody>();
-                            if (component != null && (tank == null || component.coreTank == tank))
+                            if (component != null && (/*tank == null || */component.coreTank == tank))
                                 tankbody = component;
                             else
                                 tankbody = null;
@@ -1742,13 +1770,22 @@ namespace Control_Block
                     }
                     if (tankbody != null)
                     {
-                        Patches.ClusterBody = tankbody.transform;
+                        if (Patches.DoOffsetAttachParticles == 0 || Patches.FocusedBody != tankbody || lastBlockCount != tank.blockman.blockCount)
+                            ManTechBuilder.inst.ResetAPCollection();
+                        lastBlockCount = tank.blockman.blockCount;
+
+                        Patches.FocusedBody = tankbody;
                         Patches.FocusedTech = tankbody.coreTank.trans;
-                        if (tank == null)
-                        {
-                            ManPointer.inst.DraggingFocusTech = tankbody.coreTank;
-                        }
+                        //if (tank == null)
+                        //    ManPointer.inst.DraggingFocusTech = tankbody.coreTank;
+
                         Patches.DoOffsetAttachParticles = 4;
+                    }
+                    else if (Patches.DoOffsetAttachParticles == 0 && Patches.FocusedBody != null)
+                    {
+                        Patches.FocusedBody = null;
+                        ManTechBuilder.inst.ResetAPCollection();
+                        lastBlockCount = -1;
                     }
                 }
             }
@@ -1758,120 +1795,36 @@ namespace Control_Block
 
     internal class Patches
     {
-        //private static FieldInfo H_mASS, H_mTCU, H_mTCR, H_pB,
-        //    F_mTSR, F_mASS, F_mE, F_mPB,
-        //    B_mE, B_mASS, B_mFSC, B_mPB;
-
-        //static Patches()
-        //{
-        //    try
-        //    {
-        //        BindingFlags b = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
-        //        {
-        //            Type T = typeof(HoverJet);
-        //            H_mASS = T.GetField("m_AutoStabiliseStrength", b);
-        //            H_mTCU = T.GetField("m_ThrustContributionUp", b);
-        //            H_mTCR = T.GetField("m_ThrustContributionRight", b);
-        //            H_pB = T.GetField("parentBlock", b);
-        //        }
-        //        {
-        //            Type T = typeof(FanJet);
-        //            F_mPB = T.GetField("m_ParentBlock", b);
-        //            F_mASS = T.GetField("m_AutoStabiliseStrength", b);
-        //            F_mTSR = T.GetField("m_TargetSpinRate", b);
-        //            F_mE = T.GetField("m_Effector", b);
-        //        }
-        //        {
-        //            Type T = typeof(BoosterJet);
-        //            B_mE = T.GetField("m_Effector", b);
-        //            B_mASS = T.GetField("m_AutoStabiliseStrength", b);
-        //            B_mFSC = T.GetField("m_FireStrengthCurrent", b);
-        //            B_mPB = T.GetField("m_ParentBlock", b);
-        //        }
-        //        {
-        //            m_AwaitingPhysicsReset = typeof(Tank).GetField("m_AwaitingPhysicsReset", b);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //    }
-        //}
-
-        //[HarmonyPatch(typeof(BlockManager), "AddBlockToTech")]
-        //private static class BlockManagerFix
-        //{
-        //    private static void Prefix(ref BlockManager __instance, ref TankBlock block, IntVector3 localPos)
-        //    {
-        //        foreach (TankBlock _b in __instance.IterateBlocks())
-        //        {
-        //            var module = _b.GetComponent<ModuleBlockMover>();
-        //            if (module)
-        //            {
-        //                module.BeforeBlockAdded(block);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //SR
-
-        //[HarmonyPatch(typeof(HoverJet), "AutoStabiliseTank")]
-        //private static class HoverJetStabilizePatch
-        //{
-        //    private static void Postfix(ref HoverJet __instance, ref float driveInput, ref float turnInput)
-        //    {
-        //        ModuleSteeringRegulator sr = ((TankBlock)H_pB.GetValue(__instance)).tank.gameObject.GetComponentInChildren<ModuleSteeringRegulator>();
-        //        if (sr != null && sr.CanWork)
-        //        {
-        //            float ___m_AutoStabiliseStrength = (float)H_mASS.GetValue(__instance);
-        //            Vector3 lhs = Quaternion.Inverse(sr.rbody.rotation) * sr.lhs * sr.HoverMod;
-        //            float num = 1f;
-        //            driveInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCU.GetValue(__instance));
-        //            driveInput = Mathf.Clamp(driveInput, -num, num);
-        //            turnInput -= ___m_AutoStabiliseStrength * Vector3.Dot(lhs, (Vector3)H_mTCR.GetValue(__instance));
-        //            turnInput = Mathf.Clamp(turnInput, -num, num);
-        //        }
-        //    }
-        //}
-
-        //public static bool AwaitingOverride;
-
-        //[HarmonyPatch(typeof(TargetAimer), "GetManualTarget")] // Create new hook to TargetAimer.GetManualTarget
-        //static class ChangeTarget
-        //{
-        //    private static bool Prefix(ref TargetAimer __instance, ref Visible __result)
-        //    {
-        //        if (!AwaitingOverride) return true;
-        //        AwaitingOverride = false;
-        //        var tank = __instance.GetComponentInParent<Tank>();
-        //        var swivel = tank.GetComponentInChildren<ModuleSwivel>();
-        //        if (swivel != null && swivel.mode == ModuleSwivel.Mode.AimAtPlayer)
-        //        {
-        //            __result = Singleton.playerTank.visible;
-        //            return false;
-        //        }
-        //        return true;
-        //    }
-        //}
-
         static Vector3 oP;
         static Quaternion oQ;
         public static Transform FocusedTech;
-        public static Transform ClusterBody;
+        public static ClusterBody FocusedBody;
         public static byte DoOffsetAttachParticles = 0;
 
-        //[HarmonyPatch(typeof(ManTechBuilder), "OnDragItem")]
-        //static class OnDragItem_Offset
-        //{
-        //    static void Prefix()
-        //    {
-        //        _Offset();
-        //    }
-        //    static void Postfix()
-        //    {
-        //        _undoOffset();
-        //    }
-        //}
+        /// <summary>
+        /// <see cref="BlockManager.TableCache"/>
+        /// </summary>
+        static FieldInfo BlockPlacementCollector_m_BlockTableCache = typeof(BlockPlacementCollector).GetField("m_BlockTableCache", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+
+        [HarmonyPatch(typeof(BlockPlacementCollector), "ResetState")]
+        static class SeepInCustomAPTable
+        {
+            static void Postfix(BlockPlacementCollector __instance)
+            {
+                if (DoOffsetAttachParticles != 0 && FocusedBody != null && __instance.PlacementsValid)
+                {
+                    var tableCache = (BlockManager.TableCache)BlockPlacementCollector_m_BlockTableCache.GetValue(__instance);
+                    byte[,,] newTable = new byte[BlockManager.MaxBlockLimit, BlockManager.MaxBlockLimit, BlockManager.MaxBlockLimit];
+                    foreach (var pair in FocusedBody.ClusterAPBitField)
+                    {
+                        var i = pair.Key + tableCache.blockTableCentre;
+                        newTable[i.x, i.y, i.z] = pair.Value;
+                    }
+                    tableCache.apTable = newTable;
+                    BlockPlacementCollector_m_BlockTableCache.SetValue(__instance, tableCache);
+                }
+            }
+        }
 
         [HarmonyPatch(typeof(ManTechBuilder), "Update")]
         static class UpdateAttachParticles_Offset
@@ -1905,15 +1858,15 @@ namespace Control_Block
 
         static void _Offset()
         {
-                if (ClusterBody == null || FocusedTech == null)
+                if (FocusedBody == null || FocusedTech == null)
                 {
                     DoOffsetAttachParticles = 0;
                     return;
                 }
                 oP = FocusedTech.position;
                 oQ = FocusedTech.rotation;
-                FocusedTech.position = ClusterBody.position;
-                FocusedTech.rotation = ClusterBody.rotation;
+                FocusedTech.position = FocusedBody.transform.position;
+                FocusedTech.rotation = FocusedBody.transform.rotation;
         }
 
         static void _undoOffset()
@@ -1934,43 +1887,13 @@ namespace Control_Block
                 foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
                 {
                     blockmover.PreResetPhysics();
-                    //if (blockmover.Holder != null)
-                    //{
-                    //    _RecursivePre(blockmover.Holder);
-                    //}
                 }
             }
-            //static void _RecursivePre(ClusterBody body)
-            //{
-            //    foreach (var blockmover in body.moduleBlockMover.GrabbedBlockMovers)
-            //    {
-            //        blockmover.PreResetPhysics();
-            //        if (blockmover.Holder != null)
-            //        {
-            //            _RecursivePre(blockmover.Holder);
-            //        }
-            //    }
-            //}
-            //static void _RecursivePost(ClusterBody body)
-            //{
-            //    foreach (var blockmover in body.moduleBlockMover.GrabbedBlockMovers)
-            //    {
-            //        blockmover.PostResetPhysics();
-            //        //if (blockmover.Holder != null)
-            //        //{
-            //        //    _RecursivePost(blockmover.Holder);
-            //        //}
-            //    }
-            //}
             private static void Postfix(Tank __instance)
             {
                 foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
                 {
                     blockmover.PostResetPhysics();
-                    //if (blockmover.Holder != null)
-                    //{
-                    //    _RecursivePost(blockmover.Holder);
-                    //}
                 }
             }
         }
