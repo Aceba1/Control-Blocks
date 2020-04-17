@@ -1542,6 +1542,9 @@ namespace Control_Block
             IsNetworkingInitiated = true;
             Nuterra.NetHandler.Subscribe<BlockMoverMessage>(NetMsgMoverID, ReceiveMoverChange, PromptNewMoverChange);
             Nuterra.NetHandler.OnPlayerJoined += SyncPlayer;
+
+            #warning USE TECH EVENTS TO SYNCHRONIZE
+            //ManNetTechs.inst.event
         }
 
         private static void SyncPlayer(NetPlayer player)
