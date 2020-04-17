@@ -59,7 +59,7 @@ namespace Control_Block
 
         public ClusterBody Destroy()
         {
-            moduleBlockMover.block.tank.control.driveControlEvent.Unsubscribe(GetDriveControl);
+            coreTank?.control.driveControlEvent.Unsubscribe(GetDriveControl);
             Clear(true);
             Destroy(gameObject);
             /* ManWorldTreadmill.inst.RemoveListener(this); */
@@ -73,22 +73,31 @@ namespace Control_Block
 
         public void GetDriveControl(TankControl.ControlState state)
         {
-            if (ForceFireNextFrame)
+            try
             {
-                foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon on
-                    weapon.FireControl = true;
+                if (ForceFireNextFrame)
+                {
+                    foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon on
+                        weapon.FireControl = true;
 
-                foreach (var drill in blockDrills)
-                    ModuleDrill_m_Spinning.SetValue(drill, true); // why is this value private
+                    foreach (var drill in blockDrills)
+                        ModuleDrill_m_Spinning.SetValue(drill, true); // why is this value private
 
-                ForceFireNextFrame = false;
+                    ForceFireNextFrame = false;
+                }
+                if (ForceNoFireNextFrame)
+                {
+                    foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon off
+                        weapon.FireControl = false;
+
+                    ForceNoFireNextFrame = false;
+                }
             }
-            if (ForceNoFireNextFrame)
+            catch (NullReferenceException)
             {
-                foreach (var weapon in blockWeapons) // Set every cached ModuleWeapon off
-                    weapon.FireControl = false;
-
-                ForceNoFireNextFrame = false;
+                Console.WriteLine("Null weapon block on " + coreTank.name + ":" + moduleBlockMover.UIName + "!");
+                blockWeapons.RemoveAll(v => v == null);
+                blockDrills.RemoveAll(v => v == null);
             }
         }
 
@@ -393,11 +402,9 @@ namespace Control_Block
             }
 
             ModuleWeapon weapon = block.GetComponent<ModuleWeapon>();
-            if (weapon) blockWeapons.Add(weapon);
+            if (weapon != null) blockWeapons.Add(weapon);
             ModuleDrill drill = block.GetComponent<ModuleDrill>();
-            if (drill) blockDrills.Add(drill);
-
-
+            if (drill != null) blockDrills.Add(drill);
 
             return;
         }

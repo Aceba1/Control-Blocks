@@ -1068,7 +1068,7 @@ namespace Control_Block
             block.tank.TechAudio.RemoveModule<ModuleBlockMover>(this);
             if (Holder != null)
             {
-                Holder.coreTank = block.tank;
+                //Holder.coreTank = block.tank;
                 Holder = Holder.Destroy();
             }
             LastSentVELOCITY = 0f;
