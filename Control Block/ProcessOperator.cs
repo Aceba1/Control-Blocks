@@ -524,19 +524,19 @@ namespace Control_Block
 
                 case InputType.IfPosAbove:
                     if (block.IsPlanarVALUE)
-                        return ((m_Val + 900) % 360) - 180 > m_InputParam;
+                        return ((block.PVALUE + 900) % 360) - 180 > m_InputParam;
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
-                    return m_Val > m_InputParam;
+                    return block.PVALUE > m_InputParam;
                 case InputType.IfPosBelow:
                     if (block.IsPlanarVALUE)
-                        return ((m_Val + 900) % 360) - 180 < m_InputParam;
+                        return ((block.PVALUE + 900) % 360) - 180 < m_InputParam;
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
-                    return m_Val < m_InputParam;
+                    return block.PVALUE < m_InputParam;
                 case InputType.IfPosEqual:
                     if (block.IsPlanarVALUE)
-                        return m_InputParam.Approximately(((m_Val + 900) % 360) - 180);
+                        return m_InputParam.Approximately(((block.PVALUE + 900) % 360) - 180);
                     m_InputParam = Mathf.Max(m_InputParam, 0f);
-                    return m_Val.Approximately(m_InputParam);
+                    return block.PVALUE.Approximately(m_InputParam);
 
                 case InputType.IfSpeedAbove:
                     return m_Vel > m_InputParam;
