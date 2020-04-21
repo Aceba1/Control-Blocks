@@ -23,10 +23,10 @@ namespace Control_Block
             public string ToggleComment;
             public float ToggleMultiplier;
             public float DefaultValue;
-            public bool DummyNegative;
+            public string DummyNegative;
             //public float SliderStep;
 
-            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, float defaultValue = 0f, bool dummyNegative = false)
+            public UIDispOperation(string UIname, string UIdesc, bool lockInputTypes = false, InputType permittedInputType = InputType.AlwaysOn, bool hideStrength = false, bool strengthIsToggle = false, bool clampStrength = false, float sliderFraction = 0f, bool sliderHasNegative = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVel = false, bool sliderMinOnPlanar = false, float defaultValue = 0f, string dummyNegative = null)
             {
                 LockInputTypes = lockInputTypes;
                 PermittedInputType = permittedInputType;
@@ -53,20 +53,21 @@ namespace Control_Block
             public bool HideParam;
             public bool ParamIsToggle;
             public bool ParamIsTrueValue, SliderMaxIsMaxVal, SliderMaxIsMaxVel;
-            public string UIName;
+            public string UIName, UIDesc;
             public float SliderMax;
             public string ToggleComment;
             public float ToggleMultiplier;
             public float DefaultValue;
-            public bool DummyNegative;
+            public string DummyNegative;
             //public float SliderStep;
 
-            public UIDispInput(string UIname, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, float defaultValue = 0f, bool dummyNegative = true)
+            public UIDispInput(string UIname, string UIdesc, bool hideInputKey = false, bool hideParam = false, bool paramIsToggle = false, bool paramIsTrueValue = false, float sliderMax = 0f, string toggleComment = "Invert", float toggleMultiplier = 1f, bool sliderMaxIsMaxVal = false, bool sliderMaxIsMaxVel = false, float defaultValue = 0f, string dummyNegative = null)
             {
                 HideInputKey = hideInputKey;
                 HideParam = hideParam;
                 ParamIsToggle = paramIsToggle;
                 UIName = UIname;
+                UIDesc = UIdesc;
                 ParamIsTrueValue = paramIsTrueValue;
                 SliderMax = sliderMax;
                 ToggleComment = toggleComment;
@@ -161,7 +162,7 @@ namespace Control_Block
             {OperationType.SetPos, new UIDispOperation("Set Position", "Set the position or angle to Strength", defaultValue:0f, sliderFraction:1f, sliderMinOnPlanar:true) },
             {OperationType.ShiftSpeed, new UIDispOperation("Shift Speed", "Accelerate the velocity by Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
             {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
-            {OperationType.ArrowPoint, new UIDispOperation("Velocity Point", "Aim towards the velocity of the tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.ArrowPoint, new UIDispOperation("Velocity Point", "Aim towards the direction the tech is moving (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.GroundPoint, new UIDispOperation("Ground Point", "Aim towards the ground's surface (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)\nThis will recenter if enemy is lost while running", defaultValue:1f, clampStrength:true) },
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
@@ -171,9 +172,9 @@ namespace Control_Block
             {OperationType.OrThen, new UIDispOperation("OR IF Condition", "Check this condition if the one above condition is not met", strengthIsToggle:true, toggleComment:"Use timer from top") },
             {OperationType.ElseThen, new UIDispOperation("ELSE", "Skip to EndIF if the condition above is met, or run to EndIF if it is not", lockInputTypes:true, hideStrength:true) },
             {OperationType.EndIf, new UIDispOperation("End IF", "Close the highest IF branch and proceed as normal", lockInputTypes:true, hideStrength:true) },
-            {OperationType.Nothing, new UIDispOperation("Do Nothing", "No contribution to the block mover", hideStrength:true) },
+            {OperationType.Nothing, new UIDispOperation("Do Nothing", "it does nothing", hideStrength:true) },
 #warning Might want to fix Deny Firing at some point
-            {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", dummyNegative:true, strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
+            {OperationType.FireWeapons, new UIDispOperation("Fire weapons", "Any weapons on this cluster? Bam, unemployed", dummyNegative:"DenyFireWeapons", strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
 
 
             //{OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
@@ -185,22 +186,22 @@ namespace Control_Block
         };
         public static Dictionary<InputType, UIDispInput> UIInputPairs = new Dictionary<InputType, UIDispInput>
         {
-            {InputType.AlwaysOn, new UIDispInput("Unconditional", hideInputKey:true, hideParam:true) },
-            {InputType.OnPress, new UIDispInput("On Key Press", defaultValue:1f, paramIsToggle:true) },
-            {InputType.WhileHeld, new UIDispInput("On Key Hold", defaultValue:1f, paramIsToggle:true) },
-            {InputType.OnRelease, new UIDispInput("On Key Release", defaultValue:1f, paramIsToggle:true) },
-            {InputType.Toggle, new UIDispInput("Toggle Key", dummyNegative:false, defaultValue:-1f, paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
-            {InputType.EnemyTechIsNear, new UIDispInput("Enemy is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
-            {InputType.PlayerTechIsNear, new UIDispInput("Player is Near", defaultValue:10f, hideInputKey:true, sliderMax:64) },
-            {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", defaultValue:10f, hideInputKey:true, sliderMax:64) },
-            {InputType.AboveVelocity, new UIDispInput("Above Velocity", defaultValue:10f, hideInputKey:true, sliderMax:60) },
+            {InputType.AlwaysOn, new UIDispInput("Unconditional", "Just DOIT!", hideInputKey:true, hideParam:true) },
+            {InputType.OnPress, new UIDispInput("On Key Press", "The moment this key is tapped", dummyNegative:"WhileNotPress", defaultValue:1f, paramIsToggle:true) },
+            {InputType.WhileHeld, new UIDispInput("On Key Hold", "As long as this key is held", dummyNegative:"WhileNotHeld", defaultValue:1f, paramIsToggle:true) },
+            {InputType.OnRelease, new UIDispInput("On Key Release", "Right when this key is released", dummyNegative:"WhileNotRelease", defaultValue:1f, paramIsToggle:true) },
+            {InputType.Toggle, new UIDispInput("Toggle Key", "Pressing this key turns this on or off", defaultValue:-1f, paramIsToggle:true, toggleComment:"State", toggleMultiplier:-1f) },
+            {InputType.EnemyTechIsNear, new UIDispInput("Enemy is Near", "While an enemy is within this range", dummyNegative:"EnemyTechIsFar", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.PlayerTechIsNear, new UIDispInput("Player is Near", "While the 1st player is within this range", dummyNegative:"PlayerTechIsFar", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.AboveSurfaceElev, new UIDispInput("Above Surface Elevation", "Checks how high it is from the surface directly below", dummyNegative:"BelowSurfaceElev", defaultValue:10f, hideInputKey:true, sliderMax:64) },
+            {InputType.AboveVelocity, new UIDispInput("Above Velocity", "Checks how many Meters-per-Second this block is moving (1 meter is 1 block unit)", dummyNegative:"BelowVelocity", defaultValue:10f, hideInputKey:true, sliderMax:60) },
 
-            {InputType.IfPosAbove, new UIDispInput("If Position Above", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosBelow, new UIDispInput("If Position Below", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfPosEqual, new UIDispInput("If Position Equal", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
-            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
-            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", dummyNegative:false, defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfPosAbove, new UIDispInput("If Position Above", "Checks current value of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosBelow, new UIDispInput("If Position Below", "Checks current value of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfPosEqual, new UIDispInput("If Position Equal", "Checks current value of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVal:true) },
+            {InputType.IfSpeedAbove, new UIDispInput("If Speed Above", "Checks current change-rate of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedBelow, new UIDispInput("If Speed Below", "Checks current change-rate of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
+            {InputType.IfSpeedEqual, new UIDispInput("If Speed Equal", "Checks current change-rate of this block", defaultValue:0f, hideInputKey:true, sliderMaxIsMaxVel:true) },
 
 
             //{InputType.IfSprStrengthAbove, new UIDispInput("If Spring strength Above", hideInputKey:true, paramIsTrueValue:true) },
@@ -221,6 +222,7 @@ namespace Control_Block
             TargetPoint,
             PlayerPoint,
             GroundPoint,
+            NorthPoint,
             SetLockJoint,
             SetBodyJoint,
             SetFreeJoint,
@@ -390,6 +392,8 @@ namespace Control_Block
                         return true;
 
                     case OperationType.SetLockJoint:
+                        if (blockMover.CanOnlyBeLockJoint)
+                            return false;
                         moverType = ModuleBlockMover.MoverType.Static;
                         return true;
 
@@ -559,11 +563,13 @@ namespace Control_Block
             if (dummyMode)
             {
                 if (iT.HideInputKey)
-                    return (iT.DummyNegative && m_InputParam < 0f ? "-" : "")
-                        + m_InputType.ToString() + " ";
+                    return (m_InputParam < 0f && iT.DummyNegative != null ? 
+                        iT.DummyNegative : m_InputType.ToString())
+                        + " ";
                 else
-                    return (iT.DummyNegative && m_InputParam < 0f ? "-" : "")
-                        + m_InputType.ToString() + " " + m_InputKey.ToString() + " ";
+                    return (m_InputParam < 0f && iT.DummyNegative != null ? 
+                        iT.DummyNegative : m_InputType.ToString()) 
+                        + " " + m_InputKey.ToString() + " ";
             }
             return m_InputType.ToString() + " ( " +  // Condition and parenthesis
                 (iT.HideInputKey ? "" : m_InputKey.ToString()) + // 1st parameter
@@ -577,7 +583,7 @@ namespace Control_Block
         string GetActionString(bool dummyMode)
         {
             var oT = UIOperationPairs[m_OperationType];
-            return "DO " + (oT.DummyNegative && m_Strength < 0f ? "-" : "") + m_OperationType.ToString() + (dummyMode ? " " : " ( ") + (oT.HideStrength ? "" : m_Strength.ToString()) + (dummyMode ? "" : " )"); // 'Dummy mode' removes the parenthesis only
+            return "DO " + (dummyMode && m_Strength < 0f && oT.DummyNegative != null ? oT.DummyNegative : m_OperationType.ToString()) + (dummyMode ? " " : " ( ") + (oT.HideStrength ? "" : m_Strength.ToString()) + (dummyMode ? "" : " )"); // 'Dummy mode' removes the parenthesis only
         }
 
         public string ToString(bool dummyMode)
@@ -585,9 +591,9 @@ namespace Control_Block
             switch (m_OperationType)
             {
                 case OperationType.IfThen:
-                    return "IF ( " + GetConditionString(dummyMode) + (dummyMode ? " )" : $", {m_Strength} )");
+                    return (dummyMode && m_Strength != 0f ? "TIMER ( " : "IF ( ") + GetConditionString(dummyMode) + (dummyMode ? " )" : $", {m_Strength} )");
                 case OperationType.OrThen:
-                    return "OR IF ( " + GetConditionString(dummyMode) + (dummyMode ? " )" : $", {m_Strength} )");
+                    return (dummyMode && m_Strength < 0f ? "OR TIMER ( " : "OR IF ( ") + GetConditionString(dummyMode) + (dummyMode ? " )" : $", {m_Strength} )");
                 case OperationType.EndIf:
                     return "ENDIF";
                 case OperationType.ElseThen:

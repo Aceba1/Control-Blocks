@@ -902,7 +902,7 @@ namespace Control_Block
                                     GUILayout.BeginVertical("Condition " + uii.UIName, GUI.skin.window);
                                     {
                                         UIInputPopup.Button();
-                                        GUILayout.Label(uii.UIName);
+                                        GUILayout.Label(uii.UIDesc);
                                         GUILayout.BeginHorizontal();
                                         {
                                             if (uii.HideInputKey)
