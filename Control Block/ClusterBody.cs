@@ -92,6 +92,18 @@ namespace Control_Block
 
                     ForceNoFireNextFrame = false;
                 }
+                //if (ForceDetonateNextFrame)
+                //{
+                //    var detonators = GetComponentsInChildren<ModuleDetachableLink>();
+                //    if (detonators.Length != 0)
+                //    {
+                //        TechSplitNamer namer = new TechSplitNamer(coreTank);
+                //        foreach (var detonator in detonators)
+                //        {
+                //            detonator.OnDetachTriggered(namer);
+                //        }
+                //    }
+                //}
             }
             catch (NullReferenceException)
             {
