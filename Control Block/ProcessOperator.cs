@@ -99,11 +99,12 @@ namespace Control_Block
             },
             new OperationType[] {
                 OperationType.ArrowPoint,
-                OperationType.GroundPoint,
                 OperationType.TargetPoint,
                 OperationType.PlayerPoint,
                 OperationType.CursorPoint,
-                OperationType.CameraPoint
+                OperationType.CameraPoint,
+                OperationType.GroundPoint,
+                OperationType.NorthPoint
             },
             //new OperationType[] {
             //    OperationType.SetLockJoint,
@@ -164,6 +165,7 @@ namespace Control_Block
             {OperationType.SetSpeed, new UIDispOperation("Set Speed", "Set the velocity to Strength", defaultValue:0f, sliderMaxIsMaxVel:true, sliderHasNegative:true) },
             {OperationType.ArrowPoint, new UIDispOperation("Velocity Point", "Aim towards the direction the tech is moving (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.GroundPoint, new UIDispOperation("Ground Point", "Aim towards the ground's surface (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
+            {OperationType.NorthPoint, new UIDispOperation("North Point", "Aim at a compass direction, Strength degrees to North", defaultValue:0f, sliderHasNegative:true, sliderMax:180f) },
             {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)\nThis will recenter if enemy is lost while running", defaultValue:1f, clampStrength:true) },
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
             {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", defaultValue:1f, clampStrength:true) },
@@ -374,6 +376,17 @@ namespace Control_Block
                         if (blockMover.IsPlanarVALUE) reducer = 1f - reducer;
                         Value += PointAtTarget(block.trans, Vector3.up * (outHeight - comw.y) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength * reducer;
                         //Value += PointAtTarget(block.trans, Vector3.down * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
+                        return true;
+
+                    case OperationType.NorthPoint:
+
+                        if (blockMover.IsPlanarVALUE)
+                            Value = (Vector3.SignedAngle(block.trans.forward, Vector3.ProjectOnPlane(Vector3.forward, block.trans.up), block.trans.up) + m_Strength + 900f) % 360f - 180f;
+                        else
+                        {
+                            float rad = m_Strength * Mathf.Deg2Rad;
+                            Value = block.trans.InverseTransformDirection(new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad))).y;
+                        }
                         return true;
 
                     case OperationType.SetFreeJoint:
