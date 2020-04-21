@@ -345,7 +345,7 @@ namespace Control_Block
                 {
                     try
                     {
-                        win = GUI.Window(EditID, win, DoEditWindow, module.UIName + (module.Valid || module.startblockpos.Length == 0 ? "" : " [Stuck]"));
+                        win = GUI.Window(EditID, win, DoEditWindow, module.UIName + (module.Valid || module.startblockpos.Length == 0 ? "" : " [" + module.InvalidReason + "]"));
                         if (showPresetsUI)
                             PresetsIMGUI.DoWindow();
                     }

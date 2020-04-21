@@ -83,6 +83,8 @@ namespace Control_Block
 
         [NonSerialized]
         public bool Valid = true;
+        [NonSerialized]
+        public string InvalidReason = "Corrupt";
 
         /// <summary>
         /// Block-cache for blocks found after re-evaluation
@@ -1075,6 +1077,7 @@ namespace Control_Block
             PVALUE = 0f;
             UpdatePartTransforms();
             Valid = false;
+            InvalidReason = "Detached";
         }
 
         internal void Attach()
@@ -1297,6 +1300,7 @@ namespace Control_Block
             if (!CanStartGetBlocks(blockman))
             {
                 Print("> Unique pre-blockgrab check failed!");
+                InvalidReason = "Bad setup";
                 return false;
             }
 
@@ -1306,6 +1310,7 @@ namespace Control_Block
             if (startblockpos.Length == 0)
             {
                 Print("> There are no starting positions to get blocks!");
+                InvalidReason = "Corrupt";
                 return false;
             }
 
@@ -1384,7 +1389,8 @@ namespace Control_Block
                                 }
                                 else
                                 {
-                                    //Print("Looped to self! Escaping blockgrab");
+                                    Print("Looped to self! Escaping blockgrab");
+                                    InvalidReason = "Stuck";
                                     return false;
                                 }
                             }
@@ -1412,6 +1418,7 @@ namespace Control_Block
                     //Print("Parent encountered! Escaping blockgrab (Impossible structure)");
                     for (int p = WatchDog.IndexOf(bm) + 1; p < WatchDog.Count; p++) // Add 1 to the index, and let the encountered parent decide if it could move
                         WatchDog[p].StarterBlocks.Clear();
+                    InvalidReason = "Stuck in loop";
                     return false;
                 }
 
@@ -1427,6 +1434,7 @@ namespace Control_Block
                     {
                         //Print("Impossible structure! Escaping blockgrab");
                         GrabbedBlockMovers.Clear();
+                        InvalidReason = "Stuck in loop";
                         return false; // They took our knees, also leave
                     }
                 }
@@ -1441,6 +1449,7 @@ namespace Control_Block
             if (block.tank.blockman.IsRootBlock(b))
             {
                 Print("Encountered cab! Escaping blockgrab (false)");
+                InvalidReason = "Can't move Cab";
                 return false;
             }
             return true;
