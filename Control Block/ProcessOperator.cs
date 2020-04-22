@@ -343,7 +343,7 @@ namespace Control_Block
                             Value += SafePlanarPointAngle(block.trans, planar, Value) * Mathf.Clamp01(m_Strength * m_Strength * planar.magnitude);
                             return true;
                         }
-                        Value += (block.trans.InverseTransformDirection(vel * Mathf.Sign(m_Strength)).y - Value) * Mathf.Clamp01(m_Strength * m_Strength);
+                        Value += block.trans.InverseTransformDirection(vel * Mathf.Sign(m_Strength)).y * Mathf.Clamp01(m_Strength * m_Strength);
                         return true;
 
                     case OperationType.TargetPoint:
