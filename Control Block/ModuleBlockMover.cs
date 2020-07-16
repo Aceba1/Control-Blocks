@@ -132,7 +132,7 @@ namespace Control_Block
                 {
                     float v = (value + 360) % 360;
                     if (o < v)
-                        o = o + 360;
+                        o += 360;
                     _CENTERLIMIT = ((v + o) * 0.5f + 360) % 360;
                     _EXTENTLIMIT = (o - v) * 0.5f;
                     if (_EXTENTLIMIT.Approximately(0f)) _EXTENTLIMIT = HalfLimitVALUE;
@@ -169,7 +169,7 @@ namespace Control_Block
                 {
                     float v = (value + 360) % 360;
                     if (o > v)
-                        v = v + 360;
+                        v += 360;
                     _CENTERLIMIT = ((v + o) * 0.5f + 360) % 360;
                     _EXTENTLIMIT = (v - o) * 0.5f;
                     if (_EXTENTLIMIT.Approximately(0f)) _EXTENTLIMIT = HalfLimitVALUE;
@@ -1078,6 +1078,7 @@ namespace Control_Block
             UpdatePartTransforms();
             Valid = false;
             InvalidReason = "Detached";
+            SetDirty();
         }
 
         internal void Attach()

@@ -899,7 +899,7 @@ namespace Control_Block
 
                                 if (!uio.LockInputTypes)
                                 {
-                                    GUILayout.BeginVertical("Condition " + uii.UIName, GUI.skin.window);
+                                    GUILayout.BeginVertical(uii.UIName, GUI.skin.window);
                                     {
                                         UIInputPopup.Button();
                                         GUILayout.Label(uii.UIDesc);
@@ -984,7 +984,7 @@ namespace Control_Block
                                     GUILayout.EndVertical();
                                 }
 
-                                GUILayout.BeginVertical("Operator " + uio.UIName, GUI.skin.window);
+                                GUILayout.BeginVertical(uio.UIName, GUI.skin.window);
                                 {
                                     UIOperatorPopup.Button();
                                     GUILayout.Label(uio.UIDesc);
