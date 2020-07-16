@@ -327,6 +327,7 @@
     <Compile Include="ModuleBlockMoverRail.cs" />
     <Compile Include="ModuleMTMagnet.cs" />
     <Compile Include="ModuleFrictionPad.cs" />
+    <Compile Include="ModuleMTMagnetV2.cs" />
     <Compile Include="PopupIMGUI.cs" />
     <Compile Include="ProcessOperator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
