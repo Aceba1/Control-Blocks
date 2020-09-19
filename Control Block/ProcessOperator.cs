@@ -170,7 +170,7 @@ namespace Control_Block
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
             {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
             {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
-            {OperationType.IfThen, new UIDispOperation("Start IF THEN", "Run everything up to EndIF or ELSE, if the condition is met (for Strength amount of time)", defaultValue:0f, sliderMax:5f, toggleComment:"False after time") },
+            {OperationType.IfThen, new UIDispOperation("Start IF THEN", "Run everything up to EndIF or ELSE, if the condition is met (for Strength amount of seconds)", defaultValue:0f, sliderMax:5f, toggleComment:"False after time") },
             {OperationType.OrThen, new UIDispOperation("OR IF THEN", "Use this condition if the condition above is not met", strengthIsToggle:true, toggleComment:"Use timer from top") },
             {OperationType.ElseThen, new UIDispOperation("ELSE THEN", "If the above condition failed, do what is below", lockInputTypes:true, hideStrength:true) },
             {OperationType.EndIf, new UIDispOperation("End IF", "Close the condition branch above and proceed as normal", lockInputTypes:true, hideStrength:true) },

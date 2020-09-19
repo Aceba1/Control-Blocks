@@ -41,7 +41,7 @@ namespace Control_Block
         public List<ModuleWeapon> blockWeapons = new List<ModuleWeapon>();
         public List<ModuleDrill> blockDrills = new List<ModuleDrill>();
 
-        public ModuleBlockMover moduleBlockMover;
+        public BlockMoverHead moduleMover;
         public Tank coreTank;
         public Rigidbody parentBody;
         public bool Dirty;
@@ -107,7 +107,7 @@ namespace Control_Block
             }
             catch (NullReferenceException)
             {
-                Console.WriteLine("Null weapon block on " + coreTank.name + ":" + moduleBlockMover.UIName + "!");
+                Console.WriteLine("Null weapon block on " + coreTank.name + ":" + moduleMover.UIName + "!");
                 blockWeapons.RemoveAll(v => v == null);
                 blockDrills.RemoveAll(v => v == null);
             }
@@ -224,7 +224,7 @@ namespace Control_Block
                 }
                 if (hasNullBlocks)
                 {
-                    Console.WriteLine("There were null blocks in a ClusterBody! " + moduleBlockMover.transform.localPosition.ToString());
+                    Console.WriteLine("There were null blocks in a ClusterBody! " + moduleMover.transform.localPosition.ToString());
                     blocks.RemoveAll(b => b == null);
                 }
                 rbody_mass = mass * coreTank.massScaleFactor;
@@ -480,10 +480,10 @@ namespace Control_Block
 
         public void InitializeAPCache()
         {
-            var block = moduleBlockMover.block;
+            var block = moduleMover.block;
             for (int ap = 0; ap < block.attachPoints.Length; ap++)
             {
-                foreach (var stp in moduleBlockMover.startblockpos)
+                foreach (var stp in moduleMover.startblockpos)
                 {
                     var atp = block.attachPoints[ap];
                     if (atp.Approximately(stp, 0.6f))
