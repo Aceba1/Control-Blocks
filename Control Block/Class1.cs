@@ -1879,24 +1879,27 @@ namespace Control_Block
         //private static FieldInfo m_AwaitingPhysicsReset;
         //private static Vector3 oldCOM;
         //private static bool CenterToOld = false;
-        [HarmonyPatch(typeof(Tank), "ResetPhysics")]
-        private static class ResetPhysicsHook
-        {
-            private static void Prefix(Tank __instance)
-            {
-                foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
-                {
-                    blockmover.PreResetPhysics();
-                }
-            }
-            private static void Postfix(Tank __instance)
-            {
-                foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
-                {
-                    blockmover.PostResetPhysics();
-                }
-            }
-        }
+
+
+        //! This has been moved to the Block Injector !
+        //[HarmonyPatch(typeof(Tank), "ResetPhysics")]
+        //private static class ResetPhysicsHook
+        //{
+        //    private static void Prefix(Tank __instance)
+        //    {
+        //        foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
+        //        {
+        //            blockmover.PreResetPhysics();
+        //        }
+        //    }
+        //    private static void Postfix(Tank __instance)
+        //    {
+        //        foreach (var blockmover in __instance.GetComponentsInChildren<ModuleBlockMover>())
+        //        {
+        //            blockmover.PostResetPhysics();
+        //        }
+        //    }
+        //}
 
         //[HarmonyPatch(typeof(FanJet), "AutoStabiliseTank")]
         //private static class FanJetStabilizePatch

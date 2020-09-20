@@ -1066,6 +1066,7 @@ namespace Control_Block
             //SFXIsOn = false;
             block.tank.AttachEvent.Unsubscribe(tankAttachBlockAction);
             block.tank.DetachEvent.Unsubscribe(tankDetachBlockAction);
+            block.tank.GetComponent<TechPhysicsReset>().Unsubscribe(PreResetPhysics, PostResetPhysics);
             //block.tank.ResetPhysicsEvent.Unsubscribe(tankResetPhysicsAction);
             block.tank.TechAudio.RemoveModule<ModuleBlockMover>(this);
             if (Holder != null)
@@ -1085,6 +1086,7 @@ namespace Control_Block
         {
             block.tank.AttachEvent.Subscribe(tankAttachBlockAction);
             block.tank.DetachEvent.Subscribe(tankDetachBlockAction);
+            block.tank.GetComponent<TechPhysicsReset>().Subscribe(PreResetPhysics, PostResetPhysics);
             //block.tank.ResetPhysicsEvent.Subscribe(tankResetPhysicsAction);
             block.tank.TechAudio.AddModule<ModuleBlockMover>(this);
             if (startblockpos.Length != 0) CreateHolder();
