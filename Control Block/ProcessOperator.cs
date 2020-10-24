@@ -100,6 +100,7 @@ namespace Control_Block
             new OperationType[] {
                 OperationType.ArrowPoint,
                 OperationType.TargetPoint,
+                OperationType.TargetPointPredictive,
                 OperationType.PlayerPoint,
                 OperationType.CursorPoint,
                 OperationType.CameraPoint,
@@ -167,6 +168,7 @@ namespace Control_Block
             {OperationType.GroundPoint, new UIDispOperation("Ground Point", "Aim towards the ground's surface", defaultValue:1f, clampStrength:true) },
             {OperationType.NorthPoint, new UIDispOperation("North Point", "Aim at a direction on a compass, determined by Strength", defaultValue:0f, sliderHasNegative:true, sliderMax:180f) },
             {OperationType.TargetPoint, new UIDispOperation("Target Point", "Aim towards the focused enemy (multiplied by Strength)\nThis will recenter if enemy is lost while running", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
+            {OperationType.TargetPointPredictive, new UIDispOperation("Target Point (Predictive)", "Aim towards the focused enemy (with the following muzzle velocity)\nThis will recenter if enemy is lost while running", defaultValue:0f, sliderMax:500f, toggleComment:"Ignore Gravity") },
             {OperationType.PlayerPoint, new UIDispOperation("Player Point", "Aim towards the player's tech (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
             {OperationType.CursorPoint, new UIDispOperation("Cursor Point", "Aim towards the point the mouse goes to (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
             {OperationType.CameraPoint, new UIDispOperation("Camera Point", "Aim in the direction the camera is facing (multiplied by Strength)", defaultValue:1f, sliderMax:1f, toggleComment:"Flip left & right") },
@@ -177,11 +179,6 @@ namespace Control_Block
             {OperationType.Nothing, new UIDispOperation("Do Nothing", "It does nothing", hideStrength:true) },
 #warning Might want to fix Deny Firing at some point
             {OperationType.FireWeapons, new UIDispOperation("Fire Weapons", "Any weapons on this cluster? Bam, unemployed", dummyNegative:"DenyFireWeapons", strengthIsToggle:true, toggleComment:"(Experimental) Deny firing") },
-
-
-            //{OperationType.SetLockJoint, new UIDispOperation("Lock-Joint", "Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
-            //{OperationType.SetBodyJoint, new UIDispOperation("Dynamic-Joint", "Physics state. Set the block-mover to use kinematics", hideStrength:true) },
-            //{OperationType.SetFreeJoint, new UIDispOperation("Free-Joint", "Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
             {OperationType.SetLockJoint, new UIDispOperation("(Unavailable!) Set Lock-Joint", "(Unavailable!) Static state. Set the block-mover to use ghost-phasing", hideStrength:true) },
             {OperationType.SetBodyJoint, new UIDispOperation("(Unavailable!) Set Dynamic-Joint", "(Unavailable!) Physics state. Set the block-mover to use kinematics", hideStrength:true) },
             {OperationType.SetFreeJoint, new UIDispOperation("(Unavailable!) Set Free-Joint", "(Unavailable!) Suspension state. Set the block-mover to use loose kinematics", hideStrength:true) },
@@ -235,7 +232,8 @@ namespace Control_Block
             CursorPoint,
             CameraPoint,
             Nothing,
-            FireWeapons
+            FireWeapons,
+            TargetPointPredictive,
         }
         public enum InputType : byte
         {
@@ -358,7 +356,56 @@ namespace Control_Block
                             return false;
                         }
                         m_ResetTimer = true;
-                        Value += PointAtTarget(block.trans, (target.centrePosition - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
+                        Value += PointAtTarget(block.trans, (target.GetAimPoint(block.trans.position) - block.centreOfMassWorld) * Mathf.Sign(m_Strength), ProjectDirToPlane, Value) * m_Strength * m_Strength;// * Mathf.Abs(m_Strength);
+                        return true;
+
+                    case OperationType.TargetPointPredictive:
+                        Visible targetPred = blockMover.GetTarget();
+                        if (targetPred == null)
+                        {
+                            if (m_ResetTimer)
+                            {
+                                Value = blockMover.UseLIMIT ? blockMover._CENTERLIMIT : 0f;
+                                m_ResetTimer = false;
+                            }
+                            return false;
+                        }
+                        float muzzleVelocity = Mathf.Abs(m_Strength);
+                        bool useGravity = m_Strength > 0;
+
+                        Vector3 BlockCenter = block.trans.position;
+                        Vector3 AimPointVector = targetPred.GetAimPoint(BlockCenter);
+                        Vector3 vector = AimPointVector - BlockCenter;
+                        if (muzzleVelocity > 0f) {
+                            Vector3 dist = vector;
+                            Rigidbody rbodyTank = block.tank.rbody;
+                            Vector3 angularToggle = rbodyTank.angularVelocity;
+                            Vector3 relativeVelocity = targetPred.rbody.velocity - (rbodyTank.velocity + angularToggle);
+
+                            float time = dist.magnitude / muzzleVelocity;
+                            if (useGravity)
+                            {
+                                // Console.WriteLine("enter Gravity");
+                                float height = dist.y;
+                                float land = Mathf.Sqrt((dist.x * dist.x) + (dist.z * dist.z));
+
+                                float sqrVel = muzzleVelocity * muzzleVelocity;
+
+                                if (sqrVel >= 30.0f * (height + dist.magnitude))
+                                {
+                                    // radians
+                                    float theta = Mathf.Atan((sqrVel - Mathf.Sqrt((sqrVel * sqrVel) - ((900.0f * land * land) + (60.0f * height * sqrVel)))) / (30.0f * land));
+                                    time = land / (Mathf.Cos(theta) * muzzleVelocity);
+
+                                    // add elevation
+                                    vector.y += (Mathf.Sin(theta) * muzzleVelocity * time) + BlockCenter.y;
+                                }
+                            }
+                            // vector now represents where the enemy will be - still need elevation
+                            vector += (time * relativeVelocity);
+                        }
+                        m_ResetTimer = true;
+                        Value += PointAtTarget(block.trans, vector, ProjectDirToPlane, Value);// * Mathf.Abs(m_Strength);
                         return true;
 
                     case OperationType.PlayerPoint:
