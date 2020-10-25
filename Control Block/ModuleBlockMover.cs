@@ -120,9 +120,6 @@ namespace Control_Block
         {
             get
             {
-                //if (IsPlanarVALUE)
-                //    return (_CENTERLIMIT - _EXTENTLIMIT + 720) % 360;
-                //else
                 return _CENTERLIMIT - _EXTENTLIMIT;
             }
             set
@@ -157,9 +154,6 @@ namespace Control_Block
         {
             get
             {
-                //if (IsPlanarVALUE)
-                //    return (_CENTERLIMIT + _EXTENTLIMIT + 720) % 360;
-                //else
                 return _CENTERLIMIT + _EXTENTLIMIT;
             }
             set
@@ -213,46 +207,13 @@ namespace Control_Block
         {
             if (ChangeValue)
                 MINVALUELIMIT = value;
-            /* if (IsFreeJoint && HolderJoint != null)
-            {
-                if (IsPlanarVALUE)
-                {
-                    var modify = HolderJoint.lowAngularXLimit;
-                    modify.limit = value;
-                    HolderJoint.lowAngularXLimit = modify;
-                }
-                else
-                    SetLinearLimit();
-            } */
         }
 
         public void SetMaxLimit(float value, bool ChangeValue = true)
         {
             if (ChangeValue)
                 MAXVALUELIMIT = value;
-            /* if (IsFreeJoint && HolderJoint != null)
-            {
-                if (IsPlanarVALUE)
-                {
-                    var modify = HolderJoint.highAngularXLimit;
-                    modify.limit = value;
-                    HolderJoint.highAngularXLimit = modify;
-                }
-                else
-                    SetLinearLimit();
-            } */
         }
-
-        /*
-        public void SetLinearLimit()
-        {
-            Vector3 min = GetPosCurve(PartCount - 1, MINVALUELIMIT), max = GetPosCurve(PartCount - 1, MAXVALUELIMIT), cen = (min + max) * 0.5f; // Do not use _CENTERLIMIT, because some animations will have different centers at different positions
-            HolderJoint.anchor = transform.parent.InverseTransformPoint(transform.TransformPoint(cen));
-            var ll = HolderJoint.linearLimit;
-            ll.limit = _EXTENTLIMIT; // Could use (max - min).magnitude * 0.5f instead...
-            HolderJoint.linearLimit = ll;
-        }
-        */
 
         /// <summary>
         /// Target value
@@ -273,12 +234,6 @@ namespace Control_Block
 
         public void UpdateSpringForce()
         {
-            /*
-            if (HolderJoint != null)
-            {
-                Holder.SetJointDrive(SPRDAM, SPRSTR);
-            }
-            */
         }
 
         /// <summary>
@@ -465,19 +420,8 @@ namespace Control_Block
 
         private bool UpdatedTargetAimer = false;
 
-        /* Vector3 cacheLinVel, cacheAngVel;
-        bool HoldingVelocities = false; */
-
         private void CacheHolderTr()
         {
-            /*
-            if (!IsLockJoint && Holder.rbody != null)
-            {
-                HoldingVelocities = true;
-                cacheLinVel = Holder.rbody.velocity;
-                cacheAngVel = Holder.rbody.angularVelocity;
-            }
-            */
         }
 
         private void DefaultHolderTr(bool QueueRestore)
@@ -510,13 +454,6 @@ namespace Control_Block
         {
             if (Holder != null)
             {
-                //if (FREEJOINT)
-                //{
-                //    Holder.transform.position = cachePos;
-                //    Holder.transform.rotation = cacheRot;
-                //}
-                //else
-                //{
                 Holder.transform.rotation = transform.parent.rotation; // Restore rotation to blockmover's parent
                 if (IsPlanarVALUE || useRotCurves)
                 {
@@ -524,15 +461,6 @@ namespace Control_Block
                     Holder.transform.rotation = RotateRotationByRotatedRotation(Holder.transform.rotation, GetRotCurve(PartCount - 1, PVALUE), transform.localRotation);
                 }
                 Holder.transform.position += HolderPart.position - Holder.transform.TransformPoint(block.cachedLocalPosition + block.cachedLocalRotation * relativeCenter); // Restore position relative to holder part
-
-                /*
-                if (HoldingVelocities && Holder.rbody != null) // Will not activate if lock joint, from the check above
-                {
-                    Holder.rbody.velocity = cacheLinVel;
-                    Holder.rbody.angularVelocity = cacheAngVel;
-                    HoldingVelocities = false;
-                }
-                */
             }
         }
 
@@ -544,15 +472,12 @@ namespace Control_Block
                 Holder.moduleBlockMover = this;
                 Holder.gameObject.layer = block.tank.gameObject.layer;
                 Holder.transform.parent = block.trans.parent;
-                //Holder.ClusterAPBitField;
                 Holder.InitializeAPCache();
             }
             block.tank.control.driveControlEvent.Subscribe(Holder.GetDriveControl);
             Holder.transform.position = transform.parent.position;
             Holder.transform.rotation = transform.parent.rotation;
             Holder.coreTank = block.tank;
-            /* Holder.Dynamics = !IsLockJoint; */
-            //ClusterTech.VerifyJoin(block.tank, Holder);
         }
 
         internal void Update()
@@ -564,16 +489,6 @@ namespace Control_Block
                 UpdateSFX(LastSentVELOCITY);
             }
         }
-
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <param name="ownerBody">this.ownerBody</param>
-        ///// <returns></returns>
-        //private bool CheckIfOnStatic(Rigidbody ownerBody)
-        //{
-        //    return ownerBody.transform != transform.parent;
-        //}
 
         internal void LateUpdate()
         {
@@ -594,15 +509,6 @@ namespace Control_Block
                     UpdatePartTransforms();
                     RestoreHolderTr();
                 }
-                /* if (IsFreeJoint && HolderJoint != null)
-                {
-                    float oldPVALUE = PVALUE;
-                    PValueFromFreeJoint();
-                    UpdatePartTransforms();
-
-                    VerifyNetState(PVALUE - oldPVALUE, ManGameMode.inst.IsCurrentModeMultiplayer());
-                }
-                else */
                 if (PokedByParent)
                 {
                     LockJointUpdateCOM();
@@ -610,13 +516,6 @@ namespace Control_Block
                 }
             }
         }
-
-        /* private void PValueFromFreeJoint()
-        {
-            PVALUE = IsPlanarVALUE
-                ? (Vector3.SignedAngle(transform.parent.forward, Holder.transform.forward, transform.up) + 360) % 360
-                : Mathf.Clamp(Vector3.Dot(transform.up, Holder.transform.position - transform.parent.position), MINVALUELIMIT, MAXVALUELIMIT);
-        } */
 
         [NonSerialized]
         private byte playerSyncByte;
@@ -731,15 +630,12 @@ namespace Control_Block
                         }
                     }
 
-                    /*if (!IsFreeJoint)
-                    { */
                     if (UseLIMIT)
                         PVALUE += Mathf.Clamp((ofst - pofst) * InvPointWeightRatio, -MAXVELOCITY, MAXVELOCITY); // Use ofst from before
                     else
                         PVALUE = Mathf.MoveTowardsAngle(PVALUE, VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, MAXVELOCITY); //Mathf.Clamp(VALUE * InvPointWeightRatio + PVALUE * PointWeightRatio, oldPVALUE - MAXVELOCITY, oldPVALUE + MAXVELOCITY);
 
                     VerifyNetState(PVALUE - oldPVALUE, Net);
-                    /* } */
                 }
                 else // Is controlled by NET
                 {
@@ -754,18 +650,10 @@ namespace Control_Block
                 }
                 bool HolderExists = Holder != null;
 
-                /* if (!IsFreeJoint) */
                 UpdatePartTransforms();
-                /* if (IsLockJoint)
-                { */
+
                 if (HolderExists)
                 {
-                    /* if (!WasLockJoint)
-                    {
-                        RestoreHolderTr();
-                        Holder.SetDynamics(false);
-                    }
-                    else */
                     if (LastSentVELOCITY != 0f)
                     {
                         LockJointUpdateCOM();
@@ -773,65 +661,6 @@ namespace Control_Block
                         PokedByParent = false;
                     }
                 }
-                /*
-                }
-                else // Not LockJoint
-                {
-                    if (WasLockJoint && HolderExists)
-                    {
-                        Holder.SetDynamics(true);
-                    }
-
-                    if (HolderExists && HolderJoint != null)
-                    {
-                        var orbody = ownerBody;
-                        if (IsFreeJoint)
-                        {
-                            if (!WasFreeJoint) // Set the anchors
-                            {
-                                SetupFreeJoint();
-                                UpdateSpringForce();
-                            }
-                            if (IsPlanarVALUE)
-                                HolderJoint.targetRotation = GetRotCurve(PartCount - 1, VALUE) * Quaternion.FromToRotation(Vector3.up, HolderJoint.axis);
-                            else
-                                HolderJoint.targetPosition = Quaternion.FromToRotation(Vector3.up, HolderJoint.axis) * GetPosCurve(PartCount - 1, VALUE + HalfLimitVALUE);
-
-                            if (CheckIfOnStatic(orbody))
-                            {
-                                UpdateRotateAnchor(Quaternion.identity);//0f);
-                                HolderJoint.anchor = orbody.transform.InverseTransformPoint(HolderPart.position);
-                            }
-                        }
-                        else // IsBodyJoint
-                        {
-                            if (WasFreeJoint)
-                            {
-                                HolderJoint.xMotion = ConfigurableJointMotion.Locked;
-                                HolderJoint.angularXMotion = ConfigurableJointMotion.Locked;
-                            }
-
-                            //if (CheckIfOnStatic(orbody))
-                            //{
-                            //    if (IsPlanarVALUE)
-                            //        UpdateRotateAnchor(PVALUE);
-                            //    else
-                            //        UpdateRotateAnchor(0f);
-                            //    HolderJoint.anchor = orbody.transform.InverseTransformPoint(HolderPart.position);
-                            //}
-                            //else
-                            //{
-                            //    if (IsPlanarVALUE)
-                            //        UpdateRotateAnchor(PVALUE);
-                            //    else
-                            //        HolderJoint.anchor = orbody.transform.InverseTransformPoint(HolderPart.position);
-                            //}
-                            UpdateRotateAnchor(HolderPart.localRotation);
-                            HolderJoint.anchor = orbody.transform.InverseTransformPoint(HolderPart.position);
-                        }
-                    }
-                }
-                */
             }
             catch (Exception E)
             {
@@ -874,24 +703,6 @@ namespace Control_Block
             }
         }
 
-        /*
-        internal void SetupFreeJoint()
-        {
-            if (IsPlanarVALUE)
-            {
-                HolderJoint.angularXMotion = UseLIMIT ? ConfigurableJointMotion.Limited : ConfigurableJointMotion.Free;
-                UpdateRotateAnchor(Quaternion.identity);
-                SetMinLimit(MINVALUELIMIT, false);
-                SetMaxLimit(MAXVALUELIMIT, false);
-            }
-            else
-            {
-                HolderJoint.xMotion = ConfigurableJointMotion.Limited;
-                //ClusterTech.SetOffset(block.tank, block.trans.up);
-                SetLinearLimit();
-            }
-        } */
-
         private void UpdatePartTransforms()
         {
             for (int i = 0; i < parts.Length; i++)
@@ -925,12 +736,6 @@ namespace Control_Block
         {
             if (saving)
             {
-                //if (PVALUE != 0f)
-                //{
-                //    DefaultHolderTr(true);
-                //}
-
-                //Print("Serializing " + transform.localPosition);
                 SerialData serialData = new SerialData()
                 {
                     name = UIName,
@@ -973,10 +778,6 @@ namespace Control_Block
                     UseLIMIT = sd.useLimits;
                     InputOperator.StringArrayToProcessOperations(sd.processList, ref ProcessOperations);
                     Deserialized = true;
-
-                    //Print("Deserializing " + transform.localPosition);
-                    //Print("Positional Value: " + VALUE);
-                    //Print("Got " + ProcessOperations.Count + " oper. lines from JSON:\n" + sd.processList);
                 }
                 else
                 {
@@ -1026,7 +827,6 @@ namespace Control_Block
             {
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.RightArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = 1 });
                 ProcessOperations.Add(new InputOperator() { m_InputKey = KeyCode.LeftArrow, m_InputType = InputOperator.InputType.WhileHeld, m_InputParam = 0, m_OperationType = InputOperator.OperationType.ShiftPos, m_Strength = -1 });
-                //TrueLimitVALUE = 360;
                 _CENTERLIMIT = 0f;
                 _EXTENTLIMIT = HalfLimitVALUE;
             }
@@ -1067,7 +867,6 @@ namespace Control_Block
             block.tank.AttachEvent.Unsubscribe(tankAttachBlockAction);
             block.tank.DetachEvent.Unsubscribe(tankDetachBlockAction);
             block.tank.GetComponent<TechPhysicsReset>().Unsubscribe(PreResetPhysics, PostResetPhysics);
-            //block.tank.ResetPhysicsEvent.Unsubscribe(tankResetPhysicsAction);
             block.tank.TechAudio.RemoveModule<ModuleBlockMover>(this);
             if (Holder != null)
             {
@@ -1087,7 +886,6 @@ namespace Control_Block
             block.tank.AttachEvent.Subscribe(tankAttachBlockAction);
             block.tank.DetachEvent.Subscribe(tankDetachBlockAction);
             block.tank.GetComponent<TechPhysicsReset>().Subscribe(PreResetPhysics, PostResetPhysics);
-            //block.tank.ResetPhysicsEvent.Subscribe(tankResetPhysicsAction);
             block.tank.TechAudio.AddModule<ModuleBlockMover>(this);
             if (startblockpos.Length != 0) CreateHolder();
             SetDirty();
@@ -1095,11 +893,6 @@ namespace Control_Block
 
         internal void BlockAdded(TankBlock mkblock, Tank tank)
         {
-            // This may actually have no effect...
-            //if (Valid && Holder != null)
-            //{
-            //    DefaultHolderTr(true); //Default position so no AP problems occur
-            //}
             if (!Dirty)
                 Print("ADD : set dirty " + block.cachedLocalPosition.ToString());
             SetDirty(); //ResetPhysics may already be called
@@ -1133,7 +926,6 @@ namespace Control_Block
             if (Holder != null)
             {
                 Print("RESET_POST : Cleaning holder rbody");
-                /* Holder.Dynamics = !IsLockJoint; */
                 Holder.ResetPhysics();
 
                 Rigidbody orbody = null;
@@ -1147,32 +939,8 @@ namespace Control_Block
                 RestoreHolderTr();
                 queueRestoreHolderTr = false;
 
-                /* if (IsLockJoint)
-                { */
                 Holder.FixMaskedCOM(orbody.transform);
                 Holder.ReturnCOMToRigidbody(orbody);
-                /* }
-                else if (HolderJoint != null)
-                {
-                    UpdateSpringForce();
-                    if (IsFreeJoint)
-                    {
-                        SetupFreeJoint();
-                    }
-                    else if (IsBodyJoint) // FreeJoint needs the anchor positions to stay where they are
-                    {
-                        //if (IsPlanarVALUE)
-                        //{
-                        //    UpdateRotateAnchor(PVALUE);
-                        //}
-                        //else
-                        //{
-                        //    HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
-                        //}
-                        UpdateRotateAnchor(HolderPart.localRotation);
-                        HolderJoint.anchor = transform.parent.InverseTransformPoint(HolderPart.position);
-                    }
-                } */
             }
         }
 
@@ -1214,7 +982,6 @@ namespace Control_Block
             {
                 Print("> Invalid");
                 Invalidate();
-                //queueRestoreHolderTr = false;
             }
             else
             {
@@ -1224,7 +991,6 @@ namespace Control_Block
                     {
                         Holder.Clear(true);
                         Holder.InitializeAPCache();
-                        //! Holder = Holder.Destroy();
                         Print("> Cleaned holder, there were no blocks");
                     }
                 }
@@ -1251,8 +1017,6 @@ namespace Control_Block
                     }
                     else
                         Print($"> Kept current {Holder.blocks.Count} blocks on holder");
-                    //Holder.ResetPhysics(this);
-
                     UpdatePartTransforms();
                     RestoreHolderTr();
                     queueRestoreHolderTr = false;
@@ -1266,7 +1030,6 @@ namespace Control_Block
             {
                 Holder.Clear(true);
                 Holder.InitializeAPCache();
-                //! Holder = Holder.Destroy();
             }
             PVALUE = 0f;
             UpdatePartTransforms();
@@ -1563,25 +1326,6 @@ namespace Control_Block
         {
             Console.WriteLine("A PLAYER HAS JOINED : " + player.name + "\nIncrementing GlobalSyncByte");
             GlobalPlayerSyncByte++;
-            //if (ManNetwork.IsHost)
-            //{
-            //    Console.WriteLine("A PLAYER HAS JOINED : " + player.name);
-            //    var NetTechs = ManNetwork.inst.GetAllPlayerTechs();
-            //    foreach (Tank netTech in NetTechs)
-            //    {
-            //        try
-            //        {
-            //            if (netTech == null) continue;
-            //            Console.WriteLine("Iterating through tech " + netTech.name);
-            //            foreach (var mover in netTech.GetComponentsInChildren<ModuleBlockMover>())
-            //            {
-            //                Console.WriteLine("Sending " + mover.name + mover.transform.localPosition.ToString());
-            //                Nuterra.NetHandler.BroadcastMessageToClient(NetMsgMoverID, new BlockMoverMessage(mover.block, mover.PVALUE, mover.LastSentVELOCITY), player.connectionToClient.connectionId);
-            //            }
-            //        }
-            //        catch { }
-            //    }
-            //}
         }
 
         public static void SendMoverChange(BlockMoverMessage message)

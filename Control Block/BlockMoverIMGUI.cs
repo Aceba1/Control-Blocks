@@ -223,9 +223,7 @@ namespace Control_Block
                 }
                 catch
                 {
-                    //Console.WriteLine(e);
                     module = null;
-                    //segment = null;
                     PresetsIMGUI.SetState(false, null, win);
                     showPresetsUI = false;
                 }
@@ -308,8 +306,6 @@ namespace Control_Block
             maxCache = null; //module.MAXVALUELIMIT.ToString();
             minCache = null; //module.MINVALUELIMIT.ToString();
             maxVelCache = module.MAXVELOCITY.ToString();
-            //springCache = module.SPRSTR.ToString();
-            //dampCache = module.SPRDAM.ToString();
             valueCache = module.VALUE.ToString();
             velocityCache = module.VELOCITY.ToString();
         }
@@ -1110,10 +1106,6 @@ namespace Control_Block
                                 {
                                     GUI.changed = false;
                                     module.UseLIMIT = GUILayout.Toggle(module.UseLIMIT, "Use limits");
-                                    /* if (GUI.changed && module.IsFreeJoint)
-                                    {
-                                        module.SetupFreeJoint();
-                                    } */
                                 }
 
                                 GUILayout.BeginHorizontal();
@@ -1155,67 +1147,11 @@ namespace Control_Block
                                 }
                                 GUILayout.EndHorizontal();
 
-                                /* if (module.CanOnlyBeLockJoint)
-                                { */
                                 if (module.startblockpos.Length != 0)
                                 {
                                     GUILayout.Space(12);
                                     module.LockJointBackPush = GUILayout.Toggle(module.LockJointBackPush, "Back-push movement");
                                 }
-                                /* }
-                                else
-                                {
-                                    GUILayout.Space(12);
-
-                                    GUILayout.BeginVertical(GUI.skin.window);
-                                    {
-                                        GUILayout.Label("Joint dynamics");
-                                        if (GUILayout.Toggle(module.IsLockJoint, "Lock-Joint (Static state)"))
-                                            module.moverType = ModuleBlockMover.MoverType.Static;
-                                        GUILayout.Label("Static state fixates the position and removes physics from the body entirely. (Pre-overhaul)");
-                                        GUILayout.BeginHorizontal();
-                                        {
-                                            GUILayout.Space(12);
-                                            GUILayout.BeginVertical();
-                                            {
-                                                module.LockJointBackPush = GUILayout.Toggle(module.LockJointBackPush, "Back-push movement");
-                                            }
-                                            GUILayout.EndVertical();
-                                        }
-                                        GUILayout.EndHorizontal();
-                                        GUILayout.Space(12);
-
-                                        if (GUILayout.Toggle(module.IsBodyJoint, "Dynamic-Joint (Dynamic state)"))
-                                            module.moverType = ModuleBlockMover.MoverType.Dynamic;
-                                        GUILayout.Label("Dynamic state gives the body rigid physics, restricted to the joint.");
-
-                                        GUILayout.Space(12);
-
-                                        GUI.enabled = !module.CannotBeFreeJoint;
-
-                                        if (GUILayout.Toggle(module.IsFreeJoint, "Free-Joint (Suspension state)"))
-                                            module.moverType = ModuleBlockMover.MoverType.Physics;
-                                        GUILayout.Label("Suspension state frees the physics joints to allow manipulation from influences, including the spring joint");
-                                        GUILayout.BeginHorizontal();
-                                        {
-                                            GUILayout.Space(12);
-                                            GUILayout.BeginVertical();
-                                            {
-                                                if (GUIOverseer.TextSliderPair("  Spring Strength: ", ref springCache, ref module.SPRSTR, 0, 2000, false, 5f))
-                                                    module.UpdateSpringForce();
-                                                if (GUIOverseer.TextSliderPair("  Spring Dampen: ", ref dampCache, ref module.SPRDAM, 0, 1000, false, 2.5f))
-                                                    module.UpdateSpringForce();
-                                            }
-                                            GUILayout.EndVertical();
-                                        }
-                                        GUILayout.EndHorizontal();
-
-                                        module.CannotBeFreeJoint = module.CannotBeFreeJoint; // Ensure GUI did not set it to free-joint if unpermitted
-                                        GUI.enabled = allowGUI;
-                                    }
-                                    GUILayout.EndVertical();
-                                }
-                                */
 
                                 GUILayout.Space(12f);
 
@@ -1247,15 +1183,6 @@ namespace Control_Block
                             GUILayout.Label($"Tank mass: {module.block.tank.rbody.mass}");
                             GUILayout.Label($"Tank CoM: {module.block.tank.rbody.centerOfMass}");
                             GUILayout.Label($"Tank Gravity: {module.block.tank.GetGravityScale()}");
-
-                            //GUILayout.Space(16);
-
-                            //if (GUILayout.Button("Close"))
-                            //{
-                            //    visible = false;
-                            //    IsSettingKeybind = false;
-                            //    module = null;
-                            //}
 
                             GUILayout.Space(16);
 
@@ -1378,12 +1305,6 @@ namespace Control_Block
                                 GUILayout.Label(Log);
                         }
                         GUILayout.EndVertical();
-                        //bool _showPresetsUI = GUILayout.Toggle(showPresetsUI, "Function Presets", GUI.skin.button);
-                        //if (_showPresetsUI != showPresetsUI)
-                        //{
-                        //    PresetsIMGUI.SetState(_showPresetsUI, module, win);
-                        //    showPresetsUI = _showPresetsUI;
-                        //}
                     }
                     GUILayout.EndVertical(); // Processes for <block>
 
@@ -1438,21 +1359,6 @@ namespace Control_Block
                 showPresetsUI = false;
             }
         }
-
-        //string propertycache = "Press BACKSLASH";
-        //private void rebuildpropertycache()
-        //{
-        //    propertycache = "Params: ";
-        //    foreach (var mmmm in (typeof(FMODEventInstance).GetField("m_ParamDatabase", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null) as Dictionary<string, Dictionary<string, int>>))
-        //    {
-        //        propertycache += "\n- " + mmmm.Key;
-        //        foreach (var mmmmm in mmmm.Value)
-        //        {
-        //            propertycache += "\n  - " + mmmmm.Value + " " + mmmmm.Key;
-        //        }
-        //    }
-        //}
-
         private bool IsItemSelected => SelectedIndex != -1 && SelectedIndex < module.ProcessOperations.Count;
     }
 
@@ -1489,7 +1395,6 @@ namespace Control_Block
                 }
                 catch
                 {
-                    //Console.WriteLine(e);
                     module = null;
                 }
                 visible = module;

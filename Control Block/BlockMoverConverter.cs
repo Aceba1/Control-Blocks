@@ -38,13 +38,6 @@ namespace Control_Block
                         RestrictValue = true
                     }
                 }) },
-            //{
-            //    ModuleSwivel.Mode.Directional, new Preset(true, "Legacy_Directional", "Converter for old swivel Directional mode",
-            //        "<FuncForUseTimer>",
-            //        new List<Preset.Variable> {
-
-            //        })
-            //}
         };
         public static Dictionary<string, Preset> PreOverhaulPistons = new Dictionary<string, Preset>
         {
