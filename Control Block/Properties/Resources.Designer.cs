@@ -61,66 +61,6 @@ namespace Control_Block.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.90.1 OBJ File: &apos;BF_Sozin_Computer.blend&apos;
-        ///# www.blender.org
-        ///v -0.490000 -0.350000 -0.343000
-        ///v -0.416404 -0.479961 -0.343000
-        ///v -0.413297 -0.460495 -0.413297
-        ///v -0.470361 -0.350000 -0.416404
-        ///v -0.470361 -0.424902 -0.343000
-        ///v -0.416404 -0.479961 0.343000
-        ///v -0.413297 -0.460495 0.413297
-        ///v -0.470361 -0.350000 0.416404
-        ///v -0.470361 -0.424902 0.343000
-        ///v -0.451285 -0.421732 0.413297
-        ///v -0.416404 -0.350000 0.470361
-        ///v -0.413297 -0.421732 0.451285
-        ///v -0.451285 -0.421732 -0.413297
-        ///v -0.089425 -0.150000 0.490000
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BF_Flight_Computer {
-            get {
-                return ResourceManager.GetString("BF_Flight_Computer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to # Blender v2.90.1 OBJ File: &apos;BF_Sozin_Computer.blend&apos;
-        ///# www.blender.org
-        ///v 0.000000 -0.020071 0.278292
-        ///v -0.279043 -0.020071 -0.000000
-        ///v -0.268353 -0.020034 0.074948
-        ///v -0.132237 -0.120780 0.131858
-        ///v -0.075492 -0.020034 0.267685
-        ///v 0.277771 -0.020071 0.000521
-        ///v -0.000521 -0.020071 -0.278522
-        ///v 0.139895 -0.020064 0.241005
-        ///v 0.074427 -0.020034 -0.267832
-        ///v 0.131337 -0.120780 -0.131716
-        ///v -0.268353 -0.020034 -0.074949
-        ///v 0.267164 -0.020034 -0.074971
-        ///v -0.197533 -0.020070 -0.196778
-        ///v -0.241761 -0.020064 -0.139140
-        ///v 0. [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BF_Flight_Computer_Spinner {
-            get {
-                return ResourceManager.GetString("BF_Flight_Computer_Spinner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] BF_Hover_PID_png {
-            get {
-                object obj = ResourceManager.GetObject("BF_Hover_PID_png", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] bf_rail_piston {
@@ -147,7 +87,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 0.500000 0.500000
         ///v -0.125000 0.500000 0.400000
         ///v -0.125000 0.500000 0.500000
-        ///v 0.250000  [rest of string was truncated]&quot;;.
+        ///v 0.250000 -0.437500 0.1750 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_base {
             get {
@@ -172,7 +112,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 0.500000 0.500000
         ///v -0.125000 0.500000 0.400000
         ///v -0.125000 0.500000 0.500000
-        ///v 0.250000  [rest of string was truncated]&quot;;.
+        ///v 0.250000 -0.437500 0.1750 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_base1 {
             get {
@@ -196,7 +136,8 @@ namespace Control_Block.Properties {
         ///v -0.400000 -0.500000 0.400000
         ///v -0.500000 0.400000 0.400000
         ///v 0.400000 -0.500000 0.400000
-        ///v 0.400000 -0.500000 -0.300 [rest of string was truncated]&quot;;.
+        ///v 0.400000 -0.500000 -0.300000
+        ///v 0.400000  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_corner {
             get {
@@ -221,7 +162,7 @@ namespace Control_Block.Properties {
         ///v 0.229967 0.026064 -0.125000
         ///v -0.000995 0.121754 -0.125000
         ///v -0.164978 0.189695 -0.125000
-        ///v 0.230 [rest of string was truncated]&quot;;.
+        ///v 0.230198 0.025968 0.1 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_corner_2 {
             get {
@@ -246,7 +187,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 -0.500000 0.500000
         ///v -0.500000 0.500000 0.400000
         ///v -0.500000 0.500000 0.500000
-        ///v -0.1 [rest of string was truncated]&quot;;.
+        ///v -0.125000 -0.500000  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_extension {
             get {
@@ -270,7 +211,8 @@ namespace Control_Block.Properties {
         ///v -0.400000 -0.500000 -0.400000
         ///v -0.500000 -0.100000 -0.400000
         ///v -0.400000 0.000000 -0.400000
-        ///v -0.400000 -0.100000  [rest of string was truncated]&quot;;.
+        ///v -0.400000 -0.100000 -0.500000
+        ///v 0.5 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_extension_2 {
             get {
@@ -295,7 +237,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 -0.500000 0.500000
         ///v -0.500000 0.500000 0.400000
         ///v -0.500000 0.500000 0.500000
-        ///v -0.1 [rest of string was truncated]&quot;;.
+        ///v -0.125000 -0.500000  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_extension1 {
             get {
@@ -320,7 +262,7 @@ namespace Control_Block.Properties {
         ///v -0.200000 0.125000 0.200000
         ///v -0.200000 -0.125000 0.200000
         ///v 0.200000 -0.125000 0.200000
-        ///v - [rest of string was truncated]&quot;;.
+        ///v -0.200000 0.12500 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_head {
             get {
@@ -345,7 +287,7 @@ namespace Control_Block.Properties {
         ///v -0.200000 0.125000 0.200000
         ///v -0.200000 -0.125000 0.200000
         ///v 0.200000 -0.125000 0.200000
-        ///v - [rest of string was truncated]&quot;;.
+        ///v -0.200000 0.12500 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_head1 {
             get {
@@ -369,7 +311,8 @@ namespace Control_Block.Properties {
         ///v -0.300000 -0.500000 0.400000
         ///v -0.300000 -0.500000 -0.400000
         ///v -0.500000 0.333589 -0.154717
-        ///v -0.200000 -0.500 [rest of string was truncated]&quot;;.
+        ///v -0.200000 -0.500000 -0.250000
+        ///v [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_wedge {
             get {
@@ -394,7 +337,7 @@ namespace Control_Block.Properties {
         ///v 0.240000 0.842974 0.844279
         ///v 0.240000 1.400000 -0.499998
         ///v -0.240001 0.687487 0.688640
-        ///v -0.2400 [rest of string was truncated]&quot;;.
+        ///v -0.240000 1.180000 -0.4 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string bf_rail_piston_wedge_2 {
             get {
@@ -877,7 +820,8 @@ namespace Control_Block.Properties {
         ///v -0.400000 -0.400000 -0.300000
         ///v -0.500000 -0.400000 -0.400000
         ///v 0.400000 -0.400000 -0.300000
-        ///v 0.500000 -0.100000 -0.4 [rest of string was truncated]&quot;;.
+        ///v 0.500000 -0.100000 -0.400000
+        ///v 0.450000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_base {
             get {
@@ -902,7 +846,8 @@ namespace Control_Block.Properties {
         ///v 0.350000 0.450000 -0.500000
         ///v 0.350000 0.450000 -0.450000
         ///v 0.300000 0.400000 -0.400000
-        ///v 0.300000 0.400000 -0 [rest of string was truncated]&quot;;.
+        ///v 0.300000 0.400000 -0.300000
+        ///v 0.4000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_deco_base {
             get {
@@ -927,7 +872,8 @@ namespace Control_Block.Properties {
         ///v 0.470000 -0.500000 -0.460000
         ///v 0.380000 0.510000 -0.340000
         ///v 0.380000 -0.500000 -0.340000
-        ///v 0.300000 0.450000 -0.3 [rest of string was truncated]&quot;;.
+        ///v 0.300000 0.450000 -0.340000
+        ///v 0.250000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_deco_head {
             get {
@@ -952,7 +898,8 @@ namespace Control_Block.Properties {
         ///v 0.490000 -0.500000 -0.480000
         ///v 0.390000 0.450000 -0.320000
         ///v 0.390000 -0.500000 -0.320000
-        ///v 0.300000 0.450000 -0. [rest of string was truncated]&quot;;.
+        ///v 0.300000 0.450000 -0.320000
+        ///v 0.25000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_deco_shaft {
             get {
@@ -978,7 +925,7 @@ namespace Control_Block.Properties {
         ///v -0.500000 1.400000 -0.400000
         ///v 0.400000 1.400000 -0.300000
         ///v 0.450000 1.100000 -0.400000
-        ///v 0 [rest of string was truncated]&quot;;.
+        ///v 0.500000 1.100000  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_head {
             get {
@@ -1003,7 +950,8 @@ namespace Control_Block.Properties {
         ///v 0.450000 -0.190000 -0.480000
         ///v 0.400000 0.500000 -0.320000
         ///v 0.400000 -0.190000 -0.320000
-        ///v 0.200000 0.500000 -0.320 [rest of string was truncated]&quot;;.
+        ///v 0.200000 0.500000 -0.320000
+        ///v 0.150000 0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_shaft_1 {
             get {
@@ -1028,7 +976,8 @@ namespace Control_Block.Properties {
         ///v 0.430000 -0.090000 -0.460000
         ///v 0.380000 1.110000 -0.340000
         ///v 0.380000 -0.090000 -0.340000
-        ///v 0.200000 0.500000 -0.340 [rest of string was truncated]&quot;;.
+        ///v 0.200000 0.500000 -0.340000
+        ///v 0.150000 0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_shaft_2 {
             get {
@@ -1053,7 +1002,8 @@ namespace Control_Block.Properties {
         ///v -0.200000 0.560000 -0.480000
         ///v 0.400000 1.200000 -0.320000
         ///v 0.400000 0.500000 -0.320000
-        ///v -0.200000 0.500000 -0.320000 [rest of string was truncated]&quot;;.
+        ///v -0.200000 0.500000 -0.320000
+        ///v -0.150000 0.5 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HEps_shaft_3 {
             get {
@@ -1364,7 +1314,8 @@ namespace Control_Block.Properties {
         ///v -0.440008 0.143466 0.110724
         ///v -0.440008 0.149876 0.109006
         ///v -0.440008 0.153673 0.105210
-        ///v -0.440008 0.155391 0.09 [rest of string was truncated]&quot;;.
+        ///v -0.440008 0.155391 0.098799
+        ///v -0.44000 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string rr_floating_piston_base {
             get {
@@ -1388,7 +1339,8 @@ namespace Control_Block.Properties {
         ///v 0.386843 0.482370 -0.367036
         ///v 0.380394 0.482370 -0.373485
         ///v 0.373484 0.482370 -0.380395
-        ///v 0.367035 0.482370 -0.3868 [rest of string was truncated]&quot;;.
+        ///v 0.367035 0.482370 -0.386844
+        ///v 0.385292 0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string rr_floating_piston_head {
             get {
@@ -1568,7 +1520,8 @@ namespace Control_Block.Properties {
         ///v 1.178317 0.300000 -0.020491
         ///v 1.149510 0.500000 0.001614
         ///v 1.178317 0.460000 -0.020491
-        ///v 1.256370 0.260000 0.1 [rest of string was truncated]&quot;;.
+        ///v 1.256370 0.260000 0.186701
+        ///v 1.289917 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_rr_base {
             get {
@@ -1592,7 +1545,7 @@ namespace Control_Block.Properties {
         ///v -0.855214 -0.207006 0.795810
         ///v -0.856171 -0.163013 0.772170
         ///v -0.860599 -0.110397 0.860600
-        ///v -0.863 [rest of string was truncated]&quot;;.
+        ///v -0.863379 -0.123761 0 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string swivel_rr_head {
             get {
@@ -1748,7 +1701,7 @@ namespace Control_Block.Properties {
         ///v 0.225000 -0.500000 0.300000
         ///v -0.300000 -0.500000 -0.225000
         ///v -0.225000 -0.500000 -0.300000
-        ///v -0.225 [rest of string was truncated]&quot;;.
+        ///v -0.225000 0.100000 0.2 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ven_twist_piston_base {
             get {
@@ -1773,7 +1726,7 @@ namespace Control_Block.Properties {
         ///v -0.300000 0.500000 -0.225000
         ///v 0.225000 0.200000 0.225000
         ///v 0.300000 0.275000 0.225000
-        ///v 0.2250 [rest of string was truncated]&quot;;.
+        ///v 0.225000 0.275000 0.30 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ven_twist_piston_head {
             get {
@@ -1807,7 +1760,8 @@ namespace Control_Block.Properties {
         ///v -0.000000 -0.500000 0.214200
         ///v 0.136316 0.400000 0.157736
         ///v -0.151462 -0.500000 0.151462
-        ///v -0.015146 0.400000 0.20 [rest of string was truncated]&quot;;.
+        ///v -0.015146 0.400000 0.207926
+        ///v -0.21420 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ven_twist_piston_shaft_1 {
             get {
@@ -1831,7 +1785,8 @@ namespace Control_Block.Properties {
         ///v -0.066893 -0.500000 0.161494
         ///v 0.066893 0.500000 0.161494
         ///v -0.161494 -0.500000 0.066893
-        ///v -0.066893 0.500000 0 [rest of string was truncated]&quot;;.
+        ///v -0.066893 0.500000 0.161494
+        ///v -0.16 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ven_twist_piston_shaft_2 {
             get {
