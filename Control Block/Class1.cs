@@ -858,12 +858,23 @@ namespace Control_Block
                         .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.sr), true, GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main", true))
                         .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.sr_png)))
                         .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                    Vector3.down * 0.5f,
-                    Vector3.left * 0.5f,
-                    Vector3.right * 0.5f,
-                    Vector3.forward * 0.5f,
-                    Vector3.back * 0.5f })
-                        .RegisterLater();
+                            Vector3.down * 0.5f,
+                            Vector3.left * 0.5f,
+                            Vector3.right * 0.5f,
+                            Vector3.forward * 0.5f,
+                            Vector3.back * 0.5f }
+                        );
+                        // .AddComponent<ModuleSteeringRegulator>();
+
+                    TankBlock baseBlock = SteeringRegulator.TankBlock;
+                    ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
+
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 2f, 0.1f, 5f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 2f, 0.1f, 5f, false, true));
+                    addedPID.enableHoldPosition = true;
+
+                    SteeringRegulator.RegisterLater();
+
                     CustomRecipe.RegisterRecipe(
                         new CustomRecipe.RecipeInput[]
                         {
