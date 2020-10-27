@@ -20,7 +20,6 @@ namespace Control_Block
 
         public float targetHeight = 50f;
         public float manualTargetChangeRate = 0f;
-        public bool staticHeight = false;
         public bool useTargetHeight = false;
         public bool enableHoldPosition = false;
 
@@ -556,8 +555,6 @@ namespace Control_Block
                 {
                     _targetHeight = this.targetHeight,
                     _manualChangeRate = this.manualTargetChangeRate,
-
-                    _staticHeight = this.staticHeight,
                     _useTargetHeight = this.useTargetHeight,
                     _enableHoldPosition = this.enableHoldPosition,
 
@@ -582,7 +579,6 @@ namespace Control_Block
                     this.manualTargetChangeRate = serialData._manualChangeRate;
                     this.enableHoldPosition = serialData._enableHoldPosition;
 
-                    this.staticHeight = serialData._staticHeight;
                     this.useTargetHeight = serialData._useTargetHeight;
 
                     this.targetPitch = serialData._targetPitch;
@@ -611,8 +607,6 @@ namespace Control_Block
 
                 context.Store(base.GetType(), "_targetPitch", this.targetPitch.ToString(CultureInfo.InvariantCulture));
                 context.Store(base.GetType(), "_targetRoll", this.targetRoll.ToString(CultureInfo.InvariantCulture));
-
-                context.Store(base.GetType(), "_staticHeight", this.staticHeight.ToString(CultureInfo.InvariantCulture));
                 context.Store(base.GetType(), "_useTargetHeight", this.useTargetHeight.ToString(CultureInfo.InvariantCulture));
                 context.Store(base.GetType(), "_enableHoldPosition", this.enableHoldPosition.ToString(CultureInfo.InvariantCulture));
 
@@ -714,36 +708,6 @@ namespace Control_Block
                     }
                 }
                 #endregion _manualChangeRate
-
-                #region _staticHeight
-                {
-                    string staticHeightStr = context.Retrieve(base.GetType(), "_staticHeight");
-                    if (!staticHeightStr.NullOrEmpty())
-                    {
-                        bool value;
-                        if (bool.TryParse(staticHeightStr, out value))
-                        {
-                            this.staticHeight = value;
-                        }
-                        else
-                        {
-                            d.LogError(string.Concat(new string[]
-                            {
-                            "ModuleHoverPID.OnSerializeText - Failed to parse _staticHeight setting from save data on block '",
-                            base.block.name,
-                            "'. Expected bool but got '",
-                            staticHeightStr,
-                            "'. Setting to default value of False"
-                            }));
-                            this.staticHeight = false;
-                        }
-                    }
-                    else
-                    {
-                        this.staticHeight = false;
-                    }
-                }
-                #endregion _staticHeight
 
                 #region _useTargetHeight
                 {
@@ -928,7 +892,6 @@ namespace Control_Block
             public float _targetHeight;
             public float _manualChangeRate;
 
-            public bool _staticHeight;
             public bool _useTargetHeight;
             public bool _enableHoldPosition;
 

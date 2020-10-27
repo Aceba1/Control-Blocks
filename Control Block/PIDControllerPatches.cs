@@ -304,7 +304,23 @@ namespace Control_Block
             } */
         }
 
-        // Patch GetThrottle to display height
+        #region UIPatches
+        // Patch Altimeter UI to display the actual height
+        [HarmonyPatch(typeof(UIAltimeter))]
+        [HarmonyPatch("Show")]
+        public class PatchAltimeter
+        {
+            private static FieldInfo m_SeaLevelYPos = typeof(UIAltimeter).GetField("m_SeaLevelYPos", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_Imperial = typeof(UIAltimeter).GetField("m_Imperial", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            public static void Postfix(ref UIAltimeter __instance)
+            {
+                PatchAltimeter.m_SeaLevelYPos.SetValue(__instance, 0f);
+                PatchAltimeter.m_Imperial.SetValue(__instance, false);
+                return;
+            }
+        }
+
+        // Patch GetThrottle to display target height
         [HarmonyPatch(typeof(UIThrottle))]
         [HarmonyPatch("UpdateAxis")]
         public class PatchThrottleVisual
@@ -359,6 +375,7 @@ namespace Control_Block
                 }
             }
         }
+        #endregion UIPatches
 
         #region PatchIndependentForces
         // Patch ManGravity Thrust

@@ -1134,8 +1134,8 @@ namespace Control_Block
                 #region HoverPID
                 {
                     var bf_PID_controller = new BlockPrefabBuilder("BF_Stabiliser_Computer_111")
-                        .SetName("BF Hover PID 2.0")
-                        .SetDescription("New desc.")
+                        .SetName("Altitde Control System")
+                        .SetDescription("After intense development, Better Future finally managed to create an altitude computer. It will take over your control of the vertical throttle to utilize all upward-facing fans and boosters to maintain a target altitude.")
                         .SetBlockID(10998)
                         .SetFaction(FactionSubTypes.BF)
                         .SetCategory(BlockCategories.Accessories)

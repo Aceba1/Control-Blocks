@@ -50,7 +50,7 @@ namespace Control_Block
         public PIDParameters YawPID;
 
         public float targetHeight, manualTargetChangeRate, targetPitch, targetRoll;
-        public bool staticHeight, useTargetHeight, enableHoldPosition;
+        public bool useTargetHeight, enableHoldPosition;
 
         [Serializable]
         public class PIDParameters : ScriptableObject
@@ -465,22 +465,9 @@ namespace Control_Block
         private Tank _tech;
 
         #region Globals
-        private static readonly int k_TerrainMask = ~(
-            Globals.inst.layerTank.mask |
-            Globals.inst.layerTankIgnoreTerrain.mask |
-            Globals.inst.layerShield.mask |
-            Globals.inst.layerCosmetic.mask |
-            Globals.inst.layerSceneryCoarse.mask |
-            Globals.inst.layerBullet.mask |
-            Globals.inst.layerShieldPiercingBullet.mask |
-            Globals.inst.layerShieldBulletsFilter.mask |
-            Globals.inst.layerContainer.mask |
-            Globals.inst.layerWheelSuspension.mask |
-            Globals.inst.layerLandmark.mask
-        );
         private static readonly RaycastHit[] s_Hits = new RaycastHit[32];
         private static readonly Vector3 m_EffectorDir = new Vector3(0, -1, 0);
-        private static readonly bool GlobalDebug = true;
+        private static readonly bool GlobalDebug = false;
         private static string dummyStr = "";
 
         public static void GlobalDebugPrint(string str)
@@ -621,7 +608,6 @@ namespace Control_Block
             this.HoverPID.enabled = pid.m_HoverParameters.enabled;
 
             this.targetHeight = pid.targetHeight;
-            this.staticHeight = pid.staticHeight;
             this.useTargetHeight = pid.useTargetHeight;
             this.manualTargetChangeRate = pid.manualTargetChangeRate;
             this.enableHoldPosition = pid.enableHoldPosition;
@@ -709,7 +695,6 @@ namespace Control_Block
             foreach (ModulePID pidRef in this.m_PIDModules)
             {
                 pidRef.targetHeight = this.targetHeight;
-                pidRef.staticHeight = this.staticHeight;
                 pidRef.manualTargetChangeRate = this.manualTargetChangeRate;
                 pidRef.useTargetHeight = this.useTargetHeight;
                 pidRef.enableHoldPosition = this.enableHoldPosition;
@@ -827,31 +812,7 @@ namespace Control_Block
 
         public float GetCurrentHeight()
         {
-            if (this.staticHeight)
-            {
-                return this.AttachedTank.WorldCenterOfMass.y;
-            }
-            else
-            {
-                Bounds bounds = this.AttachedTank.blockBounds;
-                Vector3 worldLocation = this.AttachedTank.boundsCentreWorld;
-                float minHeight = Mathf.Infinity;
-                int numHits = Physics.SphereCastNonAlloc(new Ray(worldLocation, PIDController.m_EffectorDir), bounds.extents.magnitude, PIDController.s_Hits, Mathf.Infinity, PIDController.k_TerrainMask, QueryTriggerInteraction.Ignore);
-                for (int i = 0; i < numHits; i++)
-                {
-                    RaycastHit raycastHit = PIDController.s_Hits[i];
-                    float height = worldLocation.y - raycastHit.point.y;
-                    if (height >= 0)
-                    {
-                        minHeight = Mathf.Min(minHeight, height);
-                    }
-                }
-                if (minHeight == Mathf.Infinity)
-                {
-                    this.HoverPID.DebugPrint("Raycast failed, assume infinite height");
-                }
-                return minHeight;
-            }
+            return this.AttachedTank.WorldCenterOfMass.y;
         }
 
         private void FixedUpdate() {
@@ -902,6 +863,11 @@ namespace Control_Block
                                 error = -currentVelocity.x;
                                 // get force needed to bring to standstill
                                 targetForce = -(this.AttachedTank.rbody.mass * currentVelocity.x);
+                            }
+
+                            if (error < 1f && error > -1f)
+                            {
+                                error = 0.0f;
                             }
 
                             float flatCalculatedThrust = targetForce < 0 ? this.calculatedThrustNegative.x : this.calculatedThrustPositive.x;
@@ -968,6 +934,11 @@ namespace Control_Block
                                 targetForce = -(this.AttachedTank.rbody.mass * currentVelocity.z);
                             }
 
+                            if (error < 1f && error > -1f)
+                            {
+                                error = 0.0f;
+                            }
+
                             float flatCalculatedThrust = targetForce < 0 ? this.calculatedThrustNegative.z : this.calculatedThrustPositive.z;
                             // get current available thrust based on tech angle
                             Vector3 worldTechForward = this.AttachedTank.transform.rotation * new Vector3(0, 0, 1);
@@ -1028,11 +999,6 @@ namespace Control_Block
                             // with target height updated, update other stuff
                             float height = this.GetCurrentHeight();
                             float newError = this.targetHeight - height;
-
-                            if (this.staticHeight)
-                            {
-                                newError = this.targetHeight - this.AttachedTank.WorldCenterOfMass.y;
-                            }
 
                             if (newError < 1f && newError > -1f)
                             {

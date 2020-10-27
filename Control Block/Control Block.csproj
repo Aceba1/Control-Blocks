@@ -92,6 +92,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="ClusterBody.cs" />
     <Compile Include="ConnectingLineRenderer.cs" />
+    <Compile Include="OptionMenuHoverPID.cs" />
     <Compile Include="PIDController.cs" />
     <Compile Include="LegacyBlockMoverIMGUI.cs" />
     <Compile Include="ModuleBlockMover.cs" />
