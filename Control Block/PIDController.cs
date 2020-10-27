@@ -488,6 +488,9 @@ namespace Control_Block
         public Vector3 calculatedThrustPositive = Vector3.zero;
         public Vector3 calculatedThrustNegative = Vector3.zero;
 
+        public Vector3 calculatedRotationThrustPositive = Vector3.zero;
+        public Vector3 calculatedRotationThrustNegative = Vector3.zero;
+
         public Vector3 nonGravityThrust = Vector3.zero;
         private Vector3 baseGravity
         {
@@ -843,6 +846,7 @@ namespace Control_Block
                 Vector3 inputCommand = (Vector3) controlState.m_State.m_InputMovement;
                 
                 Vector3 newThrottle = Vector3.zero;
+                Vector3 newRotation = Vector3.zero;
                 Vector3 standardForce = -this.nonGravityThrust;
                 Vector3 relativeTargetPosition = this.AttachedTank.transform.InverseTransformVector(this.targetPosition - this.AttachedTank.WorldCenterOfMass);
                 // PIDController.GlobalDebugPrint($"FixedUpdate Commanded Action: {inputCommand}, CalculatedThrustPos: {this.calculatedThrustNegative}, CalculatedThrustNeg: {this.calculatedThrustPositive}");
@@ -977,15 +981,36 @@ namespace Control_Block
                 }
                 if (this.PitchPID != null && this.PitchPID.enabled)
                 {
+                    if (this.calculatedRotationThrustPositive.x != 0f || this.calculatedRotationThrustNegative.x != 0f)
+                    {
 
+                    }
+                    else
+                    {
+
+                    }
                 }
                 if (this.RollPID != null && this.RollPID.enabled)
                 {
+                    if (this.calculatedRotationThrustPositive.z != 0f || this.calculatedRotationThrustNegative.z != 0f)
+                    {
 
+                    }
+                    else
+                    {
+
+                    }
                 }
                 if (this.YawPID != null && this.YawPID.enabled)
                 {
+                    if (this.calculatedRotationThrustPositive.y != 0f || this.calculatedRotationThrustNegative.y != 0f)
+                    {
 
+                    }
+                    else
+                    {
+
+                    }
                 }
                 if (this.HoverPID != null && this.HoverPID.enabled)
                 {
@@ -1078,18 +1103,9 @@ namespace Control_Block
             TankControl control = this.AttachedTank.control;
             Vector3 newThrottle = (Vector3) PIDController.m_Throttle.GetValue(control);
 
-            if (throttle.x != 0f)
-            {
-                newThrottle.x = throttle.x;
-            }
-            if (throttle.y != 0f)
-            {
-                newThrottle.y = throttle.y;
-            }
-            if (throttle.z != 0f)
-            {
-                newThrottle.z = throttle.z;
-            }
+            newThrottle.x = throttle.x;
+            newThrottle.y = throttle.y;
+            newThrottle.z = throttle.z;
 
             PIDController.m_Throttle.SetValue(control, newThrottle);
 

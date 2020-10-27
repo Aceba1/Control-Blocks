@@ -58,14 +58,14 @@ namespace Control_Block
                             __instance.CycleActiveScheme();
                             activeScheme = __instance.ActiveScheme;
                         }
-                        Vector3 vector = new Vector3(activeScheme.GetAxisMapping(MovementAxis.MoveX_MoveRight).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.MoveY_MoveUp).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.MoveZ_MoveForward).ReadRewiredInput(rewiredPlayer));
-                        Vector3 vector2 = new Vector3(activeScheme.GetAxisMapping(MovementAxis.RotateX_PitchUp).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.RotateY_YawLeft).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.RotateZ_RollRight).ReadRewiredInput(rewiredPlayer));
+                        Vector3 inputMovement = new Vector3(activeScheme.GetAxisMapping(MovementAxis.MoveX_MoveRight).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.MoveY_MoveUp).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.MoveZ_MoveForward).ReadRewiredInput(rewiredPlayer));
+                        Vector3 inputRotation = new Vector3(activeScheme.GetAxisMapping(MovementAxis.RotateX_PitchUp).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.RotateY_YawLeft).ReadRewiredInput(rewiredPlayer), activeScheme.GetAxisMapping(MovementAxis.RotateZ_RollRight).ReadRewiredInput(rewiredPlayer));
                         if (Singleton.Manager<ManInput>.inst.IsCurrentlyUsingGamepad())
                         {
-                            Vector2 vector3 = new Vector2(vector2.y, vector.z);
+                            Vector2 vector3 = new Vector2(inputRotation.y, inputMovement.z);
                             vector3 = Globals.inst.m_DriveStickInputInterpreter.InterpretAnalogStickInput(vector3);
-                            vector2.y = vector3.x;
-                            vector.z = vector3.y;
+                            inputRotation.y = vector3.x;
+                            inputMovement.z = vector3.y;
                         }
 
                         int[] throttleAxisEnableCount = (int[])PatchTankControl.m_ThrottleAxisEnableCount.GetValue(__instance);
@@ -73,23 +73,23 @@ namespace Control_Block
                         Vector3 oldInput = (Vector3)PatchTankControl.m_ThrottleInput.GetValue(__instance);
                         Vector3 oldTiming = (Vector3)PatchTankControl.m_ThrottleTiming.GetValue(__instance);
 
-                        object[] argsX = new object[] { throttleAxisEnableCount[0] > 0, vector.x, oldThrottle.x, oldInput.x, oldTiming.x };
-                        object[] argsY = new object[] { throttleAxisEnableCount[1] > 0, vector.y, oldThrottle.y, oldInput.y, oldTiming.y };
-                        object[] argsZ = new object[] { throttleAxisEnableCount[2] > 0, vector.z, oldThrottle.z, oldInput.z, oldTiming.z };
-                        if (pidController.StrafePID == null || !pidController.StrafePID.enabled)
+                        object[] argsX = new object[] { throttleAxisEnableCount[0] > 0, inputMovement.x, oldThrottle.x, oldInput.x, oldTiming.x };
+                        object[] argsY = new object[] { throttleAxisEnableCount[1] > 0, inputMovement.y, oldThrottle.y, oldInput.y, oldTiming.y };
+                        object[] argsZ = new object[] { throttleAxisEnableCount[2] > 0, inputMovement.z, oldThrottle.z, oldInput.z, oldTiming.z };
+                        if (pidController.StrafePID == null)
                         {
                             PatchTankControl.ApplyThrottle.Invoke(__instance, argsX);
                         }
-                        if (pidController.HoverPID == null || !pidController.HoverPID.enabled)
+                        if (pidController.HoverPID == null)
                         {
                             PatchTankControl.ApplyThrottle.Invoke(__instance, argsY);
                         }
-                        else if (pidController.useTargetHeight && vector.y != 0f)
+                        else if (pidController.useTargetHeight && inputMovement.y != 0f)
                         {
-                            pidController.targetHeight += Mathf.Sign(vector.y) * pidController.manualTargetChangeRate * dt;
+                            pidController.targetHeight += Mathf.Sign(inputMovement.y) * pidController.manualTargetChangeRate * dt;
                             pidController.PropagateUpdatedHoverParameters();
                         }
-                        if (pidController.AccelPID == null || !pidController.AccelPID.enabled)
+                        if (pidController.AccelPID == null)
                         {
                             PatchTankControl.ApplyThrottle.Invoke(__instance, argsZ);
                         }
@@ -103,34 +103,34 @@ namespace Control_Block
                         PatchTankControl.m_ThrottleInput.SetValue(__instance, newInput);
                         PatchTankControl.m_ThrottleTiming.SetValue(__instance, newTiming);
 
-                        vector.x = (float) argsX[1];
-                        vector.y = (float) argsY[1];
-                        vector.z = (float) argsZ[1];
+                        inputMovement.x = (float) argsX[1];
+                        inputMovement.y = (float) argsY[1];
+                        inputMovement.z = (float) argsZ[1];
 
                         // pitch/roll always use target angle - ignore
                         if (pidController.PitchPID && pidController.PitchPID.enabled)
                         {
-                            pidController.targetPitch = Mathf.Clamp(pidController.targetPitch + (vector2.x * pidController.manualTargetChangeRate * dt / 180), -1f, 1f);
-                            vector2.x = 0f;
+                            pidController.targetPitch = Mathf.Clamp(pidController.targetPitch + (inputRotation.x * pidController.manualTargetChangeRate * dt / 180), -1f, 1f);
+                            inputRotation.x = 0f;
                         }
                         if (pidController.RollPID && pidController.RollPID.enabled)
                         {
-                            pidController.targetRoll = Mathf.Clamp(pidController.targetRoll + (vector2.z * pidController.manualTargetChangeRate * dt / 180), -1f, 1f);
-                            vector2.z = 0f;
+                            pidController.targetRoll = Mathf.Clamp(pidController.targetRoll + (inputRotation.z * pidController.manualTargetChangeRate * dt / 180), -1f, 1f);
+                            inputRotation.z = 0f;
                         }
 
                         // reverse steering - may need to move rotation control around
-                        if (!__instance.ActiveScheme.ReverseSteering && (vector.z < -0.01f || newThrottle[2] < -0.01f))
+                        if (!__instance.ActiveScheme.ReverseSteering && (inputMovement.z < -0.01f || newThrottle[2] < -0.01f))
                         {
                             Vector3 forward = __instance.Tech.rootBlockTrans.forward;
                             if (Vector3.Dot(__instance.Tech.rbody.velocity, forward) < 0f)
                             {
-                                vector2.y *= -1f;
+                                inputRotation.y *= -1f;
                             }
                         }
 
-                        controlState.m_State.m_InputMovement = vector;
-                        controlState.m_State.m_InputRotation = vector2;
+                        controlState.m_State.m_InputMovement = inputMovement;
+                        controlState.m_State.m_InputRotation = inputRotation;
                         controlState.m_State.m_ThrottleValues = newThrottle;
                         controlState.m_State.m_BoostProps = (activeScheme.GetAxisMapping(MovementAxis.BoostPropellers).ReadRewiredInput(rewiredPlayer) > 0.01f);
                         controlState.m_State.m_BoostJets = (activeScheme.GetAxisMapping(MovementAxis.BoostJets).ReadRewiredInput(rewiredPlayer) > 0.01f);

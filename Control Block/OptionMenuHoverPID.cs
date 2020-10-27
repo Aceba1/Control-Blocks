@@ -305,6 +305,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_HoverParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_HoverParameters.enabled)
                     {
+                        this.hoverEnabled = toggleEnabled;
                         this.module.m_HoverParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateHover();
                     }
@@ -314,6 +315,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_HoverParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_HoverParameters.enabled)
                     {
+                        this.hoverEnabled = toggleEnabled;
                         this.module.m_HoverParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateHover();
                     }
@@ -371,6 +373,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_AccelParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_AccelParameters.enabled)
                     {
+                        this.accelEnabled = toggleEnabled;
                         this.module.m_AccelParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateAccel();
                     }
@@ -380,6 +383,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_AccelParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_AccelParameters.enabled)
                     {
+                        this.accelEnabled = toggleEnabled;
                         this.module.m_AccelParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateAccel();
                     }
@@ -437,6 +441,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_StrafeParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_StrafeParameters.enabled)
                     {
+                        this.strafeEnabled = toggleEnabled;
                         this.module.m_StrafeParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateStrafe();
                     }
@@ -446,6 +451,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_StrafeParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_StrafeParameters.enabled)
                     {
+                        this.strafeEnabled = toggleEnabled;
                         this.module.m_StrafeParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateStrafe();
                     }
@@ -503,6 +509,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_PitchParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_PitchParameters.enabled)
                     {
+                        this.pitchEnabled = toggleEnabled;
                         this.module.m_PitchParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdatePitch();
                     }
@@ -512,6 +519,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_PitchParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_PitchParameters.enabled)
                     {
+                        this.pitchEnabled = toggleEnabled;
                         this.module.m_PitchParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdatePitch();
                     }
@@ -568,6 +576,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_RollParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_RollParameters.enabled)
                     {
+                        this.rollEnabled = toggleEnabled;
                         this.module.m_RollParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateRoll();
                     }
@@ -577,6 +586,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_RollParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_RollParameters.enabled)
                     {
+                        this.rollEnabled = toggleEnabled;
                         this.module.m_RollParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateRoll();
                     }
@@ -627,6 +637,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_YawParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_YawParameters.enabled)
                     {
+                        this.yawEnabled = toggleEnabled;
                         this.module.m_YawParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateYaw();
                     }
@@ -636,6 +647,7 @@ namespace Control_Block
                     bool toggleEnabled = GUILayout.Toggle(this.module.m_YawParameters.enabled, " Enable PID");
                     if (toggleEnabled != this.module.m_YawParameters.enabled)
                     {
+                        this.yawEnabled = toggleEnabled;
                         this.module.m_YawParameters.enabled = toggleEnabled;
                         this.module.OnGUIUpdateYaw();
                     }
