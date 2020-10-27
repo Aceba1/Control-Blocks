@@ -17,6 +17,10 @@ namespace Control_Block
 
             #region Blocks
             {
+                #region Materials
+                Material bf_mat = GameObjectJSON.GetObjectFromGameResources<Material>("BF_Main");
+                #endregion Materials
+
                 #region Pistons
                 {
                     #region GSO Piston
@@ -850,7 +854,6 @@ namespace Control_Block
                         .SetBlockID(1293839)
                         .SetFaction(FactionSubTypes.BF)
                         .SetCategory(BlockCategories.Accessories)
-                        .AddComponent<ModuleSteeringRegulator>()
                         .SetGrade(0)
                         .SetPrice(3467)
                         .SetHP(200)
@@ -869,8 +872,8 @@ namespace Control_Block
                     TankBlock baseBlock = SteeringRegulator.TankBlock;
                     ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
 
-                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 2f, 0.1f, 5f, false, true));
-                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 2f, 0.1f, 5f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 200f, 10f, 500f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 200f, 10f, 500f, false, true));
                     addedPID.enableHoldPosition = true;
 
                     SteeringRegulator.RegisterLater();
@@ -878,14 +881,15 @@ namespace Control_Block
                     CustomRecipe.RegisterRecipe(
                         new CustomRecipe.RecipeInput[]
                         {
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
-                    new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
                         },
                         new CustomRecipe.RecipeOutput[]
                         {
-                    new CustomRecipe.RecipeOutput(1293839)
-                        });
+                            new CustomRecipe.RecipeOutput(1293839)
+                        }
+                    );
                 }
                 #endregion Steering Regulator
 
@@ -1126,6 +1130,54 @@ namespace Control_Block
                     #endregion Large Swivel MTMag
                 }
                 #endregion MultiTech Magnets
+
+                #region HoverPID
+                {
+                    var bf_PID_controller = new BlockPrefabBuilder("BF_Stabiliser_Computer_111")
+                        .SetName("Altitde Control System")
+                        .SetDescription("After intense development, Better Future finally managed to create an altitude computer. It will take over your control of the vertical throttle to utilize all upward-facing fans and boosters to maintain a target altitude.")
+                        .SetBlockID(10998)
+                        .SetFaction(FactionSubTypes.BF)
+                        .SetCategory(BlockCategories.Accessories)
+                        .SetGrade(0)
+                        .SetPrice(3467)
+                        .SetHP(200)
+                        .SetMass(3.5f)
+                        .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer), true, bf_mat)
+                        .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BF_Hover_PID_png)))
+                        .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                        Vector3.down * 0.5f});
+
+                    TankBlock baseBlock = bf_PID_controller.TankBlock;
+                    ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
+
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Hover, 300f, 10f, 600f, false, true));
+                    addedPID.enableHoldPosition = true;
+                    addedPID.manualTargetChangeRate = 1.0f;
+                    addedPID.useTargetHeight = true;
+
+                    Mesh spinnerMesh = GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer_Spinner);
+                    GameObject spindleChild = baseBlock.gameObject.FindChildGameObject("_spindle");
+                    GameObject ringObject = spindleChild.FindChildGameObject("m_BF_Stabiliser_Computer_111_Ring");
+                    ringObject.AddComponent<MeshFilter>().sharedMesh = spinnerMesh;
+                    ringObject.AddComponent<MeshRenderer>().sharedMaterial = bf_mat;
+
+                    CustomRecipe.RegisterRecipe(
+                        new CustomRecipe.RecipeInput[]
+                        {
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
+                        },
+                        new CustomRecipe.RecipeOutput[]
+                        {
+                            new CustomRecipe.RecipeOutput(10998)
+                        }
+                    );
+
+                    bf_PID_controller.RegisterLater();
+                }
+                #endregion HoverPID
             }
             #endregion Blocks
 
@@ -1134,6 +1186,7 @@ namespace Control_Block
             //_holder.AddComponent<OptionMenuSwivel>();
             _holder.AddComponent<OptionMenuSteeringRegulator>();
             _holder.AddComponent<OptionMenuMover>();
+            _holder.AddComponent<OptionMenuHoverPID>();
             _holder.AddComponent<LogGUI>();
             _holder.AddComponent<AdjustAttachPosition>();
             new GameObject().AddComponent<GUIOverseer>();

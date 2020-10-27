@@ -44,12 +44,13 @@ namespace Control_Block
         public static GUIOverseer inst;
         public static void CheckValid()
         {
-            inst.gameObject.SetActive(OptionMenuMover.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
+            inst.gameObject.SetActive(OptionMenuMover.inst.check_OnGUI() || OptionMenuSteeringRegulator.inst.check_OnGUI() || OptionMenuHoverPID.inst.check_OnGUI() || LogGUI.inst.check_OnGUI());
         }
         public void OnGUI()
         {
             OptionMenuMover.inst.stack_OnGUI();
             OptionMenuSteeringRegulator.inst.stack_OnGUI();
+            OptionMenuHoverPID.inst.stack_OnGUI();
             LogGUI.inst.stack_OnGUI();
         }
     }

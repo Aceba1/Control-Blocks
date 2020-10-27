@@ -43,8 +43,16 @@
     <Reference Include="BlockInjector">
       <HintPath>..\..\..\QMods\Nuterra.BlockInjector\BlockInjector.dll</HintPath>
     </Reference>
+    <Reference Include="DebugWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TerraTechWin64_Data\Managed\DebugWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\TerraTechWin64_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TerraTechWin64_Data\Managed\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,12 +92,16 @@
     <Compile Include="Class1.cs" />
     <Compile Include="ClusterBody.cs" />
     <Compile Include="ConnectingLineRenderer.cs" />
+    <Compile Include="OptionMenuHoverPID.cs" />
+    <Compile Include="PIDController.cs" />
     <Compile Include="LegacyBlockMoverIMGUI.cs" />
     <Compile Include="ModuleBlockMover.cs" />
     <Compile Include="ModuleBlockMoverRail.cs" />
+    <Compile Include="ModulePID.cs" />
     <Compile Include="ModuleMTMagnet.cs" />
     <Compile Include="ModuleFrictionPad.cs" />
     <Compile Include="ModuleMTMagnetV2.cs" />
+    <Compile Include="PIDControllerPatches.cs" />
     <Compile Include="PopupIMGUI.cs" />
     <Compile Include="ProcessOperator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -117,6 +129,9 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="Blocks\HoverPID\BF_Flight_Computer.obj" />
+    <None Include="Blocks\HoverPID\BF_Flight_Computer_Spinner.obj" />
+    <None Include="Blocks\HoverPID\BF_Hover_PID_png" />
     <None Include="Blocks\MTMags\mtmag ball collider large.obj" />
     <None Include="Blocks\MTMags\mtmag ball collider.obj" />
     <None Include="Blocks\MTMags\mtmag ball large.obj" />
