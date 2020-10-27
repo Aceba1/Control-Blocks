@@ -248,8 +248,15 @@ namespace Control_Block
                         module.OnGUIUpdateHover();
                     }
 
+                    bool toggleStaticHeight = GUILayout.Toggle(this.module.staticHeight, " Use static altitude");
+                    if (toggleStaticHeight != this.module.staticHeight)
+                    {
+                        this.module.staticHeight = toggleStaticHeight;
+                        this.module.OnGUIUpdateHover();
+                    }
                     if (GUILayout.Button("Target Current Height"))
                     {
+                        this.module.staticHeight = true;
                         this.module.targetHeight = this.module.block.centreOfMassWorld.y;
                         this.module.OnGUIUpdateHover();
                         this.module.OnResetHoverError();
@@ -321,17 +328,17 @@ namespace Control_Block
 
                 if (this.accelEnabled)
                 {
-                    if (GUIOverseer.TextSliderPair("Proportional Gain: ", ref this.accelKP, ref this.module.m_AccelParameters.kP, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Proportional Gain: ", ref this.accelKP, ref this.module.m_AccelParameters.kP, 0f, 100f, false, 0.05f))
                     {
                         module.OnGUIUpdateAccel();
                     }
 
-                    if (GUIOverseer.TextSliderPair("Integral Gain: ", ref this.accelKI, ref this.module.m_AccelParameters.kI, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Integral Gain: ", ref this.accelKI, ref this.module.m_AccelParameters.kI, 0f, 10f, false, 0.05f))
                     {
                         module.OnGUIUpdateAccel();
                     }
 
-                    if (GUIOverseer.TextSliderPair("Derivative Gain: ", ref this.accelKD, ref this.module.m_AccelParameters.kD, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Derivative Gain: ", ref this.accelKD, ref this.module.m_AccelParameters.kD, 0f, 100f, false, 0.05f))
                     {
                         module.OnGUIUpdateAccel();
                     }
@@ -387,17 +394,17 @@ namespace Control_Block
 
                 if (this.strafeEnabled)
                 {
-                    if (GUIOverseer.TextSliderPair("Proportional Gain: ", ref this.strafeKP, ref this.module.m_StrafeParameters.kP, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Proportional Gain: ", ref this.strafeKP, ref this.module.m_StrafeParameters.kP, 0f, 100f, false, 0.05f))
                     {
                         module.OnGUIUpdateStrafe();
                     }
 
-                    if (GUIOverseer.TextSliderPair("Integral Gain: ", ref this.strafeKI, ref this.module.m_StrafeParameters.kI, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Integral Gain: ", ref this.strafeKI, ref this.module.m_StrafeParameters.kI, 0f, 10f, false, 0.05f))
                     {
                         module.OnGUIUpdateStrafe();
                     }
 
-                    if (GUIOverseer.TextSliderPair("Derivative Gain: ", ref this.strafeKD, ref this.module.m_StrafeParameters.kD, 0f, 1f, false, 0.05f))
+                    if (GUIOverseer.TextSliderPair("Derivative Gain: ", ref this.strafeKD, ref this.module.m_StrafeParameters.kD, 0f, 100f, false, 0.05f))
                     {
                         module.OnGUIUpdateStrafe();
                     }

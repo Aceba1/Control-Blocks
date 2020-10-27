@@ -872,8 +872,8 @@ namespace Control_Block
                     TankBlock baseBlock = SteeringRegulator.TankBlock;
                     ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
 
-                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 2f, 0.1f, 5f, false, true));
-                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 2f, 0.1f, 5f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 200f, 10f, 500f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 200f, 10f, 500f, false, true));
                     addedPID.enableHoldPosition = true;
 
                     SteeringRegulator.RegisterLater();
