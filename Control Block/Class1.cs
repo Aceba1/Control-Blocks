@@ -1134,7 +1134,7 @@ namespace Control_Block
                 #region HoverPID
                 {
                     var bf_PID_controller = new BlockPrefabBuilder("BF_Stabiliser_Computer_111")
-                        .SetName("Altitde Control System")
+                        .SetName("Altitude Control System")
                         .SetDescription("After intense development, Better Future finally managed to create an altitude computer. It will take over your control of the vertical throttle to utilize all upward-facing fans and boosters to maintain a target altitude.")
                         .SetBlockID(10998)
                         .SetFaction(FactionSubTypes.BF)
@@ -1146,7 +1146,9 @@ namespace Control_Block
                         .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer), true, bf_mat)
                         .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BF_Hover_PID_png)))
                         .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
-                        Vector3.down * 0.5f});
+                        Vector3.down * 0.5f})
+                        .AddComponent<ModuleAltimeter>()
+                    ;
 
                     TankBlock baseBlock = bf_PID_controller.TankBlock;
                     ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
@@ -1178,6 +1180,54 @@ namespace Control_Block
                     bf_PID_controller.RegisterLater();
                 }
                 #endregion HoverPID
+
+                /* #region RotationalPID
+                {
+                    var bf_PID_controller = new BlockPrefabBuilder("BF_Stabiliser_Computer_111")
+                        .SetName("Rotational Control System")
+                        .SetDescription("After intense development, Better Future finally managed to create a rotational control computer. It's like a gyroscope, but for your fans!")
+                        .SetBlockID(10999)
+                        .SetFaction(FactionSubTypes.BF)
+                        .SetCategory(BlockCategories.Accessories)
+                        .SetGrade(0)
+                        .SetPrice(3467)
+                        .SetHP(200)
+                        .SetMass(3.5f)
+                        .SetModel(GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer), true, bf_mat)
+                        .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Properties.Resources.BF_Hover_PID_png)))
+                        .SetSizeManual(new IntVector3[] { IntVector3.zero }, new Vector3[]{
+                        Vector3.down * 0.5f});
+
+                    TankBlock baseBlock = bf_PID_controller.TankBlock;
+                    ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
+
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Pitch, 10f, 1f, 20f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Roll, 10f, 1f, 20f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Yaw, 10f, 1f, 20f, false, true));
+                    addedPID.manualTargetChangeRate = 1.0f;
+
+                    Mesh spinnerMesh = GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer_Spinner);
+                    GameObject spindleChild = baseBlock.gameObject.FindChildGameObject("_spindle");
+                    GameObject ringObject = spindleChild.FindChildGameObject("m_BF_Stabiliser_Computer_111_Ring");
+                    ringObject.AddComponent<MeshFilter>().sharedMesh = spinnerMesh;
+                    ringObject.AddComponent<MeshRenderer>().sharedMaterial = bf_mat;
+
+                    CustomRecipe.RegisterRecipe(
+                        new CustomRecipe.RecipeInput[]
+                        {
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.MotherBrain, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.ThermoJet, 1),
+                            new CustomRecipe.RecipeInput((int)ChunkTypes.FibrePlating, 2),
+                        },
+                        new CustomRecipe.RecipeOutput[]
+                        {
+                            new CustomRecipe.RecipeOutput(10998)
+                        }
+                    );
+
+                    bf_PID_controller.RegisterLater();
+                }
+                #endregion RotationalPID */
             }
             #endregion Blocks
 

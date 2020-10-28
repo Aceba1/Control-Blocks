@@ -215,93 +215,6 @@ namespace Control_Block
                 }
                 return true;
             }
-
-            /* public static void Postfix(ref TankControl __instance, ref Vector3 __state)
-            {
-                if (!__state.Equals(PatchTankControl.defaultState))
-                {
-                    Vector3 detectedThrottle = (Vector3)PatchTankControl.m_Throttle.GetValue(__instance);
-                    TankControl.ControlState controlState = (TankControl.ControlState)PatchTankControl.m_ControlState.GetValue(__instance);
-
-                    Console.WriteLine($"    POSTFIX THROTTLE START: {detectedThrottle}");
-                    Console.WriteLine($"    POSTFIX INPUTMOVEMENT START: {controlState.m_State.m_InputMovement}");
-
-                    float heightChange = detectedThrottle.y;
-                    float strafeChange = detectedThrottle.x;
-                    float accelChange = detectedThrottle.z;
-
-
-                    detectedThrottle.x = __state.x;
-                    detectedThrottle.z = __state.z;
-
-                    Vector3 oldInput = (Vector3)PatchTankControl.m_ThrottleInput.GetValue(__instance);
-                    Vector3 oldTiming = (Vector3)PatchTankControl.m_ThrottleTiming.GetValue(__instance);
-                    PIDController pid = __instance.Tech.gameObject.GetComponent<PIDController>();
-
-                    // if detect input, change target height
-                    if (heightChange != 0f)
-                    {
-                        if (pid.HoverPID != null)
-                        {
-                            if (pid.useTargetHeight)
-                            {
-                                pid.targetHeight += Mathf.Sign(heightChange) * Time.deltaTime * pid.manualTargetChangeRate;
-                                pid.PropagateUpdatedHoverParameters();
-                            }
-                            else
-                            {
-                                controlState.m_State.m_InputMovement.y += heightChange;
-                            }
-                            detectedThrottle.y = __state.y;
-                        }
-                        else
-                        {
-                            detectedThrottle.y = Mathf.Clamp(__state.y + detectedThrottle.y, -1f, 1f);
-                        }
-
-                        oldInput.y = 0f;
-                        oldTiming.y = 0f;
-
-                        PatchTankControl.m_ThrottleInput.SetValue(__instance, new Vector3(oldInput.x, 0f, oldInput.z));
-                        PatchTankControl.m_ThrottleTiming.SetValue(__instance, new Vector3(oldTiming.x, 0f, oldTiming.z));
-                    }
-
-                    // if detect input, shunt it to m_Input
-                    if (strafeChange != 0f)
-                    {
-                        if (pid.StrafePID != null)
-                        {
-                            controlState.m_State.m_InputMovement.x += strafeChange;
-                            detectedThrottle.x = __state.x;
-                        }
-
-                        oldInput.x = 0f;
-                        oldTiming.x = 0f;
-
-                        PatchTankControl.m_ThrottleInput.SetValue(__instance, new Vector3(0f, oldInput.y, oldInput.z));
-                        PatchTankControl.m_ThrottleTiming.SetValue(__instance, new Vector3(0f, oldTiming.y, oldTiming.z));
-                    }
-                    if (accelChange != 0f)
-                    {
-                        if (pid.AccelPID != null)
-                        {
-                            __instance.DriveControl += accelChange;
-                            detectedThrottle.z = __state.z;
-                        }
-
-                        PatchTankControl.m_ThrottleInput.SetValue(__instance, new Vector3(oldInput.x, oldInput.y, 0f));
-                        PatchTankControl.m_ThrottleTiming.SetValue(__instance, new Vector3(oldTiming.x, oldTiming.y, 0f));
-                    }
-
-                    Console.WriteLine($"    POSTFIX THROTTLE END: {detectedThrottle}");
-                    PatchTankControl.m_Throttle.SetValue(__instance, detectedThrottle);
-                    controlState.m_State.m_ThrottleValues.x = detectedThrottle.x;
-                    controlState.m_State.m_ThrottleValues.y = detectedThrottle.y;
-                    controlState.m_State.m_ThrottleValues.z = detectedThrottle.z;
-                    Console.WriteLine($"    POSTFIX INPUTMOVEMENT END: {controlState.m_State.m_InputMovement}");
-                    Console.WriteLine("");
-                }
-            } */
         }
 
         #region UIPatches
@@ -338,7 +251,7 @@ namespace Control_Block
                 {
                     TankControl tankControl = (TankControl)PatchThrottleVisual.m_TankControl.GetValue(__instance);
                     PIDController pidController = tankControl.Tech.gameObject.GetComponent<PIDController>();
-                    if (pidController != null && pidController.HoverPID != null && pidController.useTargetHeight)
+                    if (pidController != null && pidController.HoverPID != null && (pidController.useTargetHeight || pidController.targetHeight != Mathf.Infinity))
                     {
                         float num2 = Mathf.Round(pidController.targetHeight * 10f);
                         if (axis.m_NumericDisplay)
@@ -378,6 +291,108 @@ namespace Control_Block
         #endregion UIPatches
 
         #region PatchIndependentForces
+        // Patch Gyros
+        [HarmonyPatch(typeof(ModuleGyro))]
+        [HarmonyPatch("FixedUpdate")]
+        public class PatchModuleGyro
+        {
+            private static FieldInfo m_UseActive = typeof(ModuleGyro).GetField("m_UseActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_UsePassive = typeof(ModuleGyro).GetField("m_UsePassive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_ActiveStability = typeof(ModuleGyro).GetField("m_ActiveStability", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_ActiveSpeed = typeof(ModuleGyro).GetField("m_ActiveSpeed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_ControlTrim = typeof(ModuleGyro).GetField("m_ControlTrim", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_ControlTrimTarget = typeof(ModuleGyro).GetField("m_ControlTrimTarget", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_TrimAdjustSpeed = typeof(ModuleGyro).GetField("m_TrimAdjustSpeed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_Trim = typeof(ModuleGyro).GetField("m_Trim", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_TrimPitchMax = typeof(ModuleGyro).GetField("m_TrimPitchMax", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_ActiveAxisScale = typeof(ModuleGyro).GetField("m_ActiveAxisScale", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_PrevAngularVel = typeof(ModuleGyro).GetField("m_PrevAngularVel", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_PassiveStrength = typeof(ModuleGyro).GetField("m_PassiveStrength", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_RotationMinSpeed = typeof(ModuleGyro).GetField("m_RotationMinSpeed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_RotationMaxSpeed = typeof(ModuleGyro).GetField("m_RotationMaxSpeed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_RotationAnimTransform = typeof(ModuleGyro).GetField("m_RotationAnimTransform", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo m_RotationAnimSpeed = typeof(ModuleGyro).GetField("m_RotationAnimSpeed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            private static MethodInfo TestUseFilter = typeof(ModuleGyro).GetMethod("TestUseFilter", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            public static bool Prefix(ref ModuleGyro __instance)
+            {
+                if (__instance.block.tank)
+                {
+                    PIDController pidController = __instance.block.tank.gameObject.GetComponent<PIDController>();
+                    if (pidController != null && !pidController.AttachedTank.beam.IsActive)
+                    {
+                        Rigidbody rbody = __instance.block.tank.rbody;
+                        Vector3 vector = Vector3.zero;
+                        if ((bool)PatchModuleGyro.TestUseFilter.Invoke(__instance, new object[] {PatchModuleGyro.m_UseActive.GetValue(__instance)}))
+                        {
+                            float activeSpeed = (float) PatchModuleGyro.m_ActiveSpeed.GetValue(__instance);
+
+                            Vector3 vector2 = Quaternion.AngleAxis(rbody.angularVelocity.magnitude * 57.29578f * ((float)PatchModuleGyro.m_ActiveStability.GetValue(__instance) / activeSpeed), rbody.angularVelocity) * __instance.block.tank.rootBlockTrans.up;
+                            Vector3 vector3 = Vector3.up;
+                            Vector3 right = __instance.block.tank.rootBlockTrans.right;
+                            if ((__instance.block.tank.BlockStateController == null || !__instance.block.tank.BlockStateController.IsKillswitched(BlockControllerModuleTypes.GyroTrim)) && Mathf.Abs(Vector3.Dot(vector3, right)) < 0.95f)
+                            {
+                                float controlTrim = (float)PatchModuleGyro.m_ControlTrim.GetValue(__instance);
+                                controlTrim = Mathf.MoveTowards(controlTrim, (float)PatchModuleGyro.m_ControlTrimTarget.GetValue(__instance), Time.deltaTime * (float)PatchModuleGyro.m_TrimAdjustSpeed.GetValue(__instance));
+                                PatchModuleGyro.m_ControlTrim.SetValue(__instance, controlTrim);
+                                float num = Mathf.Clamp((float)PatchModuleGyro.m_Trim.GetValue(__instance) + controlTrim, -1f, 1f);
+                                vector3 = Quaternion.AngleAxis((float)PatchModuleGyro.m_TrimPitchMax.GetValue(__instance) * num, right) * vector3;
+                            }
+                            Vector3 vector4 = Vector3.Cross(vector2, vector3);
+                            Vector3 vector5 = __instance.transform.InverseTransformVector(vector4);
+                            Vector3 activeAxisScale = (Vector3) PatchModuleGyro.m_ActiveAxisScale.GetValue(__instance);
+                            vector5.x *= activeAxisScale.x;
+                            vector5.y *= activeAxisScale.y;
+                            vector5.z *= activeAxisScale.z;
+                            vector4 = __instance.transform.TransformVector(vector5);
+                            vector += vector4 * activeSpeed * activeSpeed;
+                            Debug.DrawLine(rbody.worldCenterOfMass, rbody.worldCenterOfMass + rbody.transform.up * 10f, Color.green);
+                            Debug.DrawLine(rbody.worldCenterOfMass, rbody.worldCenterOfMass + vector2 * 10f, Color.cyan);
+                            Debug.DrawLine(rbody.worldCenterOfMass, rbody.worldCenterOfMass + vector4 * 10f, Color.red);
+                            Debug.DrawLine(__instance.block.centreOfMassWorld, __instance.block.centreOfMassWorld + vector4 * 10f, Color.red);
+                        }
+                        if ((bool)PatchModuleGyro.TestUseFilter.Invoke(__instance, new object[] { PatchModuleGyro.m_UsePassive.GetValue(__instance) }))
+                        {
+                            Vector3 vector6 = rbody.position + (__instance.block.transform.position - rbody.transform.position);
+                            Vector3 vector7 = rbody.GetPointVelocity(vector6) - rbody.velocity;
+                            Vector3 vector8 = __instance.transform.InverseTransformVector(vector7);
+
+                            Vector3 passiveStrength = (Vector3)PatchModuleGyro.m_PassiveStrength.GetValue(__instance);
+
+                            vector8.x *= passiveStrength.x;
+                            vector8.y *= passiveStrength.y;
+                            vector8.z *= passiveStrength.z;
+                            vector7 = __instance.transform.TransformVector(vector8);
+                            vector += Vector3.Cross(vector7, vector6 - rbody.worldCenterOfMass);
+                            if (Vector3.Dot(rbody.angularVelocity, (Vector3) PatchModuleGyro.m_PrevAngularVel.GetValue(__instance)) < -1f)
+                            {
+                                vector *= 0.5f;
+                            }
+                        }
+                        PatchModuleGyro.m_PrevAngularVel.SetValue(__instance, rbody.angularVelocity);
+
+                        pidController.nonManagedTorque += vector;
+                        rbody.AddTorque(vector);
+
+                        Transform rotationAnimTransform = (Transform)PatchModuleGyro.m_RotationAnimTransform.GetValue(__instance);
+
+                        if (rotationAnimTransform)
+                        {
+                            float num2 = Mathf.Min(vector.magnitude, (float)PatchModuleGyro.m_RotationMaxSpeed.GetValue(__instance));
+                            if (num2 > (float)PatchModuleGyro.m_RotationMinSpeed.GetValue(__instance))
+                            {
+                                rotationAnimTransform.localRotation *= Quaternion.AngleAxis(num2 * (float)PatchModuleGyro.m_RotationAnimSpeed.GetValue(__instance) * Time.fixedDeltaTime, Vector3.forward);
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+
         // Patch ManGravity Thrust
         [HarmonyPatch(typeof(ManGravity))]
         [HarmonyPatch("FixedUpdate")]
@@ -404,15 +419,22 @@ namespace Control_Block
                                 float num = gravityScale * normalGravity;
                                 if (num != 0f)
                                 {
+                                    Vector3 forcePosition = gravityApplicationTarget.GetWorldCentreOfGravity();
+                                    Vector3 force = new Vector3(0, num, 0);
+                                    applicationRigidbody.AddForceAtPosition(force, forcePosition);
+
                                     // insertion: check if there's a tank with a HoverPID
-                                    PIDController hoverPID = applicationRigidbody.gameObject.GetComponent<PIDController>();
-                                    if (hoverPID && !hoverPID.AttachedTank.beam.IsActive)
+                                    PIDController pidController = applicationRigidbody.gameObject.GetComponent<PIDController>();
+                                    if (pidController && !pidController.AttachedTank.beam.IsActive)
                                     {
+                                        force.y -= normalGravity;
                                         // num is the new gravity force, replaces default gravity
                                         // gravity is effectively nullified for the block mass now, uses this isntead
-                                        hoverPID.nonGravityThrust += new Vector3(0, num - normalGravity, 0);
+                                        pidController.nonGravityThrust += force;
+
+                                        Vector3 localVector = pidController.AttachedTank.transform.InverseTransformVector(forcePosition);
+                                        pidController.nonManagedTorque += Vector3.Cross(localVector, force);
                                     }
-                                    applicationRigidbody.AddForceAtPosition(new Vector3(0f, num, 0f), gravityApplicationTarget.GetWorldCentreOfGravity());
                                 }
                             }
                         }
@@ -431,8 +453,8 @@ namespace Control_Block
             {
                 if (__instance.block.IsAttached && __instance.block.tank != null && !__instance.block.tank.beam.IsActive)
                 {
-                    PIDController hoverPID = __instance.block.tank.gameObject.GetComponent<PIDController>();
-                    if (hoverPID)
+                    PIDController pidController = __instance.block.tank.gameObject.GetComponent<PIDController>();
+                    if (pidController)
                     {
                         Vector3 blockCenter = __instance.block.centreOfMassWorld;
                         float blockForce = (__instance.MaxStrength / __instance.MaxHeight) * (__instance.MaxHeight - blockCenter.y)
@@ -447,7 +469,10 @@ namespace Control_Block
                             force *= Mathf.Clamp(blockForce, __instance.MaxStrength * 1.25f, 0f);
                         }
                         __instance.block.tank.rbody.AddForceAtPosition(force, blockCenter, ForceMode.Impulse);
-                        hoverPID.nonGravityThrust += force;
+                        pidController.nonGravityThrust += force;
+
+                        Vector3 localVector = __instance.block.tank.transform.InverseTransformVector(blockCenter);
+                        pidController.nonManagedTorque += Vector3.Cross(localVector, force);
                         return false;
                     }
                 }
@@ -498,11 +523,12 @@ namespace Control_Block
                     {
                         vector2 = ((Module)__instance).transform.TransformVector(vector3);
                         rbody.AddForceAtPosition(-vector2, vector);
-
-                        PIDController hoverPID = tank.gameObject.GetComponent<PIDController>();
-                        if (hoverPID && !hoverPID.AttachedTank.beam.IsActive)
+                        PIDController pidController = tank.gameObject.GetComponent<PIDController>();
+                        if (pidController && !pidController.AttachedTank.beam.IsActive)
                         {
-                            hoverPID.nonGravityThrust -= vector2;
+                            Vector3 localVector = tank.transform.InverseTransformVector(vector);
+                            pidController.nonManagedTorque += Vector3.Cross(localVector, -vector2);
+                            pidController.nonGravityThrust -= vector2;
                         }
                     }
                 }
@@ -598,8 +624,13 @@ namespace Control_Block
                             Vector3 force2 = (Vector3)PatchHoverJet.m_ThrustDirRight.GetValue(__instance) * (float)PatchHoverJet.m_Turn.GetValue(__instance) * d;
                             rbody.AddForceAtPosition(force1, vector);
                             rbody.AddForceAtPosition(force2, vector);
+
                             hoverPID.nonGravityThrust += force1;
                             hoverPID.nonGravityThrust += force2;
+
+                            Vector3 localVector = _parentBlock.tank.transform.InverseTransformVector(vector);
+                            hoverPID.nonManagedTorque += Vector3.Cross(localVector, force1);
+                            hoverPID.nonManagedTorque += Vector3.Cross(localVector, force2);
                         }
                         float num8 = Vector3.Dot(-_EffectorDir, rbody.GetPointVelocity(vector));
                         num3 -= num8 * (float)PatchHoverJet.m_DampingScale.GetValue(__instance);
@@ -608,6 +639,9 @@ namespace Control_Block
                             Vector3 force3 = -_EffectorDir * num3 * __instance.forceMax;
                             rbody.AddForceAtPosition(force3, vector);
                             hoverPID.nonGravityThrust += force3;
+
+                            Vector3 localVector = _parentBlock.tank.transform.InverseTransformVector(vector);
+                            hoverPID.nonManagedTorque += Vector3.Cross(localVector, force3);
                         }
                         PatchHoverJet.grounded.SetValue(__instance, true);
                         _parentBlock.tank.grounded = true;
@@ -748,18 +782,17 @@ namespace Control_Block
                 foreach (BoosterJet jet in jetList)
                 {
                     PIDController.GlobalDebugPrint("Jet: " + jet.LocalBoostDirection.ToString());
+                    float force = (float)PatchBooster.m_Force.GetValue(jet);
 
                     #region BoosterY
                     {
                         float vert = jet.LocalBoostDirection.y;
                         if (vert > 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
                             pid.calculatedThrustPositive.y += sign * force;
                         }
                         else if (vert < 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
                             pid.calculatedThrustNegative.y += sign * force;
                         }
                     }
@@ -770,12 +803,10 @@ namespace Control_Block
                         float strafe = jet.LocalBoostDirection.x;
                         if (strafe > 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
                             pid.calculatedThrustPositive.x += sign * force;
                         }
                         else if (strafe < 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
                             pid.calculatedThrustNegative.x += sign * force;
                         }
                     }
@@ -786,12 +817,11 @@ namespace Control_Block
                         float accel = jet.LocalBoostDirection.z;
                         if (accel > 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
+                            
                             pid.calculatedThrustPositive.z += sign * force;
                         }
                         else if (accel < 0)
                         {
-                            float force = (float)PatchBooster.m_Force.GetValue(jet);
                             pid.calculatedThrustNegative.z += sign * force;
                         }
                     }
@@ -801,18 +831,21 @@ namespace Control_Block
                 {
                     PIDController.GlobalDebugPrint("Fan: " + fan.LocalBoostDirection.ToString());
 
+                    float force = fan.force;
+                    float backForce = fan.backForce;
+
                     #region FanY
                     {
                         float vert = fan.LocalBoostDirection.y;
                         if (vert > 0)
                         {
-                            pid.calculatedThrustPositive.y += sign * fan.force;
-                            pid.calculatedThrustNegative.y += sign * fan.backForce;
+                            pid.calculatedThrustPositive.y += sign * force;
+                            pid.calculatedThrustNegative.y += sign * backForce;
                         }
                         else if (vert < 0)
                         {
-                            pid.calculatedThrustPositive.y += sign * fan.backForce;
-                            pid.calculatedThrustNegative.y += sign * fan.force;
+                            pid.calculatedThrustPositive.y += sign * backForce;
+                            pid.calculatedThrustNegative.y += sign * force;
                         }
                     }
                     #endregion FanY
@@ -822,13 +855,13 @@ namespace Control_Block
                         float strafe = fan.LocalBoostDirection.x;
                         if (strafe > 0)
                         {
-                            pid.calculatedThrustPositive.x += sign * fan.force;
-                            pid.calculatedThrustNegative.x += sign * fan.backForce;
+                            pid.calculatedThrustPositive.x += sign * force;
+                            pid.calculatedThrustNegative.x += sign * backForce;
                         }
                         else if (strafe < 0)
                         {
-                            pid.calculatedThrustPositive.x += sign * fan.backForce;
-                            pid.calculatedThrustNegative.x += sign * fan.force;
+                            pid.calculatedThrustPositive.x += sign * backForce;
+                            pid.calculatedThrustNegative.x += sign * force;
                         }
                     }
                     #endregion FanX
@@ -838,13 +871,141 @@ namespace Control_Block
                         float accel = fan.LocalBoostDirection.z;
                         if (accel > 0)
                         {
-                            pid.calculatedThrustPositive.z += sign * fan.force;
-                            pid.calculatedThrustNegative.z += sign * fan.backForce;
+                            pid.calculatedThrustPositive.z += sign * force;
+                            pid.calculatedThrustNegative.z += sign * backForce;
                         }
                         else if (accel < 0)
                         {
-                            pid.calculatedThrustPositive.z += sign * fan.backForce;
-                            pid.calculatedThrustNegative.z += sign * fan.force;
+                            pid.calculatedThrustPositive.z += sign * backForce;
+                            pid.calculatedThrustNegative.z += sign * force;
+                        }
+                    }
+                    #endregion FanZ
+                }
+            }
+
+            public static void GetTorqueComponents(ModuleBooster booster, PIDController pid, bool add)
+            {
+                List<BoosterJet> jetList = (List<BoosterJet>)PatchBooster.jets.GetValue(booster);
+                List<FanJet> fanList = (List<FanJet>)PatchBooster.fans.GetValue(booster);
+
+                PIDController.GlobalDebugPrint("Finding torque for: " + booster.block.name);
+
+                float sign = add ? 1f : -1f;
+
+                foreach (BoosterJet jet in jetList)
+                {
+                    PIDController.GlobalDebugPrint("Jet: " + jet.RotationContribution.ToString());
+                    float force = (float)PatchBooster.m_Force.GetValue(jet);
+                    Transform effector = (Transform)PatchBooster.boosterEffector.GetValue(jet);
+                    Vector3 localDirection = pid.AttachedTank.transform.InverseTransformVector(effector.forward);
+                    Vector3 localPosition = pid.AttachedTank.transform.InverseTransformVector(effector.position - pid.AttachedTank.WorldCenterOfMass);
+
+                    Vector3 torque = Vector3.Cross(localPosition, force * localDirection);
+                    PIDController.GlobalDebugPrint($"    Torque: {torque}");
+
+                    #region BoosterY
+                    {
+                        float yaw = jet.RotationContribution.y;
+                        if (yaw > 0)
+                        {
+                            pid.calculatedTorquePositive.y += sign * torque.y;
+                        }
+                        else if (yaw < 0)
+                        {
+                            pid.calculatedTorqueNegative.y += -sign * torque.y;
+                        }
+                    }
+                    #endregion BoosterY
+
+                    #region BoosterX
+                    {
+                        float pitch = jet.RotationContribution.x;
+                        if (pitch > 0)
+                        {
+                            pid.calculatedTorquePositive.x += sign * torque.x;
+                        }
+                        else if (pitch < 0)
+                        {
+                            pid.calculatedTorqueNegative.x += -sign * torque.x;
+                        }
+                    }
+                    #endregion BoosterX
+
+                    #region BoosterZ
+                    {
+                        float roll = jet.RotationContribution.z;
+                        if (roll > 0)
+                        {
+                            pid.calculatedTorquePositive.z += sign * torque.z;
+                        }
+                        else if (roll < 0)
+                        {
+                            pid.calculatedTorqueNegative.z += -sign * torque.z;
+                        }
+                    }
+                    #endregion BoosterZ
+                }
+                foreach (FanJet fan in fanList)
+                {
+                    PIDController.GlobalDebugPrint("Fan: " + fan.RotationContribution.ToString());
+
+                    float force = fan.force;
+                    float backForce = fan.backForce;
+
+                    Transform effector = (Transform)PatchBooster.fanEffector.GetValue(fan);
+                    Vector3 localDirection = pid.AttachedTank.transform.InverseTransformVector(effector.forward);
+                    Vector3 localPosition = pid.AttachedTank.transform.InverseTransformVector(effector.position - pid.AttachedTank.WorldCenterOfMass);
+
+                    Vector3 torque = Vector3.Cross(localPosition, force * localDirection);
+                    Vector3 backTorque = Vector3.Cross(localPosition, backForce * -localDirection);
+                    PIDController.GlobalDebugPrint($"    Torque: {torque}");
+                    PIDController.GlobalDebugPrint($"    Neg Torque: {backTorque}");
+
+                    #region FanY
+                    {
+                        float yaw = fan.RotationContribution.y;
+                        if (yaw > 0)
+                        {
+                            pid.calculatedTorquePositive.y += sign * torque.y;
+                            pid.calculatedTorqueNegative.y += -sign * backTorque.y;
+                        }
+                        else if (yaw < 0)
+                        {
+                            pid.calculatedTorquePositive.y += sign * backTorque.y;
+                            pid.calculatedTorqueNegative.y += -sign * torque.y;
+                        }
+                    }
+                    #endregion FanY
+
+                    #region FanX
+                    {
+                        float pitch = fan.RotationContribution.x;
+                        if (pitch > 0)
+                        {
+                            pid.calculatedTorquePositive.x += sign * torque.x;
+                            pid.calculatedTorqueNegative.x += -sign * backTorque.x;
+                        }
+                        else if (pitch < 0)
+                        {
+                            pid.calculatedTorquePositive.x += sign * backTorque.x;
+                            pid.calculatedTorqueNegative.x += -sign * torque.x;
+                        }
+                    }
+                    #endregion FanX
+
+                    #region FanZ
+                    {
+                        float roll = fan.RotationContribution.z;
+                        if (roll > 0)
+                        {
+                            pid.calculatedTorquePositive.z += sign * torque.z;
+                            pid.calculatedTorqueNegative.z += -sign * backTorque.z;
+                        }
+                        else if (roll < 0)
+                        {
+                            pid.calculatedTorquePositive.z += sign * backTorque.z;
+                            pid.calculatedTorqueNegative.z += -sign * torque.z;
                         }
                     }
                     #endregion FanZ
@@ -858,11 +1019,12 @@ namespace Control_Block
             {
                 public static void Postfix(ref ModuleBooster __instance)
                 {
-                    PIDController hoverPID = __instance.block.tank.GetComponent<PIDController>();
-                    if (hoverPID)
+                    PIDController pidController = __instance.block.tank.GetComponent<PIDController>();
+                    if (pidController)
                     {
                         PatchBooster.OnResetTechPhysics.Invoke(__instance, null);
-                        PatchBooster.GetThrustComponents(__instance, hoverPID, true);
+                        PatchBooster.GetThrustComponents(__instance, pidController, true);
+                        PatchBooster.GetTorqueComponents(__instance, pidController, true);
                     }
                 }
             }
@@ -874,10 +1036,11 @@ namespace Control_Block
             {
                 public static void Postfix(ref ModuleBooster __instance)
                 {
-                    PIDController hoverPID = __instance.block.tank.GetComponent<PIDController>();
-                    if (hoverPID)
+                    PIDController pidController = __instance.block.tank.GetComponent<PIDController>();
+                    if (pidController)
                     {
-                        PatchBooster.GetThrustComponents(__instance, hoverPID, false);
+                        PatchBooster.GetThrustComponents(__instance, pidController, false);
+                        PatchBooster.GetTorqueComponents(__instance, pidController, false);
                     }
                 }
             }
@@ -966,6 +1129,10 @@ namespace Control_Block
                                         if (useBoostControls && driveData.BoostJets)
                                         {
                                             isRequestedByDriveControl = (linearContribution >= 0f);
+                                            if (isRequestedByDriveControl)
+                                            {
+                                                PatchBooster.m_FireStrengthCurrent.SetValue(boosterJet, 1f);
+                                            }
                                         }
                                         else
                                         {
@@ -981,6 +1148,10 @@ namespace Control_Block
                                     {
                                         isRequestedByDriveControl = driveData.BoostJets;
                                         isFiringBoost = (isFiringBoost || isRequestedByDriveControl);
+                                        if (isFiringBoost)
+                                        {
+                                            PatchBooster.m_FireStrengthCurrent.SetValue(boosterJet, 1f);
+                                        }
                                     }
                                 }
                                 boosterJet.SetFiring(isRequestedByDriveControl);
@@ -1025,7 +1196,7 @@ namespace Control_Block
                                 {
                                     float fireStrengthCurrent = (float)PatchBooster.m_FireStrengthCurrent.GetValue(__instance);
                                     if (!(bool) PatchBooster.m_FireControl.GetValue(__instance)) {
-                                        fireStrengthCurrent = 0f;
+                                        PatchBooster.m_FireStrengthCurrent.SetValue(__instance, 0f);
                                         return false;
                                     }
                                     if (fireStrengthCurrent == 0f)
@@ -1057,7 +1228,7 @@ namespace Control_Block
                 }
             }
 
-            // Patch FixedUpdate to use throttle
+            // Patch FanJet to use throttle
             [HarmonyPatch(typeof(FanJet))]
             [HarmonyPatch("FixedUpdate")]
             public class PatchFanJet

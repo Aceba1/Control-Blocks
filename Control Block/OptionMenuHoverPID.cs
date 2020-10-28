@@ -43,7 +43,7 @@ namespace Control_Block
 
         private bool[] enableBools = new bool[6];
 
-        private int rowTiling = 3;
+        private int rowTiling = 3, panels;
 
         private void Update()
         {
@@ -115,7 +115,7 @@ namespace Control_Block
 
         private Rect UpdateWinSize()
         {
-            int panels = 0;
+            this.panels = 0;
             if (this.module.m_HoverParameters != null)
             {
                 this.hoverEnabled = this.module.m_HoverParameters.enabled;
@@ -181,8 +181,8 @@ namespace Control_Block
                     }
                 }
             }
-            float xSize = 300f * this.rowTiling;
-            float ySize = Mathf.Max((row1_enable ? 400f : 80f) + (panels > 3 ? (row2_enable ? 300f : 80f) + 16f : 0f) + 40f + 60f, 100f);
+            float xSize = 285f * this.rowTiling + (panels == 1 ? 10f : 0f);
+            float ySize = Mathf.Max((row1_enable ? (this.hoverEnabled ? 400 : 250) : 80f) + (panels > 3 ? (row2_enable ? 250f : 80f) + 16f : 0f) + 40f + 60f, 100f);
             return new Rect(mouseX, Screen.height - mouseY - 75f, xSize, ySize);
         }
 
@@ -211,12 +211,13 @@ namespace Control_Block
                 return;
             }
 
+            GUILayout.BeginVertical();
             int currPanelsCount = 0;
             GUILayout.Space(35);
             GUILayout.BeginHorizontal();
             if (this.module.m_HoverParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(380f));
                 // reset target height here, since it may change elsewhere
                 this.targetHeightStr = module.targetHeight.ToString();
                 GUILayout.Label("<size=20>Hover PID</size>");
@@ -321,11 +322,12 @@ namespace Control_Block
                     }
                 }
                 GUILayout.EndVertical();
+                GUILayout.Space(20);
                 currPanelsCount += 1;
             }
             if (this.module.m_AccelParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(380f));
                 GUILayout.Label("<size=20>Accel PID</size>");
 
                 if (this.accelEnabled)
@@ -389,11 +391,12 @@ namespace Control_Block
                     }
                 }
                 GUILayout.EndVertical();
+                GUILayout.Space(20);
                 currPanelsCount += 1;
             }
             if (this.module.m_StrafeParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(380f));
                 GUILayout.Label("<size=20>Strafe PID</size>");
 
                 if (this.strafeEnabled)
@@ -460,16 +463,20 @@ namespace Control_Block
                 currPanelsCount += 1;
             }
             // check for new horizontal
-            if (currPanelsCount == this.rowTiling)
+            if (currPanelsCount == this.rowTiling && currPanelsCount != panels)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(16);
                 GUILayout.EndHorizontal();
+                GUILayout.Space(16);
+                GUILayout.BeginHorizontal(GUILayout.MinHeight(0f));
+            }
+            else
+            {
+                GUILayout.Space(20);
             }
             if (this.module.m_PitchParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
-                GUILayout.Label("<size=20>Strafe PID</size>");
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(300f));
+                GUILayout.Label("<size=20>Pitch PID</size>");
                 // reset target pitch here, since it may change elsewhere
                 this.targetPitchStr = module.targetPitch.ToString();
                 if (this.pitchEnabled)
@@ -527,15 +534,19 @@ namespace Control_Block
                 GUILayout.EndVertical();
                 currPanelsCount += 1;
             }
-            if (currPanelsCount == this.rowTiling)
+            if (currPanelsCount == this.rowTiling && currPanelsCount != panels)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(16);
                 GUILayout.EndHorizontal();
+                GUILayout.Space(16);
+                GUILayout.BeginHorizontal();
+            }
+            else
+            {
+                GUILayout.Space(20);
             }
             if (this.module.m_RollParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(300f));
                 GUILayout.Label("<size=20>Roll PID</size>");
                 // reset target roll here, since it may change elsewhere
                 this.targetRollStr = module.targetRoll.ToString();
@@ -594,15 +605,19 @@ namespace Control_Block
                 GUILayout.EndVertical();
                 currPanelsCount += 1;
             }
-            if (currPanelsCount == this.rowTiling)
+            if (currPanelsCount == this.rowTiling && currPanelsCount != panels)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(16);
                 GUILayout.EndHorizontal();
+                GUILayout.Space(16);
+                GUILayout.BeginHorizontal();
+            }
+            else
+            {
+                GUILayout.Space(20);
             }
             if (this.module.m_YawParameters != null)
             {
-                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(425f));
+                GUILayout.BeginVertical(GUILayout.Width(260f), GUILayout.MaxWidth(260f), GUILayout.MinHeight(50f), GUILayout.MaxHeight(300f));
                 GUILayout.Label("<size=20>Yaw PID</size>");
 
                 if (this.yawEnabled)
@@ -653,15 +668,14 @@ namespace Control_Block
                     }
                 }
                 GUILayout.EndVertical();
-                currPanelsCount += 1;
             }
             GUILayout.EndHorizontal();
-            GUILayout.Space(16);
             if (GUILayout.Button("Close"))
             {
                 this.visible = false;
                 this.module = null;
             }
+            GUILayout.EndVertical();
             GUI.DragWindow();
         }
     }

@@ -470,6 +470,7 @@ namespace Control_Block
         private static readonly Vector3 m_EffectorDir = new Vector3(0, -1, 0);
         private static readonly bool GlobalDebug = false;
         private static string dummyStr = "";
+        private static float degreesPerRadian = 180f / Mathf.PI;
 
         public static void GlobalDebugPrint(string str)
         {
@@ -488,10 +489,11 @@ namespace Control_Block
         public Vector3 calculatedThrustPositive = Vector3.zero;
         public Vector3 calculatedThrustNegative = Vector3.zero;
 
-        public Vector3 calculatedRotationThrustPositive = Vector3.zero;
-        public Vector3 calculatedRotationThrustNegative = Vector3.zero;
+        public Vector3 calculatedTorquePositive = Vector3.zero;
+        public Vector3 calculatedTorqueNegative = Vector3.zero;
 
         public Vector3 nonGravityThrust = Vector3.zero;
+        public Vector3 nonManagedTorque = Vector3.zero;
         private Vector3 baseGravity
         {
             get {
@@ -840,14 +842,46 @@ namespace Control_Block
             if (!this.AttachedTank.beam.IsActive)
             {
                 Vector3 currentVelocity = this.AttachedTank.transform.InverseTransformVector(this.AttachedTank.rbody.velocity);
+                Vector3 currentAngularVelocity = this.AttachedTank.transform.InverseTransformVector(this.AttachedTank.rbody.angularVelocity);
+                Vector3 currentRotation = this.AttachedTank.transform.eulerAngles;
+
+                if (currentRotation.x > 180f)
+                {
+                    currentRotation.x -= 360f;
+                }
+                else if (currentRotation.x < -180f)
+                {
+                    currentRotation.x += 360f;
+                }
+
+                if (currentRotation.y > 180f)
+                {
+                    currentRotation.y -= 360f;
+                }
+                else if (currentRotation.y < -180f)
+                {
+                    currentRotation.y += 360f;
+                }
+
+                if (currentRotation.z > 180f)
+                {
+                    currentRotation.z -= 360f;
+                }
+                else if (currentRotation.z < -180f)
+                {
+                    currentRotation.z += 360f;
+                }
+
                 TankControl control = this.AttachedTank.control;
 
                 TankControl.ControlState controlState = (TankControl.ControlState) PIDControllerPatches.PatchTankControl.m_ControlState.GetValue(control);
                 Vector3 inputCommand = (Vector3) controlState.m_State.m_InputMovement;
+                Vector3 inputRotation = controlState.m_State.m_InputRotation;
                 
                 Vector3 newThrottle = Vector3.zero;
                 Vector3 newRotation = Vector3.zero;
                 Vector3 standardForce = -this.nonGravityThrust;
+                Vector3 standardTorque = -this.nonManagedTorque;
                 Vector3 relativeTargetPosition = this.AttachedTank.transform.InverseTransformVector(this.targetPosition - this.AttachedTank.WorldCenterOfMass);
                 // PIDController.GlobalDebugPrint($"FixedUpdate Commanded Action: {inputCommand}, CalculatedThrustPos: {this.calculatedThrustNegative}, CalculatedThrustNeg: {this.calculatedThrustPositive}");
 
@@ -907,12 +941,7 @@ namespace Control_Block
                             this.targetPosition.z = Mathf.Infinity;
                             this.StrafePID.ResetError();
                             this.AccelPID.ResetError();
-                            newThrottle.x = 0f;
                         }
-                    }
-                    else
-                    {
-                        newThrottle.x = 0f;
                     }
                 }
                 if (this.AccelPID != null && this.AccelPID.enabled)
@@ -971,45 +1000,148 @@ namespace Control_Block
                             this.targetPosition.z = Mathf.Infinity;
                             this.AccelPID.ResetError();
                             this.StrafePID.ResetError();
-                            newThrottle.z = 0f;
                         }
-                    }
-                    else
-                    {
-                        newThrottle.z = 0f;
                     }
                 }
                 if (this.PitchPID != null && this.PitchPID.enabled)
                 {
-                    if (this.calculatedRotationThrustPositive.x != 0f || this.calculatedRotationThrustNegative.x != 0f)
+                    if (this.calculatedTorquePositive.x != 0f || this.calculatedTorqueNegative.x != 0f)
                     {
+                        if (inputRotation.x == 0f)
+                        {
+                            float pitchVelocity = currentAngularVelocity.x * degreesPerRadian;
+                            float error = currentRotation.x;
+                            if (this.targetPitch > error)
+                            {
+                                float testClock = this.targetPitch - error;
+                                if (testClock <= 180f)
+                                {
+                                    error = testClock;
+                                }
+                                else
+                                {
+                                    error = testClock - 360f;
+                                }
+                            }
+                            else
+                            {
+                                float testCounter = error - this.targetPitch;
+                                if (testCounter <= 180f)
+                                {
+                                    error = -testCounter;
+                                }
+                                else
+                                {
+                                    error = 360f - testCounter;
+                                }
+                            }
 
-                    }
-                    else
-                    {
+                            // get torque needed to bring to standstill
+                            float targetTorque = 2 * this.AttachedTank.rbody.inertiaTensor.x * (error - pitchVelocity);
 
+                            float calculatedTorque = targetTorque < 0 ? this.calculatedTorqueNegative.x : this.calculatedTorquePositive.x;
+                            float standardRotation = standardTorque.z / calculatedTorque;
+
+                            string prefixStr = $"Vel: {pitchVelocity}, Full Angular Vel: {currentAngularVelocity}, ";
+                            float pidTorque = this.PitchPID.UpdateStep(error, ref PIDController.dummyStr, prefixStr);
+                            float clampedPIDTorque = targetTorque > 0 ? Mathf.Min(targetTorque, pidTorque) : Mathf.Max(targetTorque, pidTorque);
+                            float clampRotation = Mathf.Clamp(standardRotation + (clampedPIDTorque / calculatedTorque), -1f, 1f);
+                            if (this.PitchPID.debug)
+                            {
+                                Console.WriteLine($" | Pitch PID | Set Rotation: {clampRotation} for Torque: {clampedPIDTorque}");
+                            }
+                            newRotation.x = clampRotation;
+                        }
+                        else
+                        {
+                            this.PitchPID.ResetError();
+                        }
                     }
                 }
                 if (this.RollPID != null && this.RollPID.enabled)
                 {
-                    if (this.calculatedRotationThrustPositive.z != 0f || this.calculatedRotationThrustNegative.z != 0f)
+                    if (this.calculatedTorquePositive.z != 0f || this.calculatedTorqueNegative.z != 0f)
                     {
+                        if (inputRotation.z == 0f)
+                        {
+                            float rollVelocity = currentAngularVelocity.z * degreesPerRadian;
+                            float error = currentRotation.z;
+                            if (this.targetRoll > error)
+                            {
+                                float testClock = this.targetRoll - error;
+                                if (testClock <= 180f)
+                                {
+                                    error = testClock;
+                                }
+                                else
+                                {
+                                    error = testClock - 360f;
+                                }
+                            }
+                            else
+                            {
+                                float testCounter = error - this.targetRoll;
+                                if (testCounter <= 180f)
+                                {
+                                    error = -testCounter;
+                                }
+                                else
+                                {
+                                    error = 360f - testCounter;
+                                }
+                            }
 
-                    }
-                    else
-                    {
+                            // get torque needed to bring to standstill
+                            float targetTorque = 2 * this.AttachedTank.rbody.inertiaTensor.z * (error - rollVelocity);
 
+                            float calculatedTorque = targetTorque < 0 ? this.calculatedTorqueNegative.z : this.calculatedTorquePositive.z;
+                            float standardRotation = standardTorque.z / calculatedTorque;
+
+                            string prefixStr = $"Vel: {rollVelocity}, Full Angular Vel: {currentAngularVelocity}, ";
+                            float pidTorque = this.RollPID.UpdateStep(error, ref PIDController.dummyStr, prefixStr);
+                            float clampedPIDTorque = targetTorque > 0 ? Mathf.Min(targetTorque, pidTorque) : Mathf.Max(targetTorque, pidTorque);
+                            float clampRotation = Mathf.Clamp(standardRotation + (clampedPIDTorque / calculatedTorque), -1f, 1f);
+                            if (this.RollPID.debug)
+                            {
+                                Console.WriteLine($" | Pitch PID | Set Rotation: {clampRotation} for Torque: {clampedPIDTorque}");
+                            }
+                            newRotation.z = clampRotation;
+                        }
+                        else
+                        {
+                            this.RollPID.ResetError();
+                        }
                     }
                 }
                 if (this.YawPID != null && this.YawPID.enabled)
                 {
-                    if (this.calculatedRotationThrustPositive.y != 0f || this.calculatedRotationThrustNegative.y != 0f)
+                    if (this.calculatedTorquePositive.y != 0f || this.calculatedTorqueNegative.y != 0f)
                     {
+                        if (inputRotation.y == 0f)
+                        {
+                            float yawVelocity = currentRotation.y * degreesPerRadian;
+                            float error = yawVelocity;
 
-                    }
-                    else
-                    {
+                            // get torque needed to bring to standstill
+                            float targetTorque = - this.AttachedTank.rbody.inertiaTensor.y * yawVelocity;
 
+                            float calculatedTorque = targetTorque < 0 ? this.calculatedTorqueNegative.y : this.calculatedTorquePositive.y;
+                            float standardRotation = standardTorque.y / calculatedTorque;
+
+                            string prefixStr = $"Vel: {yawVelocity}, Full Angular Vel: {currentAngularVelocity}, ";
+                            float pidTorque = this.YawPID.UpdateStep(error, ref PIDController.dummyStr, prefixStr);
+                            float clampedPIDTorque = targetTorque > 0 ? Mathf.Min(targetTorque, pidTorque) : Mathf.Max(targetTorque, pidTorque);
+                            float clampRotation = Mathf.Clamp(standardRotation + (clampedPIDTorque / calculatedTorque), -1f, 1f);
+                            if (this.YawPID.debug)
+                            {
+                                Console.WriteLine($" | Yaw PID | Set Rotation: {clampRotation} for Torque: {clampedPIDTorque}");
+                            }
+                            newRotation.y = clampRotation;
+                        }
+                        else
+                        {
+                            this.YawPID.ResetError();
+                        }
                     }
                 }
                 if (this.HoverPID != null && this.HoverPID.enabled)
@@ -1066,12 +1198,12 @@ namespace Control_Block
                                 this.targetHeight = this.AttachedTank.WorldCenterOfMass.y;
                                 this.HoverPID.ResetError();
                             }
-                            error = this.targetPosition.y - this.AttachedTank.WorldCenterOfMass.y;
+                            error = this.targetHeight - this.AttachedTank.WorldCenterOfMass.y;
                             // get force needed to bring to standstill
                             targetForce = 2 * this.AttachedTank.rbody.mass * (error - currentVelocity.y);
 
                             string prefixStr = $"Vel: {currentVelocity}";
-                            float pidForce = this.AccelPID.UpdateStep(error, ref PIDController.dummyStr, prefixStr);
+                            float pidForce = this.HoverPID.UpdateStep(error, ref PIDController.dummyStr, prefixStr);
                             float clampedPIDForce = targetForce > 0 ? Mathf.Min(targetForce, pidForce) : Mathf.Max(targetForce, pidForce);
                             float clampThrottle = Mathf.Clamp(standardThrottle + (clampedPIDForce / calculatedThrust), -1f, 1f);
                             newThrottle.y = clampThrottle;
@@ -1081,12 +1213,7 @@ namespace Control_Block
                         {
                             this.targetHeight = Mathf.Infinity;
                             this.HoverPID.ResetError();
-                            newThrottle.y = 0f;
                         }
-                    }
-                    else
-                    {
-                        newThrottle.y = 0f;
                     }
                 }
                 this.UpdateThrottle(newThrottle);
@@ -1096,6 +1223,7 @@ namespace Control_Block
                 this.ResetError();
             }
             this.nonGravityThrust = Vector3.zero;
+            this.nonManagedTorque = Vector3.zero;
         }
 
         private void UpdateThrottle(Vector3 throttle)
@@ -1145,6 +1273,7 @@ namespace Control_Block
                 {
                     PIDController.GlobalDebugPrint("found booster: " + booster.block.name);
                     PIDControllerPatches.PatchBooster.GetThrustComponents(booster, this, true);
+                    PIDControllerPatches.PatchBooster.GetTorqueComponents(booster, this, true);
                 }
             }
 

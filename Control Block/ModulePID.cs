@@ -165,8 +165,9 @@ namespace Control_Block
             {
                 if (this.m_YawParameters != null)
                 {
-                    this.m_YawParameters = parameters;
+                    return false;
                 }
+                this.m_YawParameters = parameters;
             }
             return true;
         }
@@ -427,22 +428,10 @@ namespace Control_Block
             }
         }
 
-        private const string formatter = "{0,10}{1,13}";
-
-        // Convert a short argument to a byte array and display it.
-        private static void GetBytesInt32(int argument)
-        {
-            byte[] byteArray = BitConverter.GetBytes(argument);
-            Console.WriteLine(formatter, argument,
-                BitConverter.ToString(byteArray));
-        }
-
         private void OnDetach()
         {
             this.attachedPID.UnregisterPID(this);
             this.attachedPID = null;
-
-            GetBytesInt32(this.availableAxesMask);
 
             foreach (PIDController.PIDParameters.PIDAxis axis in Enum.GetValues(typeof(PIDController.PIDParameters.PIDAxis)))
             {
@@ -492,7 +481,6 @@ namespace Control_Block
 
         public static PIDController.PIDParameters ConvertOnDeserialize(ModulePID.SerialData.PIDParameters parameters, PIDController.PIDParameters.PIDAxis axis)
         {
-            Console.WriteLine("Deserialization Output: " + parameters.ToString());
             if (parameters.hasData)
             {
                 PIDController.PIDParameters controllerParams = (PIDController.PIDParameters)ScriptableObject.CreateInstance(typeof(PIDController.PIDParameters));
@@ -516,32 +504,32 @@ namespace Control_Block
         {
             if (axis == PIDController.PIDParameters.PIDAxis.Accel)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Accel {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Accel {this.block.name}");
                 if (this.m_AccelParameters != null || force) this.m_AccelParameters = parameters;
             }
             else if (axis == PIDController.PIDParameters.PIDAxis.Strafe)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Strafe {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Strafe {this.block.name}");
                 if (this.m_StrafeParameters != null || force) this.m_StrafeParameters = parameters;
             }
             else if (axis == PIDController.PIDParameters.PIDAxis.Hover)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Hover {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Hover {this.block.name}");
                 if (this.m_HoverParameters != null || force) this.m_HoverParameters = parameters;
             }
             else if (axis == PIDController.PIDParameters.PIDAxis.Pitch)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Pitch {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Pitch {this.block.name}");
                 if (this.m_PitchParameters != null || force) this.m_PitchParameters = parameters;
             }
             else if (axis == PIDController.PIDParameters.PIDAxis.Roll)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Roll {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Roll {this.block.name}");
                 if (this.m_RollParameters != null || force) this.m_RollParameters = parameters;
             }
             else if (axis == PIDController.PIDParameters.PIDAxis.Yaw)
             {
-                PIDController.GlobalDebugPrint("ModulePID - Force Replace Yaw {this.block.name}");
+                PIDController.GlobalDebugPrint($"ModulePID - Force Replace Yaw {this.block.name}");
                 if (this.m_YawParameters != null || force) this.m_YawParameters = parameters;
             }
         }
@@ -968,7 +956,6 @@ namespace Control_Block
                 {
                     PIDController.GlobalDebugPrint("DESERIALIZE INPUT: " + inputStr);
                     string[] data = inputStr.Replace("(", "").Replace(")", "").Split(':');
-                    Console.Write(data.ToString());
                     int length = data.Length;
 
                     #region DataValidityCheck
