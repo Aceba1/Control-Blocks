@@ -286,7 +286,8 @@ namespace Control_Block
                 return SafePlanarPointAngle(trans, planar, OriginalValue);
                 //return (Vector3.SignedAngle(trans.forward, Vector3.ProjectOnPlane(localTarget, trans.up), trans.up));
             }
-            return trans.InverseTransformDirection(relativeTarget).y - OriginalValue;
+            Vector3 targetRelative = trans.InverseTransformDirection(relativeTarget);
+            return Mathf.Atan2(targetRelative.x, targetRelative.z) * 57.29578f  - OriginalValue;
         }
 
         public float m_InternalTimer = 0f;
@@ -373,7 +374,7 @@ namespace Control_Block
                         float muzzleVelocity = Mathf.Abs(m_Strength);
                         bool useGravity = m_Strength > 0;
 
-                        Vector3 BlockCenter = block.trans.position;
+                        Vector3 BlockCenter = block.transform.position;
                         Vector3 AimPointVector = targetPred.GetAimPoint(BlockCenter);
                         Vector3 vector = AimPointVector - BlockCenter;
                         if (muzzleVelocity > 0f) {
@@ -398,12 +399,13 @@ namespace Control_Block
                                     time = land / (Mathf.Cos(theta) * muzzleVelocity);
 
                                     // add elevation
-                                    vector.y += (Mathf.Sin(theta) * muzzleVelocity * time) + BlockCenter.y;
+                                    vector.y += (Mathf.Sin(theta) * muzzleVelocity * time) - vector.y;
                                 }
                             }
                             // vector now represents where the enemy will be - still need elevation
                             vector += (time * relativeVelocity);
                         }
+                        vector += Vector3.up;
                         m_ResetTimer = true;
                         Value += PointAtTarget(block.trans, vector, ProjectDirToPlane, Value);// * Mathf.Abs(m_Strength);
                         return true;
