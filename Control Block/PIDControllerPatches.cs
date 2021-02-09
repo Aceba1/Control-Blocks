@@ -51,7 +51,7 @@ namespace Control_Block
                         }
                         if (rewiredPlayer.GetButtonDown(26))
                         {
-                            Singleton.Manager<ManPauseGame>.inst.TogglePauseMenu();
+                            Singleton.Manager<ManPauseGame>.inst.Invoke("TogglePauseMenu", 0f);
                         }
                         if (rewiredPlayer.GetButtonDown(73) && Singleton.Manager<ManHUD>.inst.IsHudElementVisible(ManHUD.HUDElementType.ControlSchema))
                         {

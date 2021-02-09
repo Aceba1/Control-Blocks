@@ -244,15 +244,20 @@
     <PostBuildEvent>del *.pdb
 @setlocal enableextensions enabledelayedexpansion
 
-set modpath="C:\Program Files (x86)\Steam\steamapps\common\TerraTech\QMods\"
+set modpath="C:\Program Files (x86)\Steam\steamapps\common\TerraTech\QMods\Control Block\"
+
+for %25%25I in (*) do if not "%25%25I" =="$(TargetFileName)" (
+del "%25%25I"
+)
 
 if not exist !modpath! (
 echo Creating mod folder
 mkdir !modpath!
 )
+
 echo Copying to game
 set e=$(TargetDir)..\&gt;nul
-xcopy /S /Y /R "!e:~0,-1!" !modpath!</PostBuildEvent>
+xcopy /S /Y /R "$(TargetFileName)" !modpath!</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
