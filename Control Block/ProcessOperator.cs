@@ -384,24 +384,20 @@ namespace Control_Block
                             Vector3 relativeVelocity = targetPred.rbody.velocity - (rbodyTank.velocity + angularToggle);
 
                             float time = dist.magnitude / muzzleVelocity;
+
+                            Vector3 relativeAcceleration = BallisticTargeting.GetAcceleration(targetPred.tank) - BallisticTargeting.GetAcceleration(block.tank);
+
                             if (useGravity)
                             {
-                                // Console.WriteLine("enter Gravity");
-                                float height = dist.y;
-                                float land = Mathf.Sqrt((dist.x * dist.x) + (dist.z * dist.z));
-
-                                float sqrVel = muzzleVelocity * muzzleVelocity;
-
-                                if (sqrVel >= 30.0f * (height + dist.magnitude))
-                                {
-                                    // radians
-                                    float theta = Mathf.Atan((sqrVel - Mathf.Sqrt((sqrVel * sqrVel) - ((900.0f * land * land) + (60.0f * height * sqrVel)))) / (30.0f * land));
-                                    time = land / (Mathf.Cos(theta) * muzzleVelocity);
-
-                                    // add elevation
-                                    vector.y += (Mathf.Sin(theta) * muzzleVelocity * time) - vector.y;
-                                }
+                                relativeAcceleration -= Physics.gravity;
                             }
+
+                            float exactTime = BallisticTargeting.SolveBallisticArc(BlockCenter, muzzleVelocity, AimPointVector, relativeVelocity, relativeAcceleration);
+                            if (exactTime != Mathf.Infinity)
+                            {
+                                time = exactTime;
+                            }
+
                             // vector now represents where the enemy will be - still need elevation
                             vector += (time * relativeVelocity);
                         }

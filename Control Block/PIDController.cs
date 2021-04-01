@@ -836,6 +836,12 @@ namespace Control_Block
             }
         }
 
+
+        private float threshold = 10f;
+        private bool xLock = false;
+        private bool zLock = false;
+
+
         private void FixedUpdate() {
             // get input into desired throttle changes
 
@@ -893,30 +899,33 @@ namespace Control_Block
                         {
                             float error;
                             float targetForce;
-                            if (inputCommand.z == 0f)
-                            {
-                                // have horizontal targetPosition
-                                if (this.targetPosition.x == Mathf.Infinity || this.targetPosition.z == Mathf.Infinity)
-                                {
-                                    this.targetPosition = this.AttachedTank.WorldCenterOfMass;
-                                    relativeTargetPosition = this.AttachedTank.transform.InverseTransformPoint(this.targetPosition);
-                                    this.AccelPID.ResetError();
-                                    this.StrafePID.ResetError();
-                                }
-                            }
+
                             // Minimize velocity, set target once minimized
-                            if ((this.targetPosition.x != Mathf.Infinity) && this.enableHoldPosition)
+                            if (this.xLock && this.enableHoldPosition)
                             {
                                 error = relativeTargetPosition.x;
                                 // get force needed to bring to standstill
                                 targetForce = 2 * this.AttachedTank.rbody.mass * (error - currentVelocity.x);
+
+                                if (Mathf.Abs(error) > this.threshold)
+                                {
+                                    this.xLock = false;
+                                }
                             }
                             else
                             {
-                                // this.targetPosition.z = Mathf.Infinity;
                                 error = -currentVelocity.x;
                                 // get force needed to bring to standstill
                                 targetForce = -(this.AttachedTank.rbody.mass * currentVelocity.x);
+
+                                // Low error, have horizontal targetPosition
+                                if (Mathf.Abs(error) < this.threshold)
+                                {
+                                    this.xLock = true;
+                                    this.targetPosition = this.AttachedTank.WorldCenterOfMass;
+                                    relativeTargetPosition = this.AttachedTank.transform.InverseTransformPoint(this.AttachedTank.WorldCenterOfMass);
+                                    this.StrafePID.ResetError();
+                                }
                             }
 
                             float flatCalculatedThrust = targetForce < 0 ? this.calculatedThrustNegative.x : this.calculatedThrustPositive.x;
@@ -937,10 +946,8 @@ namespace Control_Block
                         }
                         else
                         {
-                            this.targetPosition.x = Mathf.Infinity;
-                            this.targetPosition.z = Mathf.Infinity;
+                            this.xLock = false;
                             this.StrafePID.ResetError();
-                            this.AccelPID.ResetError();
                         }
                     }
                 }
@@ -952,30 +959,33 @@ namespace Control_Block
                         {
                             float error;
                             float targetForce;
-                            if (inputCommand.x == 0f)
-                            {
-                                // have horizontal targetPosition
-                                if (this.targetPosition.x == Mathf.Infinity || this.targetPosition.z == Mathf.Infinity)
-                                {
-                                    this.targetPosition = this.AttachedTank.WorldCenterOfMass;
-                                    relativeTargetPosition = this.AttachedTank.transform.InverseTransformPoint(this.targetPosition);
-                                    this.AccelPID.ResetError();
-                                    this.StrafePID.ResetError();
-                                }
-                            }
+
                             // Minimize velocity, set target once minimized
-                            if ((this.targetPosition.z != Mathf.Infinity) && this.enableHoldPosition)
+                            if (this.zLock && this.enableHoldPosition)
                             {
                                 error = relativeTargetPosition.z;
                                 // get force needed to bring to standstill
                                 targetForce = 2 * this.AttachedTank.rbody.mass * (error - currentVelocity.z);
+
+                                if (Mathf.Abs(error) > this.threshold)
+                                {
+                                    this.zLock = false;
+                                }
                             }
                             else
                             {
-                                // this.targetPosition.z = Mathf.Infinity;
                                 error = -currentVelocity.z;
                                 // get force needed to bring to standstill
                                 targetForce = -(this.AttachedTank.rbody.mass * currentVelocity.z);
+
+                                // Low error, have horizontal targetPosition
+                                if (Mathf.Abs(error) < this.threshold)
+                                {
+                                    this.zLock = true;
+                                    this.targetPosition = this.AttachedTank.WorldCenterOfMass;
+                                    relativeTargetPosition = this.AttachedTank.transform.InverseTransformPoint(this.AttachedTank.WorldCenterOfMass);
+                                    this.AccelPID.ResetError();
+                                }
                             }
 
                             float flatCalculatedThrust = targetForce < 0 ? this.calculatedThrustNegative.z : this.calculatedThrustPositive.z;
@@ -996,10 +1006,8 @@ namespace Control_Block
                         }
                         else
                         {
-                            this.targetPosition.x = Mathf.Infinity;
-                            this.targetPosition.z = Mathf.Infinity;
+                            this.zLock = false;
                             this.AccelPID.ResetError();
-                            this.StrafePID.ResetError();
                         }
                     }
                 }
