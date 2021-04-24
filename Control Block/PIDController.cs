@@ -466,11 +466,8 @@ namespace Control_Block
         private Tank _tech;
 
         #region Globals
-        private static readonly RaycastHit[] s_Hits = new RaycastHit[32];
-        private static readonly Vector3 m_EffectorDir = new Vector3(0, -1, 0);
         private static readonly bool GlobalDebug = false;
         private static string dummyStr = "";
-        private static float degreesPerRadian = 180f / Mathf.PI;
 
         public static void GlobalDebugPrint(string str)
         {
@@ -895,7 +892,7 @@ namespace Control_Block
                 {
                     if (this.calculatedThrustNegative.x != 0f || this.calculatedThrustPositive.x != 0f)
                     {
-                        if (inputCommand.x == 0f)
+                        if (inputCommand.x == 0f && inputRotation.y == 0f)
                         {
                             float error;
                             float targetForce;
@@ -955,7 +952,7 @@ namespace Control_Block
                 {
                     if (this.calculatedThrustNegative.z != 0f || this.calculatedThrustPositive.z != 0f)
                     {
-                        if (inputCommand.z == 0f)
+                        if (inputCommand.z == 0f && inputRotation.y == 0f)
                         {
                             float error;
                             float targetForce;
@@ -1017,7 +1014,7 @@ namespace Control_Block
                     {
                         if (inputRotation.x == 0f)
                         {
-                            float pitchVelocity = currentAngularVelocity.x * degreesPerRadian;
+                            float pitchVelocity = currentAngularVelocity.x * Mathf.Rad2Deg;
                             float error = currentRotation.x;
                             if (this.targetPitch > error)
                             {
@@ -1072,7 +1069,7 @@ namespace Control_Block
                     {
                         if (inputRotation.z == 0f)
                         {
-                            float rollVelocity = currentAngularVelocity.z * degreesPerRadian;
+                            float rollVelocity = currentAngularVelocity.z * Mathf.Rad2Deg;
                             float error = currentRotation.z;
                             if (this.targetRoll > error)
                             {
@@ -1127,7 +1124,7 @@ namespace Control_Block
                     {
                         if (inputRotation.y == 0f)
                         {
-                            float yawVelocity = currentRotation.y * degreesPerRadian;
+                            float yawVelocity = currentRotation.y * Mathf.Rad2Deg;
                             float error = yawVelocity;
 
                             // get torque needed to bring to standstill
@@ -1300,6 +1297,7 @@ namespace Control_Block
         private void PrePool()
         {
             PIDController.GlobalDebugPrint("PIDController Pre Pool");
+            this._tech = base.GetComponent<Tank>();
         }
 
         private void OnPool()

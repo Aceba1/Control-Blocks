@@ -361,7 +361,11 @@ namespace Control_Block
                         return true;
 
                     case OperationType.TargetPointPredictive:
+                        float muzzleVelocity = Mathf.Abs(m_Strength);
+                        bool useGravity = m_Strength > 0;
+
                         Visible targetPred = blockMover.GetTarget();
+
                         if (targetPred == null)
                         {
                             if (m_ResetTimer)
@@ -371,13 +375,12 @@ namespace Control_Block
                             }
                             return false;
                         }
-                        float muzzleVelocity = Mathf.Abs(m_Strength);
-                        bool useGravity = m_Strength > 0;
 
-                        Vector3 BlockCenter = block.transform.position;
+                        Vector3 BlockCenter = block.centreOfMassWorld;
                         Vector3 AimPointVector = targetPred.GetAimPoint(BlockCenter);
                         Vector3 vector = AimPointVector - BlockCenter;
-                        if (muzzleVelocity > 0f) {
+                        if (muzzleVelocity > 0f)
+                        {
                             Vector3 dist = vector;
                             Rigidbody rbodyTank = block.tank.rbody;
                             Vector3 angularToggle = rbodyTank.angularVelocity;
@@ -399,9 +402,9 @@ namespace Control_Block
                             }
 
                             // vector now represents where the enemy will be - still need elevation
-                            vector += (time * relativeVelocity);
+                            vector += (time * relativeVelocity) + (relativeAcceleration * time * time / 2);
                         }
-                        vector += Vector3.up;
+
                         m_ResetTimer = true;
                         Value += PointAtTarget(block.trans, vector, ProjectDirToPlane, Value);// * Mathf.Abs(m_Strength);
                         return true;

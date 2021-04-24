@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Linq;
+
 
 namespace Control_Block
 {
@@ -406,7 +410,7 @@ namespace Control_Block
             m_TargetAimer.Init(base.block, 0.5f, null);
         }
 
-        private TargetAimer m_TargetAimer;
+        public TargetAimer m_TargetAimer;
 
         internal Visible GetTarget()
         {
