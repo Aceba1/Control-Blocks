@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using Rewired;
 
