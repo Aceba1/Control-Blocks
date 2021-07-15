@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using Nuterra.BlockInjector;
 using System;
 using System.Reflection;
@@ -1245,7 +1245,7 @@ namespace Control_Block
 
             ModuleBlockMover.InitiateNetworking();
 
-            var harmony = HarmonyInstance.Create("aceba1.controlblocks");
+            var harmony = new Harmony("aceba1.controlblocks");
             harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
         }
 
