@@ -1154,9 +1154,25 @@ namespace Control_Block
                     ModulePID addedPID = baseBlock.gameObject.AddComponent<ModulePID>() as ModulePID;
 
                     addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Hover, 300f, 10f, 600f, false, true));
+                    
+                    /* addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Accel, 200f, 10f, 500f, false, true));
+                    addedPID.AddParameters(PIDController.GenerateParameterInstance(PIDController.PIDParameters.PIDAxis.Strafe, 200f, 10f, 500f, false, true));
                     addedPID.enableHoldPosition = true;
                     addedPID.manualTargetChangeRate = 1.0f;
                     addedPID.useTargetHeight = true;
+
+                    ModuleAIConfig aiConfig = baseBlock.gameObject.AddComponent<ModuleAIConfig>() as ModuleAIConfig;
+                    aiConfig.m_CombatParameters = new CustomAI.CombatParameters {
+                        mode = CustomAI.CombatParameters.CombatMode.Charge,
+                        chargeOffset = new Vector3(0, 0, 30f)
+                    };
+                    aiConfig.m_MovementParameters = new CustomAI.MovementParameters {
+                        mode = CustomAI.MovementParameters.MovementMode.Airship,
+                        targetHeight = 50f,
+                        alwaysMove = false,
+                        turnOutDistance = 20f,
+                        turnInDistance = 60f
+                    }; */
 
                     Mesh spinnerMesh = GameObjectJSON.MeshFromData(Properties.Resources.BF_Flight_Computer_Spinner);
                     GameObject spindleChild = baseBlock.gameObject.FindChildGameObject("_spindle");

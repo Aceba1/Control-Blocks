@@ -361,7 +361,11 @@ namespace Control_Block
                         return true;
 
                     case OperationType.TargetPointPredictive:
+                        float muzzleVelocity = Mathf.Abs(m_Strength);
+                        bool useGravity = m_Strength > 0;
+
                         Visible targetPred = blockMover.GetTarget();
+
                         if (targetPred == null)
                         {
                             if (m_ResetTimer)
@@ -371,41 +375,36 @@ namespace Control_Block
                             }
                             return false;
                         }
-                        float muzzleVelocity = Mathf.Abs(m_Strength);
-                        bool useGravity = m_Strength > 0;
 
-                        Vector3 BlockCenter = block.transform.position;
+                        Vector3 BlockCenter = block.centreOfMassWorld;
                         Vector3 AimPointVector = targetPred.GetAimPoint(BlockCenter);
                         Vector3 vector = AimPointVector - BlockCenter;
-                        if (muzzleVelocity > 0f) {
+                        if (muzzleVelocity > 0f)
+                        {
                             Vector3 dist = vector;
                             Rigidbody rbodyTank = block.tank.rbody;
                             Vector3 angularToggle = rbodyTank.angularVelocity;
                             Vector3 relativeVelocity = targetPred.rbody.velocity - (rbodyTank.velocity + angularToggle);
 
                             float time = dist.magnitude / muzzleVelocity;
+
+                            Vector3 relativeAcceleration = BallisticTargeting.GetAcceleration(targetPred.tank) - BallisticTargeting.GetAcceleration(block.tank);
+
                             if (useGravity)
                             {
-                                // Console.WriteLine("enter Gravity");
-                                float height = dist.y;
-                                float land = Mathf.Sqrt((dist.x * dist.x) + (dist.z * dist.z));
-
-                                float sqrVel = muzzleVelocity * muzzleVelocity;
-
-                                if (sqrVel >= 30.0f * (height + dist.magnitude))
-                                {
-                                    // radians
-                                    float theta = Mathf.Atan((sqrVel - Mathf.Sqrt((sqrVel * sqrVel) - ((900.0f * land * land) + (60.0f * height * sqrVel)))) / (30.0f * land));
-                                    time = land / (Mathf.Cos(theta) * muzzleVelocity);
-
-                                    // add elevation
-                                    vector.y += (Mathf.Sin(theta) * muzzleVelocity * time) - vector.y;
-                                }
+                                relativeAcceleration -= Physics.gravity;
                             }
+
+                            float exactTime = BallisticTargeting.SolveBallisticArc(BlockCenter, muzzleVelocity, AimPointVector, relativeVelocity, relativeAcceleration);
+                            if (exactTime != Mathf.Infinity)
+                            {
+                                time = exactTime;
+                            }
+
                             // vector now represents where the enemy will be - still need elevation
-                            vector += (time * relativeVelocity);
+                            vector += (time * relativeVelocity) + (relativeAcceleration * time * time / 2);
                         }
-                        vector += Vector3.up;
+
                         m_ResetTimer = true;
                         Value += PointAtTarget(block.trans, vector, ProjectDirToPlane, Value);// * Mathf.Abs(m_Strength);
                         return true;
